@@ -1,4 +1,8 @@
 
+***************************************
+version-1.3.0
+
++ add PCR deduplication for UMI and reads
 
 ***************************************
 version-1.2.0
