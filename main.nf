@@ -1150,6 +1150,7 @@ process getSoftwareVersions{
 }
 
 process workflowSummaryMqc {
+  label 'python'
   label 'lowCpu'
   label 'lowMem'
   label 'multiqc'
