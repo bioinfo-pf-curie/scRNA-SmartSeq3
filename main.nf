@@ -1151,7 +1151,7 @@ process getSoftwareVersions{
 
 process workflowSummaryMqc {
   label 'lowCpu'
-  label 'lowMem'
+  label 'medMem'
   label 'multiqc'
 
   when:
