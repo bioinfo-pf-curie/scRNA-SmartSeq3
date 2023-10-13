@@ -1150,9 +1150,8 @@ process getSoftwareVersions{
 }
 
 process workflowSummaryMqc {
-  label 'lowCpu'
-  label 'medMem'
-  label 'multiqc'
+  label 'onlyLinux'
+  executor = 'local'
 
   when:
   !params.skipMultiQC
