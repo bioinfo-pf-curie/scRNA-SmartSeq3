@@ -1,7 +1,0 @@
-name: rseqc-4.0.0
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - bioconda::rseqc=4.0.0=py37hf01694f_0

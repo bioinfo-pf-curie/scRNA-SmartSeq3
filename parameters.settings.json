@@ -1,0 +1,166 @@
+{
+  "parameters": [
+    {
+      "name": "reads",
+      "label": "Input files",
+      "usage": "Path to input data (must be surrounded with quotes)",
+      "type": "path",
+      "choices": [],
+      "nargs": "+",
+      "default_value": null,
+      "pattern": ".*\\*.*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Mandatory arguments"
+    },
+    {
+      "name": "samplePlan",
+      "label": "Input files",
+      "usage": "Path to sample plan (csv format) with raw reads (if `--reads` is not specified)",
+      "type": "path",
+      "choices": [],
+      "nargs": "+",
+      "default_value": null,
+      "pattern": ".*\\*.*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Mandatory arguments"
+    },
+    {
+      "name": "profile",
+      "label": "Configuration profile(s)",
+      "usage": "Configuration profile to use. Can use multiple (comma separated).",
+      "type": "string",
+      "choices": [
+        "conda", "cluster", "docker", "multiconda", "conda", "path", "multipath", "singularity"
+      ],
+      "nargs": "+",
+      "default_value": null,
+      "pattern": ".*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Mandatory arguments"
+    },
+    {
+      "name": "genome",
+      "label": "Reference genome",
+      "usage": "Name of the reference genome.",
+      "type": "string",
+      "nargs": "1",
+      "choices": [],
+      "default_value": false,
+      "pattern": "",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Mandatory arguments"
+    },
+
+    {
+      "name": "singleEnd",
+      "label": "Input files",
+      "usage": "For single-end input data",
+      "type": "boolean",
+      "nargs": 0,
+      "choices": [],
+      "default_value": false,
+      "pattern": "",
+      "render": "check-box",
+      "arity": 0,
+      "group": "Inputs"
+    },
+
+    {
+      "name": "genomeAnnotationPath",
+      "label": "Annotation path",
+      "usage": "Path to genome annotations folder",
+      "type": "path",
+      "choices": [],
+      "nargs": "+",
+      "default_value": null,
+      "pattern": ".*\\*.*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "References"
+    },
+
+    {
+      "name": "skipFastqc",
+      "label": "Skip Fastqc",
+      "usage": "Disable Fastqc",
+      "type": "boolean",
+      "nargs": 0,
+      "choices": [],
+      "default_value": false,
+      "pattern": "",
+      "render": "check-box",
+      "arity": 0,
+      "group": "Skip options"
+    },
+    {
+      "name": "skipMultiqc",
+      "label": "Skip MultiQC",
+      "usage": "Disable MultiQC",
+      "type": "boolean",
+      "nargs": 0,
+      "choices": [],
+      "default_value": false,
+      "pattern": "",
+      "render": "check-box",
+      "arity": 0,
+      "group": "Skip options"
+    },
+
+    {
+      "name": "outDir",
+      "label": "Output directory",
+      "usage": "The output directory where the results will be saved",
+      "type": "path",
+      "nargs": 1,
+      "choices": [],
+      "default_value": null,
+      "pattern": ".*",
+      "render": "file",
+      "arity": 0,
+      "group": "Other options"
+    },
+    {
+      "name": "multiqcConfig",
+      "label": "MultiQC configuration file",
+      "usage": "Specify a custom config file for MultiQC",
+      "type": "path",
+      "nargs": 1,
+      "choices": [],
+      "default_value": null,
+      "pattern": ".*",
+      "render": "file",
+      "arity": 0,
+      "group": "Other options"
+    },
+    {
+      "name": "metadata",
+      "label": "MultiQC metadata file",
+      "usage": "Specify a custom metadata file for MultiQC",
+      "type": "path",
+      "nargs": 1,
+      "choices": [],
+      "default_value": null,
+      "pattern": ".*",
+      "render": "file",
+      "arity": 0,
+      "group": "Other options"
+    },
+    {
+      "name": "name",
+      "label": "Name for the pipeline run",
+      "usage": "Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic",
+      "type": "string",
+      "nargs": 1,
+      "choices": [],
+      "default_value": "25.MB",
+      "pattern": ".*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Other options"
+    }
+  ]
+}
