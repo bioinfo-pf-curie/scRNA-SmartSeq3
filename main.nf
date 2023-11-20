@@ -1221,7 +1221,6 @@ process multiqc {
   file ('genesat/*') from genesat_results.collect().ifEmpty([]) // linegraph
   file('rmPCRumi/*') from chUmi_dedup_mqc.collect()
 
-
   output: 
   file splan
   file "*report.html" into multiqc_report
