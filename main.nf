@@ -1202,7 +1202,7 @@ process multiqc {
   //Modules
   file ('star/*') from chAlignmentLogs.collect().ifEmpty([])
   file ('FC/*') from chAssignmentLogs_allreads.collect().ifEmpty([])
-  file ('coverage/*') from chGeneCov_res.collect().ifEmpty([])
+  file ('coverage/*.geneBodyCoverage.txt') from chGeneCov_res.collect().ifEmpty([])
   file ('preseq/*') from preseq_results.collect().ifEmpty([])
   //LOGS
   //file ('umiExtract/*') from chUmiExtractedLog.collect()
