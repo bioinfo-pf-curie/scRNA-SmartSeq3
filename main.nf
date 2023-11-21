@@ -1150,9 +1150,8 @@ process getSoftwareVersions{
 }
 
 process workflowSummaryMqc {
-  label 'lowCpu'
-  label 'lowMem'
-  label 'multiqc'
+  label 'onlyLinux'
+  executor = 'local'
 
   when:
   !params.skipMultiQC
@@ -1220,7 +1219,6 @@ process multiqc {
   //file ("dupPerGene/*") from chDupPerGene_mqc.collect() // dotplot DupPerGene.csv
   file ('genesat/*') from genesat_results.collect().ifEmpty([]) // linegraph
   file('rmPCRumi/*') from chUmi_dedup_mqc.collect()
-
 
   output: 
   file splan
