@@ -82,20 +82,6 @@
       "arity": 0,
       "group": "References"
     },
-
-    {
-      "name": "skipFastqc",
-      "label": "Skip Fastqc",
-      "usage": "Disable Fastqc",
-      "type": "boolean",
-      "nargs": 0,
-      "choices": [],
-      "default_value": false,
-      "pattern": "",
-      "render": "check-box",
-      "arity": 0,
-      "group": "Skip options"
-    },
     {
       "name": "skipMultiqc",
       "label": "Skip MultiQC",
@@ -109,7 +95,19 @@
       "arity": 0,
       "group": "Skip options"
     },
-
+    {
+      "name": "protocol",
+      "label": "Choose protocol",
+      "usage": "Run protocol parameters",
+      "type": "string",
+      "nargs": 0,
+      "choices": [],
+      "default_value": false,
+      "pattern": "",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Mandatory arguments"
+    },
     {
       "name": "outDir",
       "label": "Output directory",
