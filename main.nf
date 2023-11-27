@@ -54,9 +54,6 @@ if (params.genomes && params.genome && !params.genomes.containsKey(params.genome
   exit 1, "The provided genome '${params.genome}' is not available in the genomes file. Currently the available genomes are ${params.genomes.keySet().join(", ")}"
 }
 
-// Initialize variable from the genome.conf file
-//params.bowtie2Index = NFTools.getGenomeAttribute(params, 'bowtie2')
-
 // Stage config files
 multiqcConfigCh = Channel.fromPath(params.multiqcConfig)
 outputDocsCh = Channel.fromPath("$projectDir/docs/output.md")
@@ -158,6 +155,9 @@ workflow {
 
     // extract UMIs in forward reads
     stdin_R1 = Channel.of('R1', 'R2')
+
+    stdin_R1.view()
+    
     umiExtraction(
       rawReadsCh
       stdin_R1
@@ -167,6 +167,7 @@ workflow {
     umiExtraction_logR1Ch = umiExtraction.out.log
     versionsCh = versionsCh.mix(umiExtraction.out.versions)
 
+/*
     // extract UMIs in reverse reads
     stdin_R2 = Channel.of('R2', 'R1')
     umiExtraction_fastqR1Ch
@@ -190,7 +191,7 @@ workflow {
     umiExtractionSummary_nonUmiReadIdCh = umiExtractionSummary.out.nonUmiReadId
     umiExtractionSummary_percentUmiCh = umiExtractionSummary.out.percentUmi
     umiExtractionSummary_nbTotFragCh = umiExtractionSummary.out.nbTotFrag
-
+*/
     //*******************************************
     // MULTIQC
   
