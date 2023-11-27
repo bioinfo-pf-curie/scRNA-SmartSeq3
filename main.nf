@@ -148,7 +148,6 @@ workflow {
 
   main:
     // Init Channels
-    fastqcMqcCh = Channel.empty()
 
     // subroutines
     outputDocumentation(
@@ -156,14 +155,39 @@ workflow {
       outputDocsImagesCh
     )
 
-    // PROCESS: fastqc
-    if (! params.skipFastqc){
-      fastqc(
-        rawReadsCh
-      )
-      fastqcMqcCh = fastqc.out.results.collect()
-      versionsCh = versionsCh.mix(fastqc.out.versions)
-    }
+    // extract UMIs in forward reads
+    stdin_R1 = Channel.of('R1', 'R2')
+    umiExtraction(
+      rawReadsCh
+      stdin_R1
+    )
+    umiExtraction_fastqR1Ch = umiExtraction.out.fastq_umi
+    umiExtraction_fastqNoUmiR1Ch = umiExtraction.out.fastq_noumi
+    umiExtraction_logR1Ch = umiExtraction.out.log
+    versionsCh = versionsCh.mix(umiExtraction.out.versions)
+
+    // extract UMIs in reverse reads
+    stdin_R2 = Channel.of('R2', 'R1')
+    umiExtraction_fastqR1Ch
+      .map() {item -> [item[1], item[0]] }
+      .set{umiExtraction_fastqR1_changedCh}
+    umiExtraction(
+      umiExtraction_fastqR1_changedCh
+      stdin_R2
+    )
+    umiExtraction_fastqR2Ch = umiExtraction.out.fastq_umi
+    umiExtraction_fastqNoUmiR2Ch = umiExtraction.out.fastq_noumi
+    umiExtraction_logR2Ch = umiExtraction.out.log
+    versionsCh = versionsCh.mix(umiExtraction.out.versions)
+    
+    // summarize UMI extraction
+    umiExtractionSummary(
+      rawReadsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR2Ch)
+    )
+    umiExtractionSummary_fastqCh = umiExtractionSummary.out.fastq
+    umiExtractionSummary_nonUmiReadIdCh = umiExtractionSummary.out.nonUmiReadId
+    umiExtractionSummary_percentUmiCh = umiExtractionSummary.out.percentUmi
+    umiExtractionSummary_nbTotFragCh = umiExtractionSummary.out.nbTotFrag
 
     //*******************************************
     // MULTIQC
