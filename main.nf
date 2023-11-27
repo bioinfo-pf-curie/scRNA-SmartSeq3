@@ -135,6 +135,8 @@ sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readPath
 // Processes
 include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/utils/outputDocumentation'
+include { umiExtraction } from './nf-modules/common/process/umitools/umiExtraction'
+include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -147,7 +149,6 @@ workflow {
   versionsCh = Channel.empty()
 
   main:
-    // Init Channels
 
     // subroutines
     outputDocumentation(
@@ -171,6 +172,7 @@ workflow {
     umiExtraction_fastqR1Ch
       .map() {item -> [item[1], item[0]] }
       .set{umiExtraction_fastqR1_changedCh}
+    
     umiExtraction(
       umiExtraction_fastqR1_changedCh
       stdin_R2
@@ -206,7 +208,6 @@ workflow {
         sPlanCh.collect(),
         metadataCh.ifEmpty([]),
         multiqcConfigCh.ifEmpty([]),
-        fastqcMqcCh.ifEmpty([]),
         getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
         workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
         warnCh.collect().ifEmpty([])
