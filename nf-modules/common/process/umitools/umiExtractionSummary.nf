@@ -19,29 +19,31 @@ process umiExtractionSummary {
   tuple val(meta), file("*_nbTotFrag.txt"), emit: nbTotFrag
 
   script:
+  def args = task.ext.args ?: ''
+  def prefix = task.ext.prefix ?: "${meta.id}"
   """
   # save read IDs that have no umis in a file to extract them after alignment 
-  seqkit seq -j ${task.cpus} -n -i ${fastqNoUmi_R2} -o ${meta}_nonUmisReadsIDs.txt
+  seqkit seq -j ${task.cpus} -n -i ${fastqNoUmi_R2} -o ${prefix}_nonUmisReadsIDs.txt
 
   # concatenate R1 and R2 umi reads == all umi reads 
   cat ${umiExtraction_fastqR2_R1} >> ${umiExtraction_fastqR1_R1}
   ############## Save % UMIs reads
   nb_lines=`wc -l < <(gzip -cd ${R1})`
   nb_totFrag=\$(( \$nb_lines / 4 ))
-  echo "totFrag: \$nb_totFrag" > ${meta}_nbTotFrag.txt
+  echo "totFrag: \$nb_totFrag" > ${prefix}_nbTotFrag.txt
 
   nb_lines=`wc -l < <(gzip -cd ${umiExtraction_fastqR1_R1}) `
   nb_umis=\$(( \$nb_lines / 4 ))
-  echo "percentUMI:\$(( \$nb_umis * 100 / \$nb_totFrag ))" > ${meta}_pUMIs.txt
+  echo "percentUMI:\$(( \$nb_umis * 100 / \$nb_totFrag ))" > ${prefix}_pUMIs.txt
   ##############
   # add non umi reads == all reads 
   cat ${fastqNoUmi_R1} >> ${umiExtraction_fastqR1_R1}
-  mv ${umiExtraction_fastqR1_R1} ${meta}_totReads.R1.fastq.gz
+  mv ${umiExtraction_fastqR1_R1} ${prefix}_totReads.R1.fastq.gz
 
   # concatenate R1 and R2 umi reads
   cat ${umiExtraction_fastqR2_R2} >> ${umiExtraction_fastqR1_R2} 
   # add non umi reads
   cat ${fastqNoUmi_R2} >> ${umiExtraction_fastqR1_R2} 
-  mv ${umiExtraction_fastqR1_R2} ${meta}_totReads.R2.fastq.gz
+  mv ${umiExtraction_fastqR1_R2} ${prefix}_totReads.R2.fastq.gz
   """
 }
