@@ -20,9 +20,11 @@ process umiExtraction {
   path("versions.txt"), emit: versions
 
   script:
+  def args = task.ext.args ?: ''
+  def prefix = task.ext.prefix ?: "${meta.id}"
   """
-  umi_tools extract --stdin=${reads[0]} --stdout=${meta}_UMIsExtractedin${stdin_read[0]}.${stdin_read[0]}.fastq.gz \\
-                    --read2-in=${reads[1]} --read2-out=${meta}_UMIsExtractedin${stdin_read[0]}.${stdin_read[1]}.fastq.gz \\
+  umi_tools extract --stdin=${reads[0]} --stdout=${prefix}_UMIsExtractedin${stdin_read[0]}.${stdin_read[0]}.fastq.gz \\
+                    --read2-in=${reads[1]} --read2-out=${prefix}_UMIsExtractedin${stdin_read[0]}.${stdin_read[1]}.fastq.gz \\
                     --filtered-out ${prefix}_noUMIin${stdin_read[0]}.${stdin_read[0]}.fastq.gz --filtered-out2 ${prefix}_noUMIin${stdin_read[0]}.${stdin_read[1]}.fastq.gz \\
                     --log=${prefix}_umiExtract${stdin_read[0]}.log ${args}
 
