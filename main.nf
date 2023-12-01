@@ -154,7 +154,7 @@ workflow {
     )
 
     // extract UMIs in forward reads
-    stdin_R1 = Channel.of('R1', 'R2')
+    stdin_R1 = Channel.of('R1')
 
     stdin_R1.view()
     
@@ -167,9 +167,8 @@ workflow {
     umiExtraction_logR1Ch = umiExtraction.out.log
     versionsCh = versionsCh.mix(umiExtraction.out.versions)
 
-/*
     // extract UMIs in reverse reads
-    stdin_R2 = Channel.of('R2', 'R1')
+    stdin_R2 = Channel.of('R2')
     umiExtraction_fastqR1Ch
       .map() {item -> [item[1], item[0]] }
       .set{umiExtraction_fastqR1_changedCh}
@@ -191,7 +190,7 @@ workflow {
     umiExtractionSummary_nonUmiReadIdCh = umiExtractionSummary.out.nonUmiReadId
     umiExtractionSummary_percentUmiCh = umiExtractionSummary.out.percentUmi
     umiExtractionSummary_nbTotFragCh = umiExtractionSummary.out.nbTotFrag
-*/
+
     //*******************************************
     // MULTIQC
   
