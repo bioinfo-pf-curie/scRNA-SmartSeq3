@@ -160,7 +160,7 @@ workflow {
     stdin_R1.view()
     
     umiExtraction(
-      rawReadsCh
+      rawReadsCh,
       stdin_R1
     )
     umiExtraction_fastqR1Ch = umiExtraction.out.fastq_umi
@@ -175,7 +175,7 @@ workflow {
       .set{umiExtraction_fastqR1_changedCh}
     
     umiExtraction(
-      umiExtraction_fastqR1_changedCh
+      umiExtraction_fastqR1_changedCh,
       stdin_R2
     )
     umiExtraction_fastqR2Ch = umiExtraction.out.fastq_umi
