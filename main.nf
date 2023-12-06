@@ -134,6 +134,7 @@ sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readPath
 include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/utils/outputDocumentation'
 include { umiExtraction } from './nf-modules/common/process/umitools/umiExtraction'
+include { umiExtractionR2R1 } from './nf-modules/common/process/umitools/umiExtraction'
 include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
@@ -174,7 +175,7 @@ workflow {
       .map() {item -> [item[1], item[0]] }
       .set{umiExtraction_fastqR1_changedCh}
     
-    umiExtraction(
+    umiExtractionR2R1(
       umiExtraction_fastqR1_changedCh,
       stdin_R2
     )
