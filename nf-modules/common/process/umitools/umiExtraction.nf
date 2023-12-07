@@ -30,7 +30,7 @@ process umiExtraction {
   def logOut = stdin_read == "R1" ? "--log=${meta.id}_umiExtractR1.log" : 
                                   "--log=${meta.id}_umiExtractR2.log"
   """
-  umi_tools extract $inputCmd $outCmd $filtredOut $logOut ${args}
+  umi_tools extract ${args} $inputCmd $outCmd $filtredOut $logOut 
   umi_tools --version &> versions.txt
   """
 }

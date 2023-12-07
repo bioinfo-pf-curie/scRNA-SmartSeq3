@@ -169,12 +169,17 @@ workflow {
     umiExtraction_logR1Ch = umiExtractionR1R2.out.log
     versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
 
+    umiExtraction_fastqR1Ch.view()
     // extract UMIs in reverse reads
-    stdin_R2 = Channel.of('R2')
     umiExtraction_fastqR1Ch
-      .map() {item -> [item[1], item[0]] }
+      .map() {item -> [meta, item[1], item[0]] }
       .set{umiExtraction_fastqR1_changedCh}
-    
+
+
+    umiExtraction_fastqR1_changedCh.view()
+
+    stdin_R2 = Channel.of('R2')
+
     umiExtractionR2R1(
       umiExtraction_fastqR1_changedCh,
       stdin_R2
