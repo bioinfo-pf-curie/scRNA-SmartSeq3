@@ -195,7 +195,7 @@ workflow {
     if (!params.skipMultiQC){
 
       getSoftwareVersions(
-        versionsCh.collectFile().unique()
+        versionsCh.unique().collectFile()
       )
 
       multiqc(
