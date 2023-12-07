@@ -117,7 +117,6 @@ workflowSummaryCh = NFTools.summarize(summary, workflow, params)
 
 // Load raw reads
 rawReadsCh = NFTools.getInputData(params.samplePlan, params.reads, params.readPaths, params.singleEnd, params)
-rawReadsCh.view()
 
 // Make samplePlan if not available
 sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readPaths, params.singleEnd)
@@ -156,10 +155,7 @@ workflow {
     )
 
     // extract UMIs in forward reads
-    stdin_R1 = Channel.of('R1')
-
-    stdin_R1.view()
-    
+    stdin_R1 = Channel.of('R1')    
     umiExtractionR1R2(
       rawReadsCh,
       stdin_R1
@@ -170,9 +166,13 @@ workflow {
     versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
 
     umiExtraction_fastqR1Ch.view()
+    [[id:V590T10, singleEnd:false], 
+    /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/8b/c2beed5e5902e7689382e325bcac1f/V590T10_UMIsExtractedinR1.R1.fastq.gz, 
+    /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/8b/c2beed5e5902e7689382e325bcac1f/V590T10_UMIsExtractedinR1.R2.fastq.gz]
+
     // extract UMIs in reverse reads
     umiExtraction_fastqR1Ch
-      .map() {meta, item -> [[meta], item[1], item[0]] }
+      .map() {meta, item -> [item[1], item[0]] }
       .set{umiExtraction_fastqR1_changedCh}
 
 
