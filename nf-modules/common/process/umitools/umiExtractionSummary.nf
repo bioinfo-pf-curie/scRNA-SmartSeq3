@@ -28,7 +28,7 @@ process umiExtractionSummary {
   # concatenate R1 and R2 umi reads == all umi reads 
   cat ${umiExtraction_r2[0]} >> ${umiExtraction_r1[0]}
   ############## Save % UMIs reads
-  nb_lines=`wc -l < <(gzip -cd ${R1})`
+  nb_lines=`wc -l < <(gzip -cd ${raw_reads[0]})`
   nb_totFrag=\$(( \$nb_lines / 4 ))
   echo "totFrag: \$nb_totFrag" > ${prefix}_nbTotFrag.txt
 
