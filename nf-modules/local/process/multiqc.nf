@@ -30,7 +30,7 @@ process multiqc {
   splanOpts = params.samplePlan ? "--splan ${params.samplePlan}" : ""
   isPE = params.singleEnd ? 0 : 1
     
-  modulesList = "-m custom_content -m preseq -m rseqc -m bowtie1 -m hisat2 -m star -m cutadapt -m fastqc -m qualimap -m salmon -m gffcompare"
+  modulesList = "-m custom_content 
   warn = warnings.name == 'warnings.txt' ? "--warn warnings.txt" : ""
   """
   mqc_header.py --name "RNA-seq" --version ${workflow.manifest.version} ${metadataOpts} ${splanOpts} ${warn} > multiqc-config-header.yaml
