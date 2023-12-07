@@ -164,16 +164,8 @@ workflow {
     umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumi
     umiExtraction_logR1Ch = umiExtractionR1R2.out.log
     versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
-  
-    // extract UMIs in reverse reads
-    /*umiExtraction_fastqR1Ch
-      .map { item -> [ item[0], item[2], item[1] ] }
-      .set{umiExtraction_fastqR1_changedCh}*/
-
-    //umiExtraction_fastqR1_changedCh.view()
 
     stdin_R2 = Channel.of('R2')
-
     umiExtractionR2R1(
       umiExtraction_fastqR1Ch,
       stdin_R2
@@ -192,6 +184,8 @@ workflow {
     umiExtractionSummary_percentUmiCh = umiExtractionSummary.out.percentUmi
     umiExtractionSummary_nbTotFragCh = umiExtractionSummary.out.nbTotFrag
 
+    umiExtractionSummary_fastqCh.view()
+
     //*******************************************
     // MULTIQC
   
@@ -201,7 +195,7 @@ workflow {
     if (!params.skipMultiQC){
 
       getSoftwareVersions(
-        versionsCh.unique().collectFile()
+        versionsCh.collectFile().unique()
       )
 
       multiqc(
