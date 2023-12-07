@@ -14,7 +14,6 @@ process multiqc {
   path splan
   path metadata
   path multiqcConfig
-  path ('fastqc/*')
   path ('softwareVersions/*')
   path ('workflowSummary/*')
   path warnings
