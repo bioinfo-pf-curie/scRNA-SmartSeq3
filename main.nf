@@ -164,8 +164,6 @@ workflow {
     umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumi
     umiExtraction_logR1Ch = umiExtractionR1R2.out.log
     versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
-
-    umiExtraction_fastqR1Ch.view()
   
     // extract UMIs in reverse reads
     umiExtraction_fastqR1Ch
