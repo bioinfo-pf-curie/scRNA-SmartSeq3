@@ -21,15 +21,14 @@ process umiExtraction {
 
   script:
   def args = task.ext.args ?: ''
-  def prefix = task.ext.prefix ?: "${meta.id}"
   def inputCmd= stdin_read == "R1" ? "--stdin=${reads[0]} --read2-in=${reads[1]}" : 
                                    "--stdin=${reads[1]} --read2-in=${reads[0]}"
-  def outCmd = stdin_read == "R1" ? "--stdout=${prefix}_UMIsExtractedinR1.R1.fastq.gz --read2-out=${prefix}_UMIsExtractedinR1.R2.fastq.gz" : 
-                                     "--stdout=${prefix}_UMIsExtractedinR2.R2.fastq.gz --read2-out=${prefix}_UMIsExtractedinR2.R1.fastq.gz"
-  def filtredOut = stdin_read == "R1" ? "--filtered-out ${prefix}_noUMIinR1.R1.fastq.gz --filtered-out2 ${prefix}_noUMIinR1.R2.fastq.gz" :
-                                      "--filtered-out ${prefix}_noUMIinR2.R2.fastq.gz --filtered-out2 ${prefix}_noUMIinR2.R1.fastq.gz"
-  def logOut = stdin_read == "R1" ? "--log=${prefix}_umiExtractR1.log" : 
-                                  "--log=${prefix}_umiExtractR2.log"
+  def outCmd = stdin_read == "R1" ? "--stdout=${meta.id}_UMIsExtractedinR1.R1.fastq.gz --read2-out=${meta.id}_UMIsExtractedinR1.R2.fastq.gz" : 
+                                     "--stdout=${meta.id}_UMIsExtractedinR2.R2.fastq.gz --read2-out=${meta.id}_UMIsExtractedinR2.R1.fastq.gz"
+  def filtredOut = stdin_read == "R1" ? "--filtered-out ${meta.id}_noUMIinR1.R1.fastq.gz --filtered-out2 ${meta.id}_noUMIinR1.R2.fastq.gz" :
+                                      "--filtered-out ${meta.id}_noUMIinR2.R2.fastq.gz --filtered-out2 ${meta.id}_noUMIinR2.R1.fastq.gz"
+  def logOut = stdin_read == "R1" ? "--log=${meta.id}_umiExtractR1.log" : 
+                                  "--log=${meta.id}_umiExtractR2.log"
   """
   umi_tools extract $inputCmd $outCmd $filtredOut $logOut ${args}
   umi_tools --version &> versions.txt
