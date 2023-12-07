@@ -170,7 +170,7 @@ workflow {
       .map { item -> [ item[0], item[2], item[1] ] }
       .set{umiExtraction_fastqR1_changedCh}*/
 
-    umiExtraction_fastqR1_changedCh.view()
+    //umiExtraction_fastqR1_changedCh.view()
 
     stdin_R2 = Channel.of('R2')
 
