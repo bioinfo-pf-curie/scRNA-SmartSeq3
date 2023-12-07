@@ -10,7 +10,7 @@ process umiExtractionSummary {
   label 'lowMem'
 
   input: 
-  tuple val(meta), path(R1), path(R2), path(umiExtraction_fastqR1_R1), path(umiExtraction_fastqR1_R2), path(umiExtraction_fastqR2_R1), path(umiExtraction_fastqR2_R2), (fastqNoUmi_R1), path(fastqNoUmi_R2)
+  tuple val(meta), path(R1), path(R2), path(umiExtraction_fastqR1_R1), path(umiExtraction_fastqR1_R2), path(umiExtraction_fastqR2_R1), path(umiExtraction_fastqR2_R2), path(fastqNoUmi_R1), path(fastqNoUmi_R2)
 
   output:
   tuple val(meta), file("*_totReads.R1.fastq.gz"), file("*_totReads.R2.fastq.gz"), emit: fastq
