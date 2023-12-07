@@ -166,10 +166,7 @@ workflow {
     versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
 
     umiExtraction_fastqR1Ch.view()
-    [[id:V590T10, singleEnd:false], 
-    /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/8b/c2beed5e5902e7689382e325bcac1f/V590T10_UMIsExtractedinR1.R1.fastq.gz, 
-    /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/8b/c2beed5e5902e7689382e325bcac1f/V590T10_UMIsExtractedinR1.R2.fastq.gz]
-
+  
     // extract UMIs in reverse reads
     umiExtraction_fastqR1Ch
       .map() {meta, item -> [item[1], item[0]] }
