@@ -169,9 +169,8 @@ workflow {
   
     // extract UMIs in reverse reads
     umiExtraction_fastqR1Ch
-      .map {meta, item -> [item[1], item[0]] }
+      .map {meta, item -> [meta, item[1], item[0]] }
       .set{umiExtraction_fastqR1_changedCh}
-
 
     umiExtraction_fastqR1_changedCh.view()
 
