@@ -31,6 +31,6 @@ process umiExtraction {
                                   "--log=${meta.id}_umiExtractR2.log"
   """
   umi_tools extract ${args} $inputCmd $outCmd $filtredOut $logOut 
-  umi_tools --version &> versions.txt
+  umi_tools --version | cut -f1,3 -d" " &> versions.txt
   """
 }
