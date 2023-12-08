@@ -202,8 +202,8 @@ workflow {
     )
     chAlignedBam = starAlign.out.bam
     chAlignedLogs = starAlign.out.logs
-    chVersions = chVersions.mix(starAlign.out.versions)
-    
+    versionsCh = versionsCh.mix(starAlign.out.versions)
+
     //*******************************************
     // MULTIQC
   
