@@ -190,9 +190,54 @@ workflow {
     trimLinker(
       umiExtractionSummary_fastqCh
     )
-    trimLinker_sens_fastqCh=trimLinker.out.fastq
-    trimLinker_sens_logCh=trimLinker.out.log
+    trimLinker_fastqCh=trimLinker.out.fastq
+    trimLinker_logCh=trimLinker.out.log
     versionsCh = versionsCh.mix(trimLinker.out.versions)
+
+    // From nf-core
+    // Function that checks the alignment rate of the STAR output
+    // and returns true if the alignment passed and otherwise false
+    skippedPoorAlignment = []
+    def checkStarLog(logs) {
+      def percentAligned = 0;
+      logs.eachLine { line ->
+        if ((matcher = line =~ /Uniquely mapped reads %\s*\|\s*([\d\.]+)%/)) {
+          percentAligned = matcher[0][1]
+        }else if ((matcher = line =~ /Uniquely mapped reads number\s*\|\s*([\d\.]+)/)) {
+          numAligned = matcher[0][1]
+        }
+      }
+      logname = logs.getBaseName() - 'Log.final'
+      if(numAligned.toInteger() <= 2000.toInteger() ){
+          log.info "#################### LESS THAN 2000 READS! IGNORING FOR FURTHER DOWNSTREAM ANALYSIS! ($logname)  >> ${percentAligned}% <<"
+          skippedPoorAlignment << logname
+          return false
+      } else {
+          log.info "          Passed alignment > star ($logname)   >> ${percentAligned}% <<"
+          return true
+      }
+    }
+
+    // Update input channel
+    chStarRawReads = Channel.empty()
+    chStarRawReads = chTrimmedReads
+
+    starAlign(
+      trimLinker_fastqCh
+    )
+    chAlignedBam = starAlign.out.bam
+    chAlignedLogs = starAlign.out.logs
+    chVersions = chVersions.mix(starAlign.out.versions)
+
+    // Filter removes all 'aligned' channels that fail the check
+    chAlignBam
+      .filter { prefix, logs, bams -> checkStarLog(logs) }
+      .map() {item -> [item[0], item[2]] }
+      .dump (tag:'starbams')
+      .set {chAlignBamCheck_umi}
+
+
+    
 
 
     //*******************************************
