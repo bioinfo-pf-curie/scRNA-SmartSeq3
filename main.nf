@@ -156,7 +156,7 @@ workflow {
       outputDocsImagesCh
     )
 
-    rawReadsCh.collect().collate( 10 ).view()
+    rawReadsCh.collect().collate( 3 ).view()
 
     // extract UMIs in forward reads
     stdin_R1 = Channel.of('R1')    
