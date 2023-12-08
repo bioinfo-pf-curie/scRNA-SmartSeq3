@@ -136,6 +136,7 @@ include { umiExtraction as umiExtractionR1R2 } from './nf-modules/common/process
 include { umiExtraction as umiExtractionR2R1 } from './nf-modules/common/process/umitools/umiExtraction'
 include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
 include { trimLinker } from './nf-modules/common/process/cutadapt/trimLinker'
+include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -220,24 +221,23 @@ workflow {
 
     // Update input channel
     chStarRawReads = Channel.empty()
-    chStarRawReads = chTrimmedReads
+    chStarRawReads = trimLinker_fastqCh
 
     starAlign(
-      trimLinker_fastqCh
+      chStarRawReads,
+      chStarIndex,
+      chGtf
     )
     chAlignedBam = starAlign.out.bam
     chAlignedLogs = starAlign.out.logs
     chVersions = chVersions.mix(starAlign.out.versions)
 
     // Filter removes all 'aligned' channels that fail the check
-    chAlignBam
-      .filter { prefix, logs, bams -> checkStarLog(logs) }
-      .map() {item -> [item[0], item[2]] }
-      .dump (tag:'starbams')
-      .set {chAlignBamCheck_umi}
-
-
-    
+    // chAlignBam
+    //   .filter { prefix, logs, bams -> checkStarLog(logs) }
+    //   .map() {item -> [item[0], item[2]] }
+    //   .dump (tag:'starbams')
+    //   .set {chAlignBamCheck_umi}
 
 
     //*******************************************
