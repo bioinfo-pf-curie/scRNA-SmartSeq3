@@ -196,7 +196,7 @@ workflow {
     versionsCh = versionsCh.mix(trimLinker.out.versions)
 
 
-    trimLinker_fastqCh.collect().map{fastq->[100,fastq.flatten()]}.view()
+    trimLinker_fastqCh.collect().collate( 10 ).view()
 
     // // faire batch de cellules
     // concatFastq(
@@ -204,14 +204,14 @@ workflow {
     // )
     // barcodeRead = concatFastq.out.reads
 
-    starAlign(
-      trimLinker_fastqCh,
-      chStarIndex,
-      chGtf
-    )
-    chAlignedBam = starAlign.out.bam
-    chAlignedLogs = starAlign.out.logs
-    versionsCh = versionsCh.mix(starAlign.out.versions)
+    // starAlign(
+    //   trimLinker_fastqCh,
+    //   chStarIndex,
+    //   chGtf
+    // )
+    // chAlignedBam = starAlign.out.bam
+    // chAlignedLogs = starAlign.out.logs
+    // versionsCh = versionsCh.mix(starAlign.out.versions)
 
     //*******************************************
     // MULTIQC
