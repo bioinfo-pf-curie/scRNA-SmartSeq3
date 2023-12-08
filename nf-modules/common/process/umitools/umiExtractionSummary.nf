@@ -2,7 +2,6 @@
  * Umitools extract UMI
  */
 
-
 process umiExtractionSummary {
   tag "${meta.id}"
   label 'umiTools'
@@ -13,10 +12,10 @@ process umiExtractionSummary {
   tuple val(meta), path(raw_reads), path(umiExtraction_r1), path(umiExtraction_r2), path(fastqNoUmi_R1), path(fastqNoUmi_R2)
 
   output:
-  tuple val(meta), file("*_totReads.R1.fastq.gz"), file("*_totReads.R2.fastq.gz"), emit: fastq
-  tuple val(meta), file("*_nonUmisReadsIDs.txt"), emit: nonUmiReadId
-  tuple val(meta), file("*_pUMIs.txt"), emit: percentUmi
-  tuple val(meta), file("*_nbTotFrag.txt"), emit: nbTotFrag
+  tuple val(meta), path("*_totReads.R1.fastq.gz"), path("*_totReads.R2.fastq.gz"), emit: fastq
+  tuple val(meta), path("*_nonUmisReadsIDs.txt"), emit: nonUmiReadId
+  tuple val(meta), path("*_pUMIs.txt"), emit: percentUmi
+  tuple val(meta), path("*_nbTotFrag.txt"), emit: nbTotFrag
 
   script:
   def args = task.ext.args ?: ''

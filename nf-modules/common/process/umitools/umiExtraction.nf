@@ -14,9 +14,9 @@ process umiExtraction {
   val(stdin_read)
 
   output:
-  tuple val(meta), file("*_UMIsExtractedinR*"), emit: fastq_umi
-  tuple val(meta), file("*_noUMIinR*.R1.fastq.gz"), file("*_noUMIinR*.R2.fastq.gz"), emit: fastq_noumi
-  tuple val(meta), file("*.log"), emit: log
+  tuple val(meta), path("*_UMIsExtractedinR*"), emit: fastq_umi
+  tuple val(meta), path("*_noUMIinR*.R1.fastq.gz"), path("*_noUMIinR*.R2.fastq.gz"), emit: fastq_noumi
+  tuple val(meta), path("*.log"), emit: log
   path("versions.txt"), emit: versions
 
   script:
