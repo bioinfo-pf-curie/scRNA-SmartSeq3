@@ -195,9 +195,14 @@ workflow {
     trimLinker_logCh=trimLinker.out.log
     versionsCh = versionsCh.mix(trimLinker.out.versions)
 
-    // faire batch de cellules
-    
-    trimLinker_fastqCh.collect().splitFastq( by: 10 ).view()
+
+    trimLinker_fastqCh.collect().map{fastq->[100,fastq.flatten()]}.view()
+
+    // // faire batch de cellules
+    // concatFastq(
+    // reads.collect().map{fastq->[100,fastq.flatten()]},
+    // )
+    // barcodeRead = concatFastq.out.reads
 
     starAlign(
       trimLinker_fastqCh,
