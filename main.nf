@@ -135,6 +135,7 @@ include { outputDocumentation } from './nf-modules/common/process/utils/outputDo
 include { umiExtraction as umiExtractionR1R2 } from './nf-modules/common/process/umitools/umiExtraction'
 include { umiExtraction as umiExtractionR2R1 } from './nf-modules/common/process/umitools/umiExtraction'
 include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
+include { trimLinker } from './nf-modules/common/process/cutadapt/trimLinker'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -185,13 +186,14 @@ workflow {
     umiExtractionSummary_percentUmi_mqcCh = umiExtractionSummary.out.percentUmi
     umiExtractionSummary_nbTotFrag_mqcCh = umiExtractionSummary.out.nbTotFrag
 
-    strand = Channel.of('sense')
-    trimLinker_sens(
-    )  
-
-    strand = Channel.of('antisense')
-    trimLinker_antisens(
+    // trim linker in forward reads
+    trimLinker(
+      umiExtractionSummary_fastqCh
     )
+    trimLinker_sens_fastqCh=trimLinker_sens.out.fastq
+    trimLinker_sens_logCh=trimLinker_sens.out.log
+    versionsCh = versionsCh.mix(umiExtractionR2R1.out.versions)
+
 
     //*******************************************
     // MULTIQC
