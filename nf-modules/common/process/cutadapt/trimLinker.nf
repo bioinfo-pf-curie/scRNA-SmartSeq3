@@ -10,7 +10,6 @@ process trimLinker {
 
   input:
   tuple val(meta), path(R1), path(R2)
-  val(strand)
 
   output:
   tuple val(meta),  path("*.R1.fastq.gz"), path("*.R2.fastq.gz"), emit: fastq
