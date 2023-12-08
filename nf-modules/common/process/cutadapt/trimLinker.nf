@@ -13,7 +13,7 @@ process trimLinker {
 
   output:
   tuple val(meta),  path("*.R1.fastq.gz"), path("*.R2.fastq.gz"), emit: fastq
-  tuple val(prefix), path("*_cutadapt.log"), emit: log
+  tuple val(meta), path("*_cutadapt.log"), emit: log
   path("versions.txt"), emit: versions
 
   script:
