@@ -195,6 +195,13 @@ workflow {
     trimLinker_logCh=trimLinker.out.log
     versionsCh = versionsCh.mix(trimLinker.out.versions)
 
+    // faire batch de cellules
+    
+    trimLinker_fastqCh
+    .collect()
+    .splitFastq( by: 10 )
+    .view()
+
     starAlign(
       trimLinker_fastqCh,
       chStarIndex,
