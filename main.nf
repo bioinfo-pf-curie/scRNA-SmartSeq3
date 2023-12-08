@@ -219,18 +219,18 @@ workflow {
       }
     }
 
-    // Update input channel
-    chStarRawReads = Channel.empty()
-    chStarRawReads = trimLinker_fastqCh
+    // // Update input channel
+    // chStarRawReads = Channel.empty()
+    // chStarRawReads = trimLinker_fastqCh
 
-    starAlign(
-      chStarRawReads,
-      chStarIndex,
-      chGtf
-    )
-    chAlignedBam = starAlign.out.bam
-    chAlignedLogs = starAlign.out.logs
-    chVersions = chVersions.mix(starAlign.out.versions)
+    // starAlign(
+    //   chStarRawReads,
+    //   chStarIndex,
+    //   chGtf
+    // )
+    // chAlignedBam = starAlign.out.bam
+    // chAlignedLogs = starAlign.out.logs
+    // chVersions = chVersions.mix(starAlign.out.versions)
 
     // Filter removes all 'aligned' channels that fail the check
     // chAlignBam
