@@ -197,10 +197,7 @@ workflow {
 
     // faire batch de cellules
     
-    trimLinker_fastqCh
-    .collect()
-    .splitFastq( by: 10 )
-    .view()
+    trimLinker_fastqCh.collect().splitFastq( by: 10 ).view()
 
     starAlign(
       trimLinker_fastqCh,
