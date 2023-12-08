@@ -38,6 +38,6 @@ process trimLinker {
     -o ${prefix}_trimmed.R1.fastq.gz -p ${prefix}_trimmed.R2.fastq.gz \
     ${R1} ${R2} &> ${prefix}_cutadapt.log
 
-  echo cutadapt $(cutadapt --version) &> versions.txt
+  echo cutadapt \$(cutadapt --version) &> versions.txt
   """
 }
