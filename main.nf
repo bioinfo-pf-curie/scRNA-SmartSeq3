@@ -190,9 +190,9 @@ workflow {
     trimLinker(
       umiExtractionSummary_fastqCh
     )
-    trimLinker_sens_fastqCh=trimLinker_sens.out.fastq
-    trimLinker_sens_logCh=trimLinker_sens.out.log
-    versionsCh = versionsCh.mix(umiExtractionR2R1.out.versions)
+    trimLinker_sens_fastqCh=trimLinker.out.fastq
+    trimLinker_sens_logCh=trimLinker.out.log
+    versionsCh = versionsCh.mix(trimLinker.out.versions)
 
 
     //*******************************************
