@@ -200,7 +200,8 @@ workflow {
     .collate( 2 )
     // add prefix ex: batch1, ...
     .set{fastqBatch}
-    .view()
+    
+    fastqBatch.view()
 
     // faire batch de cellules
     concatFastq(
