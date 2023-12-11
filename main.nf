@@ -153,7 +153,7 @@ workflow {
   main:
 
     rawReadsCh
-    .map{reads->[reads[1], reads[2]]} // remove meta
+    .map{reads->[reads[1]]} // remove meta
     .collate(3)
     .set{fastqBatch}
     
