@@ -156,8 +156,6 @@ workflow {
       outputDocsImagesCh
     )
 
-    rawReadsCh.collate( 3 ).view()
-
     // extract UMIs in forward reads
     stdin_R1 = Channel.of('R1')    
     umiExtractionR1R2(
@@ -198,13 +196,18 @@ workflow {
     versionsCh = versionsCh.mix(trimLinker.out.versions)
 
 
-    trimLinker_fastqCh.collect().collate( 10 ).view()
+    trimLinker_fastqCh
+    .collate( 2 )
+    // add prefix ex: batch1, ...
+    .set{fastqBatch}
 
-    // // faire batch de cellules
-    // concatFastq(
-    // reads.collect().map{fastq->[100,fastq.flatten()]},
-    // )
-    // barcodeRead = concatFastq.out.reads
+    // faire batch de cellules
+    concatFastq(
+    fastqBatch.collect().map{fastq->[2,fastq.flatten()]},
+    )
+    concatFastqCh = concatFastq.out.reads
+
+    concatFastqCh.view()
 
     // starAlign(
     //   trimLinker_fastqCh,
