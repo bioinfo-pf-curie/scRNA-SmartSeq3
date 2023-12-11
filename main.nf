@@ -152,6 +152,12 @@ workflow {
 
   main:
 
+    rawReadsCh
+    .collate(3)
+    .set{fastqBatch}
+    
+    fastqBatch.view()
+
     // subroutines
     outputDocumentation(
       outputDocsCh,
@@ -197,12 +203,12 @@ workflow {
     trimLinker_logCh=trimLinker.out.log
     versionsCh = versionsCh.mix(trimLinker.out.versions)
 
-    // add prefix ex: batch1, ...
-    trimLinker_fastqCh
-    .collate(3)
-    .set{fastqBatch}
+    // // add prefix ex: batch1, ...
+    // trimLinker_fastqCh
+    // .collate(3)
+    // .set{fastqBatch}
     
-    fastqBatch.view()
+    // fastqBatch.view()
 
     // faire batch de cellules
     // concatFastq(
