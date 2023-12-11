@@ -158,6 +158,12 @@ workflow {
     
     fastqBatch.view()
 
+    // faire batch de cellules
+    concatFastq(
+    fastqBatch.map{fastq->[2,fastq.flatten()]},
+    )
+    concatFastqCh = concatFastq.out.reads
+
     // subroutines
     outputDocumentation(
       outputDocsCh,
