@@ -137,6 +137,10 @@ include { umiExtraction as umiExtractionR2R1 } from './nf-modules/common/process
 include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
 include { trimLinker } from './nf-modules/common/process/cutadapt/trimLinker'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
+include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
+
+
+
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
