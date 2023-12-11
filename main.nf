@@ -200,10 +200,11 @@ workflow {
     .collate( 2 )
     // add prefix ex: batch1, ...
     .set{fastqBatch}
+    .view()
 
     // faire batch de cellules
     concatFastq(
-    fastqBatch.collect().map{fastq->[2,fastq.flatten()]},
+    fastqBatch.map{fastq->[2,fastq.flatten()]},
     )
     concatFastqCh = concatFastq.out.reads
 
