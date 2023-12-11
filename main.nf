@@ -195,10 +195,9 @@ workflow {
     trimLinker_logCh=trimLinker.out.log
     versionsCh = versionsCh.mix(trimLinker.out.versions)
 
-
+    // add prefix ex: batch1, ...
     trimLinker_fastqCh
     .collate( 2 )
-    // add prefix ex: batch1, ...
     .set{fastqBatch}
     
     fastqBatch.view()
