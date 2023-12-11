@@ -139,8 +139,6 @@ include { trimLinker } from './nf-modules/common/process/cutadapt/trimLinker'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
 
-
-
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -201,18 +199,18 @@ workflow {
 
     // add prefix ex: batch1, ...
     trimLinker_fastqCh
-    .collate( 2 )
+    .collate(3)
     .set{fastqBatch}
     
     fastqBatch.view()
 
     // faire batch de cellules
-    concatFastq(
-    fastqBatch.map{fastq->[2,fastq.flatten()]},
-    )
-    concatFastqCh = concatFastq.out.reads
+    // concatFastq(
+    // fastqBatch.map{fastq->[2,fastq.flatten()]},
+    // )
+    // concatFastqCh = concatFastq.out.reads
 
-    concatFastqCh.view()
+    // concatFastqCh.view()
 
     // starAlign(
     //   trimLinker_fastqCh,
