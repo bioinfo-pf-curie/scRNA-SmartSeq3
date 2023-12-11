@@ -9,7 +9,7 @@ process concatFastq {
   label 'minMem'
 
   input:
-  tuple val(meta), val(by) ,path(reads, stageAs: "input*/*")
+  tuple val(by) ,path(reads, stageAs: "input*/*")
   
 
   output:

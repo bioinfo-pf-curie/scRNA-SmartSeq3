@@ -158,6 +158,8 @@ workflow {
     
     fastqBatch.view()
 
+    fastqBatch.map{fastq->[2,fastq.flatten()]}.view()
+
     // faire batch de cellules
     concatFastq(
     fastqBatch.map{fastq->[2,fastq.flatten()]},
