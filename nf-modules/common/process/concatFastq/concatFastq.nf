@@ -11,7 +11,6 @@ process concatFastq {
   input:
   tuple val(by) ,path(reads, stageAs: "input*/*")
   
-
   output:
   tuple val(meta), path("*.merged.fastq.gz"), emit: reads
   path "versions.txt"                       , emit: versions

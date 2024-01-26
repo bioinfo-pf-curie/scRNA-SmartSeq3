@@ -119,7 +119,16 @@ custom_data:
             title: 'Expressed Genes'
             ylab: 'Number of expressed genes (TPM>1)'
             scale: 'Pastel1'
-
+    
+    # gene_biotype:
+    #    file_format: 'csv'
+    #    section_name: 'Gene Biotypes'
+    #    description: ''
+    #    plot_type: 'bargraph'
+    #    pconfig:
+    #         namespace: '_biotype_counts_mqc'
+    #         id: '_biotype_counts_mqc'
+    
     gene_saturation:
        file_format: 'tsv'
        section_name: 'Gene-based saturation'
@@ -139,6 +148,8 @@ sp:
       fn: '*genetype.txt'
    gene_saturation:
       fn: '*gcurve.txt'
+  #  gene_biotype:
+  #     fn: '*_biotype_counts_mqc.txt'
 
 
 table_cond_formatting_rules:
@@ -175,19 +186,9 @@ extra_fn_clean_exts:
 ## Modules 
 
 module_order:
-  - fastqc
-  - bowtie1:
-      name: 'rRNA Mapping'
-      info: 'This section reports the fraction of reads aligned on ribosomal RNAs.'
-      target: ''
-      path_filters:
-        - '*.log'
   - star
-  - hisat2
-  - tophat
   - rseqc
   - featureCounts
-  - HTSeq
   - preseq:
      name: 'Sequencing Complexity'
      info: 'estimates the complexity of a library, showing how many additional unique reads are sequenced for increasing total read count. A shallow curve indicates complexity saturation. The dashed line shows a perfectly complex library where total reads = unique reads. The presented graph shows extrapolated curves up to 200M sequencing reads.'

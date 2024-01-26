@@ -153,13 +153,12 @@ workflow {
   main:
 
     rawReadsCh
-    .map{reads->[reads[1]]} // remove meta
+    .map{reads->[reads[1].flatten()]} // remove meta
     .collate(3)
+    .map{meta, reads->['batch', reads]} // comment rajouter un prefix différents ??????????
     .set{fastqBatch}
-    
+  
     fastqBatch.view()
-
-    fastqBatch.map{fastq->[2,fastq.flatten()]}.view()
 
     // faire batch de cellules
     concatFastq(
