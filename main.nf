@@ -160,12 +160,12 @@ workflow {
   )
   addBcInHeaderCh = addBcInHeader.out.reads
 
-  addBcInHeaderCh.view()
-
    createBatch(
     addBcInHeaderCh.map{reads->[reads[1]]}.flatten().collect() // In future : not to do because it will be directly a directory with all files
    )
    createBatchCh = createBatch.out.reads
+
+  createBatchCh.view()
 
   createBatchCh
   .map { file -> 
