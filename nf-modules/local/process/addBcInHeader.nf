@@ -5,10 +5,10 @@ process addBcInHeader {
   tag "$meta.id"
 
   input:
-  tuple val(meta), path (reads)
+  tuple val(meta), path(reads)
 
   output:
-  tuple val("rename_"meta), path("*.fastq.gz"), emit: reads
+  tuple val("rename_${meta.id}"), path("*.fastq.gz"), emit: reads
 
   script:
   def prefix = task.ext.prefix ?: "${meta.id}"
