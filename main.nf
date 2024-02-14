@@ -169,15 +169,14 @@ workflow {
 
   createBatchCh
   .map { file -> 
-    def meta = [:]
-        meta.id = file.name.toString().tokenize('.').get(0)
-    return [meta.id, file]
+    def meta = file.name.toString().tokenize('.').get(0)
+    return [meta, file]
     }
   .groupTuple() // groupe R1 and R2 together
-  .map{it -> [it[0][0], [it[1][0][0], it[1][0][1]]]}
+  .map{it -> [it[0], [it[1][0][0], it[1][0][1]]]}
   .set{batchFastqsCh}
 
-  batchFastqsCh.view()
+  batchFastqsCh.map{it -> [it[0], [it[1][0], it[1][1]]]}.view()
 
   // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh
