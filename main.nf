@@ -171,7 +171,7 @@ workflow {
   .map { file -> 
     def meta = [:]
         meta.id = file.name.toString().tokenize('.').get(0)
-    return [meta, file]
+    return [meta.id, file]
     }
   .groupTuple() // groupe R1 and R2 together
   .set{batchFastqsCh}
