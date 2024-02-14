@@ -152,8 +152,10 @@ workflow {
 
   main:
 
+  rawReadsCh.collect().view()
+
    createBatch(
-    rawReadsCh.collect()
+    rawReadsCh.collect(),
     // nb_files=5
     // ls -1 *.R1.fastq.gz | xargs -L $nb_files echo | awk '{print "cat " $0 " > batch_"NR".R1.fastq.gz"}' > create_batches.sh && bash create_batches.sh
    )
