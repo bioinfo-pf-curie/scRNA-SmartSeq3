@@ -171,13 +171,17 @@ workflow {
   .map { file -> 
     def meta = [:]
       meta.id = file.name.toString().tokenize('.').get(0)
-    return [meta.id, file]
+    return [meta, file]
     }
   .groupTuple() // groupe R1 and R2 together
-  .map{it -> [it[0], [it[1][0][0], it[1][0][1]]]}
+  .map{it -> [it[0], [it[1][0][0], it[1][0][1]]]} 
   .set{batchFastqsCh}
 
   batchFastqsCh.view()
+
+  batchFastqsCh.map{it -> it[0]}.view()
+  //[[id:[batch_1], [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R1.fastq.gz, /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R2.fastq.gz]]
+  // je voudrais : [id:[batch_1], [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R1.fastq.gz, /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R2.fastq.gz]
 
   // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh
