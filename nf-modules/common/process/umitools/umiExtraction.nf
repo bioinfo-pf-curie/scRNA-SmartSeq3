@@ -10,7 +10,7 @@ process umiExtraction {
   label 'lowMem'
 
   input: 
-  tuple val(meta), path(reads)
+  tuple val(meta), path(r1), path(r2)
   val(stdin_read)
 
   output:
