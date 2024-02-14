@@ -177,7 +177,7 @@ workflow {
   .map{it -> [it[0], it[1][0][0], it[1][0][1]]}
   .set{batchFastqsCh}
 
-  batchFastqsCh.map{it -> it[0]}.view()
+  batchFastqsCh.view()
 
   // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh
