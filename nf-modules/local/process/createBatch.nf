@@ -1,0 +1,20 @@
+process concatFastq {
+  label 'samtools'
+  tag "${meta.id}"
+  label 'minCpu'
+  label 'minMem'
+
+  input:
+  path(readDir)
+
+  output:
+  tuple val("batch_*"), path("*.R1.fastq.gz"), path("*.R2.fastq.gz"), emit: reads
+
+  script:
+  """
+  # merge all R1 fastq files per batchSize
+  ls -1 *.R1.fastq.gz | xargs -L $params.batchSize echo | awk '{print "cat " \$0 " > batch_"NR".R1.fastq.gz"}' > create_batches.sh && bash create_batches.sh
+  # merge all R2 fastq files per batchSize
+  ls -1 *.R2.fastq.gz | xargs -L $params.batchSize echo | awk '{print "cat " \$0 " > batch_"NR".R2.fastq.gz"}' > create_batches.sh && bash create_batches.sh
+  """
+}

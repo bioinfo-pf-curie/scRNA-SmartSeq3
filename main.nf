@@ -152,25 +152,30 @@ workflow {
 
   main:
 
-    rawReadsCh
-    .map{reads->[reads[1].flatten()]} // remove meta
-    .collate(3)
-    .map{meta, reads->['batch', reads]} // comment rajouter un prefix différents ??????????
-    .set{fastqBatch}
+   createBatch(
+    rawReadsCh.collect()
+    // nb_files=5
+    // ls -1 *.R1.fastq.gz | xargs -L $nb_files echo | awk '{print "cat " $0 " > batch_"NR".R1.fastq.gz"}' > create_batches.sh && bash create_batches.sh
+   )
+   createBatchCh = createBatch.out.reads
+
+   createBatchCh.groupTuple().view()
+
+   createBatchCh.view()
+
+    // rawReadsCh
+    // .map{reads->[reads[1].flatten()]} // remove meta
+    // .collate(3)
+    // .map{meta, reads->['batch', reads]} // comment rajouter un prefix différents ??????????
+    // .set{fastqBatch}
   
-    fastqBatch.view()
+    // fastqBatch.view()
 
-    // faire batch de cellules
-    concatFastq(
-    fastqBatch.map{fastq->[2,fastq.flatten()]},
-    )
-    concatFastqCh = concatFastq.out.reads
-
-    // subroutines
-    outputDocumentation(
-      outputDocsCh,
-      outputDocsImagesCh
-    )
+    // // faire batch de cellules
+    // concatFastq(
+    // fastqBatch.map{fastq->[2,fastq.flatten()]},
+    // )
+    // concatFastqCh = concatFastq.out.reads
 
     // extract UMIs in forward reads
     stdin_R1 = Channel.of('R1')    
@@ -210,6 +215,12 @@ workflow {
     trimLinker_fastqCh=trimLinker.out.fastq
     trimLinker_logCh=trimLinker.out.log
     versionsCh = versionsCh.mix(trimLinker.out.versions)
+
+    // subroutines
+    outputDocumentation(
+      outputDocsCh,
+      outputDocsImagesCh
+    )
 
     // // add prefix ex: batch1, ...
     // trimLinker_fastqCh
