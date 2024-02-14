@@ -175,7 +175,7 @@ workflow {
   .groupTuple()
   .set{batchFastqsCh}
 
-  batchFastqsCh.map{meta, fastq->[meta, fastq]}.view()
+  batchFastqsCh.map{meta, fastq-> meta, fastq}.view()
 
   // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh
