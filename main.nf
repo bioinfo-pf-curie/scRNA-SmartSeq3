@@ -175,7 +175,7 @@ workflow {
   .groupTuple()
   .map { it -> 
          def meta.id = it[0]
-         return [meta, [row[1][0], row[1][1]]]
+         return [meta, [it[1][0], it[1][1]]]
        }
   .set{batchFastqsCh}
 
