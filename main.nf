@@ -155,7 +155,7 @@ workflow {
   rawReadsCh
   .map{reads->[reads[1].flatten()]}
   .collect()
-  .filter( ~/*.R1.*/ )
+  .filter( ~/.R1.f*/ )
   .view()
 
    createBatch(
