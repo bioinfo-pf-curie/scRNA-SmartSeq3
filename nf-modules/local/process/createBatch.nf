@@ -4,7 +4,7 @@ process createBatch {
   label 'minMem'
 
   input:
-  path(readDir)
+  path readDir
 
   output:
   tuple val("batch_*"), path("*.R1.fastq.gz"), path("*.R2.fastq.gz"), emit: reads
