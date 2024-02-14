@@ -175,7 +175,7 @@ workflow {
   .groupTuple()
   .set{batchFastqsCh}
 
-  batchFastqsCh.flatten().view()
+  batchFastqsCh.flatten().map(it -> [it[0], [it[1], it[2]]]).view()
 
   // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh
