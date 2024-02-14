@@ -173,9 +173,13 @@ workflow {
     return tuple(key, file)
     } 
   .groupTuple()
+  .map { it -> 
+         def meta.id = it[0]
+         return [meta, [row[1][0], row[1][1]]]
+       }
   .set{batchFastqsCh}
 
-  batchFastqsCh.map{meta, fastq->[meta, fastq]}.view()
+  batchFastqsCh.view()
 
   // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh
@@ -196,7 +200,7 @@ workflow {
     // extract UMIs in forward reads
     stdin_R1 = Channel.of('R1')    
     umiExtractionR1R2(
-      batchFastqsCh.map{meta, fastq->[meta, fastq]},
+      batchFastqsCh,
       stdin_R1
     )
     umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi

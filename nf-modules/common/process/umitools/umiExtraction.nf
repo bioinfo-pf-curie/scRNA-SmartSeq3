@@ -4,13 +4,13 @@
 
 
 process umiExtraction {
-  tag "$meta"
+  tag "$meta.id"
   label 'umiTools'
   label 'lowCpu'
   label 'lowMem'
 
   input: 
-  tuple val(meta), path(r1), path(r2)
+  tuple val(meta), path(reads)
   val(stdin_read)
 
   output:
