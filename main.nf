@@ -174,7 +174,7 @@ workflow {
     return [meta.id, file]
     }
   .groupTuple() // groupe R1 and R2 together
-  .map{it -> [it[0], [it[1][0], it[1][1]]]}
+  .map{it -> [it[0], [it[1][0][0], it[1][0][1]]]}
   .set{batchFastqsCh}
 
   batchFastqsCh.view()
