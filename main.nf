@@ -159,7 +159,13 @@ workflow {
 
 
   createBatchCh.view()
-   createBatchCh.fromPath("*.R{1,2}.fastq.gz", checkIfExists:true).view()
+  createBatchCh
+    .map { file -> 
+      def key = file.name.toString().tokenize('.').get(0)
+      return tuple(key, file)
+      } 
+    .groupTuple()
+    .view()
    //(~/^batch_(\d+)/)
 
     // rawReadsCh
