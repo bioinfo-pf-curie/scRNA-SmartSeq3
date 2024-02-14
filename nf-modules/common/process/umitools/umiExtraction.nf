@@ -2,7 +2,6 @@
  * Umitools extract UMI
  */
 
-
 process umiExtraction {
   tag "$meta.id"
   label 'umiTools'
