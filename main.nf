@@ -152,7 +152,7 @@ workflow {
 
   main:
 
-   createBatch_r1(
+   createBatch(
     rawReadsCh.map{reads->[reads[1]]}.flatten().collect()
    )
    createBatchCh = createBatch.out.reads
