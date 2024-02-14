@@ -4,7 +4,7 @@
 
 
 process umiExtraction {
-  tag "$meta.id"
+  tag "$meta"
   label 'umiTools'
   label 'lowCpu'
   label 'lowMem'
