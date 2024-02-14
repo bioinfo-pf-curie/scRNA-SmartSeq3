@@ -157,9 +157,8 @@ workflow {
    )
    createBatchCh = createBatch.out.reads
 
-   createBatchCh.groupTuple().view()
-
-   createBatchCh.view()
+   createBatchCh.fromFilePairs("*.R{1,2}.fastq.gz", checkIfExists:true).view()
+   //(~/^batch_(\d+)/)
 
     // rawReadsCh
     // .map{reads->[reads[1].flatten()]} // remove meta

@@ -7,7 +7,7 @@ process createBatch {
   path ('reads/*')
 
   output:
-  tuple val(~/^batch_(\d+)/), path("*.R1.fastq.gz"), path("*.R2.fastq.gz"), emit: reads
+  path("*.R1.fastq.gz"), path("*.R2.fastq.gz"), emit: reads
 
   script:
   """
