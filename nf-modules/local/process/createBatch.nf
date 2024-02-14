@@ -4,7 +4,7 @@ process createBatch {
   label 'minMem'
 
   input:
-  path(reads)
+  path ('reads/*')
 
   output:
   tuple val("batch_*"), path("*.R1.fastq.gz"), path("*.R2.fastq.gz"), emit: reads
@@ -12,8 +12,8 @@ process createBatch {
   script:
   """
   # merge all R1 fastq files per batchSize
-  ls -1 *.R1.fastq.gz | xargs -L $params.batchSize echo | awk '{print "cat " \$0 " > batch_"NR".R1.fastq.gz"}' > create_batches.sh && bash create_batches.sh
+  ls -1 reads/*.R1.fastq.gz | xargs -L $params.batchSize echo | awk '{print "cat " \$0 " > batch_"NR".R1.fastq.gz"}' > create_batches.sh && bash create_batches.sh
   # merge all R2 fastq files per batchSize
-  ls -1 *.R2.fastq.gz | xargs -L $params.batchSize echo | awk '{print "cat " \$0 " > batch_"NR".R2.fastq.gz"}' > create_batches.sh && bash create_batches.sh
+  ls -1 reads/*.R2.fastq.gz | xargs -L $params.batchSize echo | awk '{print "cat " \$0 " > batch_"NR".R2.fastq.gz"}' > create_batches.sh && bash create_batches.sh
   """
 }

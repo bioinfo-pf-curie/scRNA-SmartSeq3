@@ -153,12 +153,13 @@ workflow {
   main:
 
   rawReadsCh
-  .map{reads->[reads[1][0].flatten()]}
+  .map{reads->[reads[1].flatten()]}
   .collect()
+  //.filter( ~/.R1.fastq.gz/ )
   .view()
 
    createBatch(
-    rawReadsCh.collect()
+    rawReadsCh.map{reads->[reads[1].flatten()]}.collect()
     // nb_files=5
     // ls -1 *.R1.fastq.gz | xargs -L $nb_files echo | awk '{print "cat " $0 " > batch_"NR".R1.fastq.gz"}' > create_batches.sh && bash create_batches.sh
    )
