@@ -159,7 +159,7 @@ workflow {
 
 
   createBatchCh.view()
-   createBatchCh.fromFilePairs("*.R{1,2}.fastq.gz", checkIfExists:true).view()
+   createBatchCh.fromPath("*.R{1,2}.fastq.gz", checkIfExists:true).view()
    //(~/^batch_(\d+)/)
 
     // rawReadsCh
