@@ -175,7 +175,7 @@ workflow {
   .groupTuple()
   .set{batchFastqsCh}
 
-  batchFastqsCh.map{meta, fastq-> meta, fastq}.view()
+  batchFastqsCh.map{meta, fastq->[meta, fastq]}.view()
 
   // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh
@@ -196,7 +196,7 @@ workflow {
     // extract UMIs in forward reads
     stdin_R1 = Channel.of('R1')    
     umiExtractionR1R2(
-      batchFastqsCh.map { it -> [it[0], [it[1]]]},
+      batchFastqsCh,
       stdin_R1
     )
     umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
