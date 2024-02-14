@@ -170,7 +170,7 @@ workflow {
   createBatchCh
   .map { file -> 
     def meta = [:]
-      meta.id = file.name.toString().tokenize('.').get(0)
+      meta.id = file.name.toString().tokenize('.').get(0).flatten()
     return [meta, file]
     }
   .groupTuple() // groupe R1 and R2 together
