@@ -152,28 +152,32 @@ workflow {
 
   main:
 
+  addBcInHeader(
+    rawReadsCh
+  )
+  addBcInHeaderCh = addBcInHeader.out.reads
+
    createBatch(
-    rawReadsCh.map{reads->[reads[1]]}.flatten().collect()
+    addBcInHeaderCh.map{reads->[reads[1]]}.flatten().collect() // In future : not to do because it will be directly a directory with all files
    )
    createBatchCh = createBatch.out.reads
 
-
-  createBatchCh.view()
   createBatchCh
-    .map { file -> 
-      def key = file.name.toString().tokenize('.').get(0)
-      return tuple(key, file)
-      } 
-    .groupTuple()
-    .view()
-   //(~/^batch_(\d+)/)
+  .map { file -> 
+    def key = file.name.toString().tokenize('.').get(0)
+    return tuple(key, file)
+    } 
+  .groupTuple()
+  .set{batchFastqsCh}
 
+
+  // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh
     // .map{reads->[reads[1].flatten()]} // remove meta
     // .collate(3)
     // .map{meta, reads->['batch', reads]} // comment rajouter un prefix différents ??????????
     // .set{fastqBatch}
-  
+
     // fastqBatch.view()
 
     // // faire batch de cellules
@@ -181,11 +185,12 @@ workflow {
     // fastqBatch.map{fastq->[2,fastq.flatten()]},
     // )
     // concatFastqCh = concatFastq.out.reads
+  // PREVIOUS TEST FAILED -----------------------
 
     // extract UMIs in forward reads
     stdin_R1 = Channel.of('R1')    
     umiExtractionR1R2(
-      rawReadsCh,
+      batchFastqsCh,
       stdin_R1
     )
     umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
