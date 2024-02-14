@@ -175,6 +175,7 @@ workflow {
   .groupTuple()
   .set{batchFastqsCh}
 
+  batchFastqsCh.view()
 
   // PREVIOUS TEST FAILED -----------------------
     // rawReadsCh

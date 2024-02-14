@@ -17,4 +17,3 @@ process addBcInHeader {
   seqkit replace -p " " -r '_CELL'${prefix}' ' ${reads[1]} > "rename_"${reads[1]}
   """
 }
-
