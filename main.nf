@@ -183,16 +183,17 @@ workflow {
   */
 
 
-  createBatchCh
+  createBatchCh.fromFilePairs('*R{1,2}.fastq.gz').view()
+  /*createBatchCh
     .map { row ->
       def meta = [:]
         meta.id = row[0]
-      def batch = row[1] //.fromFilePairs('*R{1,2}.fastq.gz')
+      def batch = row[1].fromFilePairs('*R{1,2}.fastq.gz')
     return [meta, batch]
     }
   .set{batchFastqsCh}
 
-  batchFastqsCh.view()
+  batchFastqsCh.view()*/
 
 
 
