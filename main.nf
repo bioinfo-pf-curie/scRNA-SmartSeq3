@@ -167,8 +167,9 @@ workflow {
 
   // save meta.id as kdi ID
   createBatchCh
-    .map { row ->[row[0]]}
+    .map { row ->[row[0][0]]}
     .set{kdiID}
+
   // group by batch and extract the batch as name
   createBatchCh
     .map { row -> row[1]}
@@ -177,10 +178,11 @@ workflow {
       def batch = it.name.toString().tokenize('.').get(0) 
       return [batch, it]}
   .groupTuple()
-  .join(kdiID)
+  .combine(kdiID)
   .set{fq}
 
   fq.view()
+  // join ne marche pas 
   // sans [batch_1, [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/37/5c642fb19fb0383984c61abc906cfa/batch_1.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/37/5c642fb19fb0383984c61abc906cfa/batch_1.R2.fastq.gz]]
   //.combine(kdiID) [batch_1, [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/d4/7dd43d7b4456aedfbb412ea46ff3da/batch_1.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/d4/7dd43d7b4456aedfbb412ea46ff3da/batch_1.R2.fastq.gz], [id:V605, batch:batch_2]]
 
