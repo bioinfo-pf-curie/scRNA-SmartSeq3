@@ -405,7 +405,7 @@ Available Profiles
             .map { row ->
 	            def meta = [:]
                 meta.id = row[0]
-              return [meta, inputDir]
+              return [meta, row[1]]
             }.ifEmpty { Nextflow.exit 1, "params.readDir was empty - no input files supplied" }
         }else {
           return Channel
