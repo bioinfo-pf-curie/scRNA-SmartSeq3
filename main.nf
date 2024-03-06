@@ -174,7 +174,7 @@ workflow {
   createBatchCh.view()
 
   createBatchCh
-    .fromList(readDir)
+    .fromList()
     .map { row ->
       def meta = [:]
         meta.id = row[0]
