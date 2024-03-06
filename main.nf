@@ -155,6 +155,8 @@ workflow {
 
   main:
 
+  rawReadsCh.view()
+
 //changer nftools -> prendre repo
   addBcInHeader(
     rawReadsCh // prendre repo en input
