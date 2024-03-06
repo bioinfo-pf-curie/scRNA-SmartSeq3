@@ -15,7 +15,8 @@ process addBcInHeader {
   for fastq in ${reads}/*.fastq.gz
   do
   prefix=\$(basename \$fastq .fastq.gz)
-  seqkit replace -p " " -r '_CELL'\$prefix' '  \$fastq > "rename_"\$prefix".fastq.gz"
+  seqkit replace -p " " -r '_CELL'\$prefix' '  \$fastq > "rename_"\$prefix".fastq"
+  gzip "rename_"\$prefix".fastq"
   done
   """
 }
