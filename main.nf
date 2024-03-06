@@ -178,7 +178,6 @@ workflow {
       return [batch, it]}
   .groupTuple()
   .combine(kdiID)
-  .map { it -> [it[0], it[1]]}
   .set{fq}
 
   fq.view()
