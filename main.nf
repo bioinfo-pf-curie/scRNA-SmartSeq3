@@ -172,14 +172,23 @@ workflow {
    createBatchCh = createBatch.out.reads
 
   createBatchCh.view() 
-   
+
   createBatchCh
-    .map { row ->
-      def meta = [:]
-        meta.id = row[0]
-      def batch = row[1].name.toString().tokenize('.').get(0)
-    return [meta, [batch, row[1]]]
-    }
+    .map { row ->[row[0]]}
+    .set{kdiID}
+
+  createBatchCh
+    .map { row -> row[1].collect()}
+    .set{fq}
+
+  kdiID.view()
+  fq.view()
+
+  createBatchCh
+    // .map { row ->
+    //   def batch = row[1].name.toString().tokenize('.').get(0)
+    //   return [row[0], [batch, row[1]]]
+    //   }
   .groupTuple()
   .set{batchFastqsCh}
 
