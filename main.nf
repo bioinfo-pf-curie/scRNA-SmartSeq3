@@ -167,7 +167,7 @@ workflow {
 
   // save meta.id as kdi ID
   createBatchCh
-    .map { row ->[row[0]]}
+    .map { meta -> meta.id}
     .set{kdiID}
 
   // group by batch and extract the batch as name
