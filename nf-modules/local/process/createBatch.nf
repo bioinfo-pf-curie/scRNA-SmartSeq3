@@ -2,13 +2,13 @@ process createBatch {
   label 'samtools'
   label 'minCpu'
   label 'minMem'
-  tag "$meta.id"
+  tag "${meta.id}"
 
   input:
   tuple val(meta), path(reads)
 
   output:
-  tuple val(meta), path("*.R1.fastq.gz"), path("*.R2.fastq.gz"),emit: reads
+  tuple val(meta),  path("*.R1.fastq.gz"), path("*.R2.fastq.gz"),emit: reads
 
   script:
   """

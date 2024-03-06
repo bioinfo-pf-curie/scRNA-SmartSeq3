@@ -8,7 +8,7 @@ process addBcInHeader {
   tuple val(meta), path(reads)
 
   output:
-  tuple val("${meta.id}"), path("addBcInHeader"), emit: reads
+  tuple val(meta), path("addBcInHeader"), emit: reads
 
   script:
   """
