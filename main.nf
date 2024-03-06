@@ -170,10 +170,12 @@ workflow {
 
   createBatchCh.view() 
 
+  // save meta.id as kdi ID
   createBatchCh
     .map { row ->[row[0]]}
     .set{kdiID}
 
+  // group by batch and extract the batch as name
   createBatchCh
     .map { row -> row[1]}
     .flatten()
@@ -183,147 +185,109 @@ workflow {
   .groupTuple()
   .set{fq}
 
+  // add too each batch, the meta.id
   kdiID
   .combine(fq)
   .map { it -> 
     def meta = it[0]
         meta.batch = it[1]
     return [meta, it[2]]}
-  .view()
-
-  createBatchCh
-    // .map { row ->
-    //   def batch = row[1].name.toString().tokenize('.').get(0)
-    //   return [row[0], [batch, row[1]]]
-    //   }
-  .groupTuple()
   .set{batchFastqsCh}
-
-  //batchFastqsCh.view()
-
-  /*createBatchCh
-  .map { file -> 
-    def meta = [:]
-      meta.id = file.name.toString().tokenize('.').get(0)
-    return [meta, file]
-    }
-  .groupTuple() // groupe R1 and R2 together
-  .map{it -> [it[0], [it[1][0][0], it[1][0][1]]]} 
-  .set{batchFastqsCh}*/
-
-
-  //batchFastqsCh.map{it -> it[0]}.view()
-  //[[id:[batch_1], [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R1.fastq.gz, /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R2.fastq.gz]]
-  // je voudrais : [id:[batch_1], [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R1.fastq.gz, /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R2.fastq.gz]
-
-  // PREVIOUS TEST FAILED -----------------------
-    // rawReadsCh
-    // .map{reads->[reads[1].flatten()]} // remove meta
-    // .collate(3)
-    // .map{meta, reads->['batch', reads]} // comment rajouter un prefix différents ??????????
-    // .set{fastqBatch}
-
-    // fastqBatch.view()
-
-    // // faire batch de cellules
-    // concatFastq(
-    // fastqBatch.map{fastq->[2,fastq.flatten()]},
-    // )
-    // concatFastqCh = concatFastq.out.reads
-  // PREVIOUS TEST FAILED -----------------------
+  
+  batchFastqsCh.view()
 
     // extract UMIs in forward reads
-    stdin_R1 = Channel.of('R1')    
-    umiExtractionR1R2(
-      batchFastqsCh, // problème prefix =[batch_1  -> [
-      stdin_R1
-    )
-    umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
-    umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumi
-    umiExtraction_logR1Ch = umiExtractionR1R2.out.log
-    versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
+  stdin_R1 = Channel.of('R1')    
+  umiExtractionR1R2(
+    batchFastqsCh, // problème prefix =[batch_1  -> [
+    stdin_R1
+  )
+  umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
+  umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumi
+  umiExtraction_logR1Ch = umiExtractionR1R2.out.log
+  versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
 
-    // extract UMIs in reverse reads
-    stdin_R2 = Channel.of('R2')
-    umiExtractionR2R1(
-      umiExtraction_fastqR1Ch,
-      stdin_R2
-    )
-    umiExtraction_fastqR2Ch = umiExtractionR2R1.out.fastq_umi
-    umiExtraction_fastqNoUmiR2Ch = umiExtractionR2R1.out.fastq_noumi
-    umiExtraction_logR2Ch = umiExtractionR2R1.out.log
-    versionsCh = versionsCh.mix(umiExtractionR2R1.out.versions)
-    
-    // summarize UMI extraction
-    umiExtractionSummary(
-      rawReadsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR2Ch)
-    )
-    umiExtractionSummary_fastqCh = umiExtractionSummary.out.fastq
-    umiExtractionSummary_nonUmiReadIdCh = umiExtractionSummary.out.nonUmiReadId
-    umiExtractionSummary_percentUmi_mqcCh = umiExtractionSummary.out.percentUmi
-    umiExtractionSummary_nbTotFrag_mqcCh = umiExtractionSummary.out.nbTotFrag
-
-    // trim linker in forward reads
-    trimLinker(
-      umiExtractionSummary_fastqCh
-    )
-    trimLinker_fastqCh=trimLinker.out.fastq
-    trimLinker_logCh=trimLinker.out.log
-    versionsCh = versionsCh.mix(trimLinker.out.versions)
-
-    // subroutines
-    outputDocumentation(
-      outputDocsCh,
-      outputDocsImagesCh
-    )
-
-    // // add prefix ex: batch1, ...
-    // trimLinker_fastqCh
-    // .collate(3)
-    // .set{fastqBatch}
-    
-    // fastqBatch.view()
-
-    // faire batch de cellules
-    // concatFastq(
-    // fastqBatch.map{fastq->[2,fastq.flatten()]},
-    // )
-    // concatFastqCh = concatFastq.out.reads
-
-    // concatFastqCh.view()
-
-    // starAlign(
-    //   trimLinker_fastqCh,
-    //   chStarIndex,
-    //   chGtf
-    // )
-    // chAlignedBam = starAlign.out.bam
-    // chAlignedLogs = starAlign.out.logs
-    // versionsCh = versionsCh.mix(starAlign.out.versions)
-
-    //*******************************************
-    // MULTIQC
+  // extract UMIs in reverse reads
+  stdin_R2 = Channel.of('R2')
+  umiExtractionR2R1(
+    umiExtraction_fastqR1Ch,
+    stdin_R2
+  )
+  umiExtraction_fastqR2Ch = umiExtractionR2R1.out.fastq_umi
+  umiExtraction_fastqNoUmiR2Ch = umiExtractionR2R1.out.fastq_noumi
+  umiExtraction_logR2Ch = umiExtractionR2R1.out.log
+  versionsCh = versionsCh.mix(umiExtractionR2R1.out.versions)
   
-    // Warnings that will be printed in the mqc report
-    warnCh = Channel.empty()
+  // summarize UMI extraction
+  umiExtractionSummary(
+    rawReadsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR2Ch)
+  )
+  umiExtractionSummary_fastqCh = umiExtractionSummary.out.fastq
+  umiExtractionSummary_nonUmiReadIdCh = umiExtractionSummary.out.nonUmiReadId
+  umiExtractionSummary_percentUmi_mqcCh = umiExtractionSummary.out.percentUmi
+  umiExtractionSummary_nbTotFrag_mqcCh = umiExtractionSummary.out.nbTotFrag
 
-    if (!params.skipMultiQC){
+  // trim linker in forward reads
+  trimLinker(
+    umiExtractionSummary_fastqCh
+  )
+  trimLinker_fastqCh=trimLinker.out.fastq
+  trimLinker_logCh=trimLinker.out.log
+  versionsCh = versionsCh.mix(trimLinker.out.versions)
 
-      getSoftwareVersions(
-        versionsCh.unique().collectFile()
-      )
+  // subroutines
+  outputDocumentation(
+    outputDocsCh,
+    outputDocsImagesCh
+  )
 
-      multiqc(
-        customRunName,
-        sPlanCh.collect(),
-        metadataCh.ifEmpty([]),
-        multiqcConfigCh.ifEmpty([]),
-        getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
-        workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
-        warnCh.collect().ifEmpty([])
-      )
-      mqcReport = multiqc.out.report.toList()
-    }
+  // // add prefix ex: batch1, ...
+  // trimLinker_fastqCh
+  // .collate(3)
+  // .set{fastqBatch}
+  
+  // fastqBatch.view()
+
+  // faire batch de cellules
+  // concatFastq(
+  // fastqBatch.map{fastq->[2,fastq.flatten()]},
+  // )
+  // concatFastqCh = concatFastq.out.reads
+
+  // concatFastqCh.view()
+
+  // starAlign(
+  //   trimLinker_fastqCh,
+  //   chStarIndex,
+  //   chGtf
+  // )
+  // chAlignedBam = starAlign.out.bam
+  // chAlignedLogs = starAlign.out.logs
+  // versionsCh = versionsCh.mix(starAlign.out.versions)
+
+  //*******************************************
+  // MULTIQC
+
+  // Warnings that will be printed in the mqc report
+  warnCh = Channel.empty()
+
+  if (!params.skipMultiQC){
+
+    getSoftwareVersions(
+      versionsCh.unique().collectFile()
+    )
+
+    multiqc(
+      customRunName,
+      sPlanCh.collect(),
+      metadataCh.ifEmpty([]),
+      multiqcConfigCh.ifEmpty([]),
+      getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
+      workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
+      warnCh.collect().ifEmpty([])
+    )
+    mqcReport = multiqc.out.report.toList()
+  }
 }
 
 workflow.onComplete {
