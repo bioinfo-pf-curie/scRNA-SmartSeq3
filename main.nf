@@ -174,17 +174,16 @@ workflow {
   createBatchCh
     .map { row -> row[1]}
     .flatten()
-    .map{ 
+    .map{ it -> 
       def batch = it.name.toString().tokenize('.').get(0) 
       return [batch, it]}
   .groupTuple()
-  .combine(kdiID.map { meta -> meta.id})
+  .combine(kdiID)
   .set{fq}
 
   fq.view()
-  // join ne marche pas 
-  // sans [batch_1, [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/37/5c642fb19fb0383984c61abc906cfa/batch_1.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/37/5c642fb19fb0383984c61abc906cfa/batch_1.R2.fastq.gz]]
-  //.combine(kdiID) [batch_1, [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/d4/7dd43d7b4456aedfbb412ea46ff3da/batch_1.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/d4/7dd43d7b4456aedfbb412ea46ff3da/batch_1.R2.fastq.gz], [id:V605, batch:batch_2]]
+  //si .combine(kdiID)  kdiID == [id:V605, batch:batch_2] or je veux que le meta.id car le meta.batch ne change pas en fonction des fastq (reste batch_2 pour batch_2 et batch_1)
+  // donc je dois faire .combine(kdiID.map { meta -> meta.id})
 
   // add too each batch, the meta.id
   fq
