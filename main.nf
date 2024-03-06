@@ -187,6 +187,7 @@ workflow {
   .map{ 
     def batch = it.name.toString().tokenize('.').get(0) 
     return [batch, it]}
+  .groupTuple()
   .set{fq2}
 
   fq2.view()
