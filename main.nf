@@ -175,26 +175,18 @@ workflow {
     .set{kdiID}
 
   createBatchCh
-    .map { row -> row[1].collect()}
-    .set{fq}
-
-  kdiID.view()
-
-  fq.view()
-
-  fq
-  .flatten()
-  .map{ 
-    def batch = it.name.toString().tokenize('.').get(0) 
-    return [batch, it]}
+    .map { row -> row[1]}
+    .flatten()
+    .map{ 
+      def batch = it.name.toString().tokenize('.').get(0) 
+      return [batch, it]}
   .groupTuple()
-  .set{fq2}
+  .set{fq}
 
   kdiID
-  .combine(fq2)
+  .combine(fq)
   .map { it -> 
-    def meta = [:]
-        meta.id = it[0]
+    def meta = it[0]
         meta.batch = it[1]
     return [meta, it[2]]}
   .view()
