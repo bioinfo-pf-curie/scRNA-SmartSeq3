@@ -167,20 +167,16 @@ workflow {
 
   // group by batch and extract the batch as name
   createBatchCh
-    .map { row -> row[1]} // get the fastq list
+    .map { row -> row[1]} // get the fastq list [,,,]
     .flatten()
     .map{ fastq -> 
-      def batch = fastq.name.toString().tokenize('.').get(0) 
+      def batch = fastq.name.toString().tokenize('.').get(0)  // get the batch
       return [batch, fastq]}
-  .groupTuple()
-  .combine(createBatchCh.map{ row -> row[0].id})
+  .groupTuple() // groupe R1 and R2 per batch
+  .combine(createBatchCh.map{ row -> row[0].id}) // get the meta.id
   .set{fq}
 
-  fq.view()
-  //si .combine(kdiID)  kdiID == [id:V605, batch:batch_2] or je veux que le meta.id car le meta.batch ne change pas en fonction des fastq (reste batch_2 pour batch_2 et batch_1)
-  // donc je dois faire .combine(kdiID.map { meta -> meta.id})
-
-  // add too each batch, the meta.id
+  // create the meta.batch
   fq
   .map { it -> 
     def meta = [:]
@@ -190,26 +186,6 @@ workflow {
   .set{batchFastqsCh}
 
   batchFastqsCh.view()
-  
-/*
-[[id:V605]] //kdiID
-
-[batch_1, 
-[/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R1.fastq.gz, 
-/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R2.fastq.gz], 
-[id:V605, batch:batch_1]] //fq
-
-[batch_2, 
-[/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R1.fastq.gz, 
-/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R2.fastq.gz], 
-[id:V605, batch:batch_1]]
-
-[[id:V605, batch:batch_2], 
-[/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R1.fastq.gz, 
-/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R2.fastq.gz]]
-[[id:V605, batch:batch_2], 
-[/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R1.fastq.gz, 
-/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R2.fastq.gz]]*/
 
   // extract UMIs in forward reads
   stdin_R1 = Channel.of('R1')    
