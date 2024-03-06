@@ -388,7 +388,7 @@ Available Profiles
        * @return
        */
 
-      public static Object getInputData(samplePlan, readDir, params) {
+      public static Object getInputData(samplePlan, reads, readDir, params) {
         if (samplePlan) {
       	  return Channel
             .fromPath(samplePlan)
@@ -397,7 +397,7 @@ Available Profiles
               def meta = [:]
                     meta.id = row[0] // KDI ID
               def inputDir = returnDir(row[1], params) // directory path
-              return [meta, [inputDir]]
+              return [meta, inputDir]
             }
         } else if (readDir) {
           return Channel
@@ -406,9 +406,18 @@ Available Profiles
 	            def meta = [:]
                 meta.id = row[0]
               def inputDir = returnDir(row[1], params)
-              return [meta, [inputDir]]
+              return [meta, inputDir]
             }.ifEmpty { Nextflow.exit 1, "params.readDir was empty - no input files supplied" }
-        }
+        }else {
+          return Channel
+            .fromPath(reads)
+            .ifEmpty { Nextflow.exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
+            .map { row -> 
+              def meta = [:]
+                  meta.id = row[0]
+              return [meta, row[1]]
+            }
+         }
       }
 
 
@@ -427,7 +436,7 @@ Available Profiles
         if (samplePlan){
           return Channel
             .fromPath(samplePlan)
-
+            
         } else if(readDir){
 	        return Channel
             .fromPath(readDir)
