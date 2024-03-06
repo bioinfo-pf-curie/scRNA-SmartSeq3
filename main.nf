@@ -65,7 +65,7 @@ outputDocsImagesCh = file("$projectDir/docs/images/", checkIfExists: true)
 ==========================
 */
 
-if ((params.reads && params.samplePlan) || (params.readPaths && params.samplePlan)){
+if ((params.reads && params.samplePlan) || (params.readDir && params.samplePlan)){
   exit 1, "Input reads must be defined using either '--reads' or '--samplePlan' parameter. Please choose one way"
 }
 
@@ -116,10 +116,10 @@ workflowSummaryCh = NFTools.summarize(summary, workflow, params)
 */
 
 // Load raw reads
-rawReadsCh = NFTools.getInputData(params.samplePlan, params.reads, params.readPaths, params.singleEnd, params)
+rawReadsCh = NFTools.getInputData(params.samplePlan, params.reads, params.readDir, params)
 
 // Make samplePlan if not available
-sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readPaths, params.singleEnd)
+sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readDir)
 
 /*
 ==================================
