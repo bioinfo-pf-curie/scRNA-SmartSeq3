@@ -183,7 +183,7 @@ workflow {
   fq.view()
 
   fq
-  .flatten()
+  .collect()
   .map{ it.name.toString().tokenize('.').get(0) }
   .set{fq2}
 
