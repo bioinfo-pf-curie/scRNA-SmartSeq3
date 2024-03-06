@@ -173,7 +173,7 @@ workflow {
       def batch = fastq.name.toString().tokenize('.').get(0) 
       return [batch, fastq]}
   .groupTuple()
-  .combine(createBatchCh.map{ meta -> meta.id})
+  .combine(createBatchCh.map{ row -> row[0]})
   .set{fq}
 
   fq.view()
