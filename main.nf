@@ -178,7 +178,7 @@ workflow {
       def batch = it.name.toString().tokenize('.').get(0) 
       return [batch, it]}
   .groupTuple()
-  .join(createBatchCh)
+  .combine(kdiID.map { meta -> meta.id})
   .set{fq}
 
   fq.view()
