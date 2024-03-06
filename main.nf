@@ -165,20 +165,15 @@ workflow {
    )
    createBatchCh = createBatch.out.reads
 
-  // save meta.id as kdi ID
-  createBatchCh
-    .map { meta -> meta.id}
-    .set{kdiID}
-
   // group by batch and extract the batch as name
   createBatchCh
-    .map { row -> row[1]}
+    .map { row -> row[1]} // get the fastq list
     .flatten()
-    .map{ it -> 
-      def batch = it.name.toString().tokenize('.').get(0) 
-      return [batch, it]}
+    .map{ fastq -> 
+      def batch = fastq.name.toString().tokenize('.').get(0) 
+      return [batch, fastq]}
   .groupTuple()
-  .combine(kdiID)
+  .combine(createBatchCh.map{ meta -> meta.id})
   .set{fq}
 
   fq.view()
