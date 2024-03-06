@@ -190,7 +190,14 @@ workflow {
   .groupTuple()
   .set{fq2}
 
-  kdiID.combine(fq2).view()
+  kdiID
+  .combine(fq2)
+  .map { it -> 
+    def meta = [:]
+        meta.id = it[0]
+        meta.batch = it[1]
+    return [meta, it[2]]}
+  .view()
 
   createBatchCh
     // .map { row ->
