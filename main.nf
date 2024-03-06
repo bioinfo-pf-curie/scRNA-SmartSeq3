@@ -179,8 +179,9 @@ workflow {
       return [batch, it]}
   .groupTuple()
   .combine(kdiID)
-  .map { it -> it[2], it[1]}
+  .map { it -> [it[2], it[1]]}
   .set{batchFastqsCh}
+
   batchFastqsCh.view()
 
   // add too each batch, the meta.id
