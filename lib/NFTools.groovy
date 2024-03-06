@@ -396,7 +396,7 @@ Available Profiles
             .map { row ->
               def meta = [:]
                     meta.id = row[0] // KDI ID
-              def inputDir = returnDir(row[1], params) // directory path
+              def inputDir = returnDir(row[1], params) // directory path/*.fastq.gz
               return [meta, inputDir]
             }
         } else if (readDir) {
@@ -405,7 +405,6 @@ Available Profiles
             .map { row ->
 	            def meta = [:]
                 meta.id = row[0]
-              def inputDir = returnDir(row[1], params)
               return [meta, inputDir]
             }.ifEmpty { Nextflow.exit 1, "params.readDir was empty - no input files supplied" }
         }else {
