@@ -189,12 +189,13 @@ workflow {
   // add too each batch, the meta.id
   fq
   .map { it -> 
-    def meta = it[2]
+    def meta = [:]
+        meta.id = it[2]
         meta.batch = it[0]
     return [meta, it[1]]}
   .set{batchFastqsCh}
 
-  //batchFastqsCh.view()
+  batchFastqsCh.view()
   
 /*
 [[id:V605]] //kdiID
