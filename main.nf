@@ -181,7 +181,7 @@ workflow {
   fq.view()
   // add too each batch, the meta.id
   kdiID
-  .combine(fq, by: 0)
+  .combine(fq)
   .map { it -> 
     def meta = it[0]
         meta.batch = it[1]
