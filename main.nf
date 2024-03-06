@@ -183,8 +183,9 @@ workflow {
   */
 
 
-  createBatchCh.fromFilePairs('*R{1,2}.fastq.gz').view()
-  /*createBatchCh
+  /*createBatchCh.fromFilePairs('*R{1,2}.fastq.gz').view()
+  
+  createBatchCh
     .map { row ->
       def meta = [:]
         meta.id = row[0]
@@ -208,7 +209,7 @@ workflow {
   .set{batchFastqsCh}*/
 
 
-  batchFastqsCh.map{it -> it[0]}.view()
+  /*batchFastqsCh.map{it -> it[0]}.view()
   //[[id:[batch_1], [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R1.fastq.gz, /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R2.fastq.gz]]
   // je voudrais : [id:[batch_1], [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R1.fastq.gz, /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R2.fastq.gz]
 
