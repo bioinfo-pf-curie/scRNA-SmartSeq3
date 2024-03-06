@@ -176,13 +176,18 @@ workflow {
   [id:V590], 
   /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/ab/74316f7c55f80eabea9508fd697519/batch_1.R1.fastq.gz, 
   /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/ab/74316f7c55f80eabea9508fd697519/batch_1.R2.fastq.gz]
+
+  [id:V590],
+  [batch_1, [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/ab/74316f7c55f80eabea9508fd697519/batch_1.R1.fastq.gz, 
+            /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/ab/74316f7c55f80eabea9508fd697519/batch_1.R2.fastq.gz]]
   */
+
 
   createBatchCh
     .map { row ->
       def meta = [:]
         meta.id = row[0]
-        batch = row[1].fromFilePairs('*{1,2}.fastq.gz')
+      def batch = row[1] //.fromFilePairs('*R{1,2}.fastq.gz')
     return [meta, batch]
     }
   .set{batchFastqsCh}
