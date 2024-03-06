@@ -172,16 +172,15 @@ workflow {
    createBatchCh = createBatch.out.reads
 
   createBatchCh.view() 
- 
-  createBatchCh.fromFilePairs('*R{1,2}.fastq.gz').view()
-  
+   
   createBatchCh
     .map { row ->
       def meta = [:]
         meta.id = row[0]
-      def batch = row[1].fromFilePairs('*R{1,2}.fastq.gz')
-    return [meta, batch]
+      def batch = row[1].name.toString().tokenize('.').get(0)
+    return [meta, [batch, row[1]]]
     }
+  .groupTuple()
   .set{batchFastqsCh}
 
   batchFastqsCh.view()
