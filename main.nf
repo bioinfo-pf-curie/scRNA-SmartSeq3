@@ -169,7 +169,6 @@ workflow {
   createBatchCh
     .map { row ->[row[0]]}
     .set{kdiID}
-  kdiID.view()
   // group by batch and extract the batch as name
   createBatchCh
     .map { row -> row[1]}
@@ -179,19 +178,21 @@ workflow {
       return [batch, it]}
   .groupTuple()
   .combine(kdiID)
-  .map { it -> [it[2], it[1]]}
-  .set{batchFastqsCh}
+  .set{fq}
 
-  batchFastqsCh.view()
+  fq.view()
 
   // add too each batch, the meta.id
-  /*fq
+  fq
   .map { it -> 
     def meta = it[2]
         meta.batch = it[0]
     return [meta, it[1]]}
-  .set{}
+  .set{batchFastqsCh}
 
+  batchFastqsCh.view()
+  
+/*
 [[id:V605]] //kdiID
 
 [batch_1, 
