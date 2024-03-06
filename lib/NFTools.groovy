@@ -401,7 +401,7 @@ Available Profiles
             }
         } else if (readDir) {
           return Channel
-            .fromPath(readDir)
+            .fromList(readDir)
             .map { row ->
 	            def meta = [:]
                 meta.id = row[0]
