@@ -13,6 +13,7 @@ process addBcInHeader {
   script:
   def prefix = task.ext.prefix ?: "${meta.id}"
   """
+  //for 
   seqkit replace -p " " -r '_CELL'${prefix}' ' ${reads[0]} > "rename_"${reads[0]}
   seqkit replace -p " " -r '_CELL'${prefix}' ' ${reads[1]} > "rename_"${reads[1]}
   """

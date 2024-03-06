@@ -365,6 +365,20 @@ Available Profiles
         }
       }
 
+      public static Object returnDir(String path, params) {
+        def colors = generateLogColors(params.get("monochromeLogs", false) as Boolean)
+        if (path =~ /(http|ftp)/) {
+           return Nextflow.fromPath(path)
+        } else if (!Nextflow.fromPath(path).exists()) {
+           Nextflow.expath(
+             "${colors.red}[WARNING] Input directory does not exists: ${path}, see --help for more information${colors.reset}"
+           )
+        } else {
+           return Nextflow.fromPath(path)
+        }
+      }
+
+
       /**
        * Channeling the input file containing FASTQ or BAM
        * Format is: "idSample,sampleName,pathToFastq1,[pathToFastq2]"
@@ -374,73 +388,27 @@ Available Profiles
        * @return
        */
 
-      public static Object getInputData(samplePlan, reads, readPaths, singleEnd, params) {
-
+      public static Object getInputData(samplePlan, readDir, params) {
         if (samplePlan) {
       	  return Channel
             .fromPath(samplePlan)
             .splitCsv(header: false)
             .map { row ->
-	      def meta = [:]
-              meta.id = row[0]
-              meta.name = row[1]
-              def inputFile1 = returnFile(row[2], params)
-              def inputFile2 = 'null'
-
-              if (hasExtension(inputFile1, 'fastq.gz') || hasExtension(inputFile1, 'fq.gz') || hasExtension(inputFile1, 'fastq')) {
-	        if (!singleEnd){
-                  checkNumberOfItem(row, 4, params)
-                  inputFile2 = returnFile(row[3], params)
-                  if (!hasExtension(inputFile2, 'fastq.gz') && !hasExtension(inputFile2, 'fq.gz') && !hasExtension(inputFile2, 'fastq')) {
-                    Nextflow.exit(1, "File: ${inputFile2} has an unexpected extension. See --help for more information")
-                  }
-      		}
-              } else if (hasExtension(inputFile1, 'bam')) {
-                checkNumberOfItem(row, 3, params)
-              } else {
-                Nextflow.exit(1, "File: ${inputFile1} has an unexpected extension. See --help for more information")
-              }
-	      
-	      if (singleEnd) {
-	        meta.singleEnd = true
-		return [meta, [inputFile1]]
-              }else{
-                meta.singleEnd = false
-                return [meta, [inputFile1, inputFile2]]
-              }
+              def meta = [:]
+                    meta.id = row[0] // KDI ID
+              def inputDir = returnDir(row[1], params) // directory path
+              return [meta, [inputDir]]
             }
-        } else if (readPaths) {
+        } else if (readDir) {
           return Channel
-            .fromList(readPaths)
+            .fromPath(readDir)
             .map { row ->
-	      def meta = [:]
-              meta.id = row[0]
-              def inputFile1 = returnFile(row[1][0], params)
-              def inputFile2 = singleEnd ? null: returnFile(row[1][1], params)
-              if (singleEnd) {
-                meta.singleEnd = true
-                return [meta, [inputFile1]]
-              }else{
-                meta.singleEnd = false
-                return [meta, [inputFile1, inputFile2]]
-              }
-           }.ifEmpty { Nextflow.exit 1, "params.readPaths was empty - no input files supplied" }
-        } else {
-          return Channel
-            .fromFilePairs(reads, size: singleEnd ? 1 : 2)
-            .ifEmpty { Nextflow.exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
-            .map { row -> 
-                   def meta = [:]
-                   meta.id = row[0]
-                   if (singleEnd) {
-                     meta.singleEnd = true
-                     return [meta, [row[1][0]]]
-                   }else{
-                     meta.singleEnd = false
-                     return [meta, [row[1][0], row[1][1]]] 
-                   }
-            }
-         }
+	            def meta = [:]
+                meta.id = row[0]
+              def inputDir = returnDir(row[1][0], params)
+              return [meta, [inputDir]]
+            }.ifEmpty { Nextflow.exit 1, "params.readDir was empty - no input files supplied" }
+        }
       }
 
 
@@ -449,45 +417,25 @@ Available Profiles
        * 
        * @param samplePlan
        * @param reads
-       * @param readPaths
+       * @param readDir
        * @param singleEnd
        
        * @return
        */
 
-      public static Object getSamplePlan(samplePlan, reads, readPaths, singleEnd) {
+      public static Object getSamplePlan(samplePlan, readDir) {
         if (samplePlan){
-	  return Channel.fromPath(samplePlan)
-	} else if(readPaths){
-          if (singleEnd){
-	    return Channel
-	      .from(readPaths)
-              .collectFile() {
-	        item -> ["sample_plan.csv", item[0] + ',' + item[0] + ',' + item[1][0] + '\n']
-               }
-          }else{
-            return Channel
-              .from(readPaths)
-              .collectFile() {
-                item -> ["sample_plan.csv", item[0] + ',' + item[0] + ',' + item[1][0] + ',' + item[1][1] + '\n']
-              }
-          }
-        }else{
-	  if (singleEnd){
-	    return Channel
-	      .fromFilePairs( reads, size: 1 )
-	      .collectFile() {
-	        item -> ["sample_plan.csv", item[0] + ',' + item[0] + ',' + item[1][0] + '\n']
-	      }
-  	  }else{
-	    return Channel
-	      .fromFilePairs( reads, size: 2 )
-	      .collectFile() {
-	        item -> ["sample_plan.csv", item[0] + ',' + item[0] + ',' + item[1][0] + ',' + item[1][1] + '\n']
- 	      }
-	  }
+          return Channel
+            .fromPath(samplePlan)
+            
+        } else if(readDir){
+	        return Channel
+            .fromPath(readDir)
+            .collectFile() {
+	              item -> ["sample_plan.csv", item[0] + ',' + item[1] + '\n']
+             }
         }
-      }
+	    }
 
 
    /************************************
