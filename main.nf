@@ -167,13 +167,26 @@ workflow {
   addBcInHeaderCh.view()
 
    createBatch(
-    addBcInHeaderCh 
+    addBcInHeaderCh // In future : not to do because it will be directly a directory with all files
    )
    createBatchCh = createBatch.out.reads
 
   createBatchCh.view()
 
   createBatchCh
+    .fromList(readDir)
+    .map { row ->
+      def meta = [:]
+        meta.id = row[0]
+    return [meta, row[1].fromFilePairs('*_{1,2}.fastq.gz')]
+    }
+  .set{batchFastqsCh}
+
+  batchFastqsCh.view()
+
+
+
+  /*createBatchCh
   .map { file -> 
     def meta = [:]
       meta.id = file.name.toString().tokenize('.').get(0)
@@ -181,9 +194,8 @@ workflow {
     }
   .groupTuple() // groupe R1 and R2 together
   .map{it -> [it[0], [it[1][0][0], it[1][0][1]]]} 
-  .set{batchFastqsCh}
+  .set{batchFastqsCh}*/
 
-  batchFastqsCh.view()
 
   batchFastqsCh.map{it -> it[0]}.view()
   //[[id:[batch_1], [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R1.fastq.gz, /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/bf/f1d001f7ef2f61206dc017982e89f5/batch_1.R2.fastq.gz]]
