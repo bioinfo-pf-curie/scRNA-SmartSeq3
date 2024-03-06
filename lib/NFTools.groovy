@@ -396,8 +396,7 @@ Available Profiles
             .map { row ->
               def meta = [:]
                     meta.id = row[0] // KDI ID
-              def inputDir = returnDir(row[1], params) // directory path/*.fastq.gz
-              return [meta, inputDir]
+              return [meta, row[1]]
             }
         } else if (readDir) {
           return Channel
