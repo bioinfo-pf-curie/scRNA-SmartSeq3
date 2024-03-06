@@ -184,9 +184,9 @@ workflow {
     }
   .set{batchFastqsCh}
 
-  batchFastqsCh.view()*/
+  batchFastqsCh.view()
 
-  createBatchCh
+  /*createBatchCh
   .map { file -> 
     def meta = [:]
       meta.id = file.name.toString().tokenize('.').get(0)
@@ -194,7 +194,7 @@ workflow {
     }
   .groupTuple() // groupe R1 and R2 together
   .map{it -> [it[0], [it[1][0][0], it[1][0][1]]]} 
-  .set{batchFastqsCh}
+  .set{batchFastqsCh}*/
 
 
   //batchFastqsCh.map{it -> it[0]}.view()
