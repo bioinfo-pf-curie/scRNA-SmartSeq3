@@ -177,6 +177,7 @@ workflow {
       def batch = it.name.toString().tokenize('.').get(0) 
       return [batch, it]}
   .groupTuple()
+  .combine(kdiID)
   .set{fq}
   fq.view()
 
@@ -184,16 +185,12 @@ workflow {
   //[batch_2, [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R2.fastq.gz]]
  
   // add too each batch, the meta.id
-  kdiID
-  .combine(fq)
+  fq
   .map { it -> 
-    def meta = it[0]
-        meta.batch = it[1]
-    return [meta, it[2]]}
+    def meta = it[2]
+        meta.batch = it[0]
+    return [meta, it[1]]}
   .set{batchFastqsCh}
-
-   kdiID.combine(fq).view()
-
 
   //[[id:V605, batch:batch_2], [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R2.fastq.gz]]
   //[[id:V605, batch:batch_2], [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R2.fastq.gz]]
