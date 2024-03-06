@@ -6,7 +6,7 @@ process umiExtraction {
   tag "${meta.batch}"
   label 'umiTools'
   label 'lowCpu'
-  label 'lowMem'
+  label 'medMem'
 
   input: 
   tuple val(meta), path(reads)

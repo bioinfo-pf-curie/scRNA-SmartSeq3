@@ -1,7 +1,7 @@
 process addBcInHeader {
   label 'seqkit'
-  label 'minCpu'
-  label 'minMem'
+  label 'lowCpu'
+  label 'medMem'
   tag "$meta.id"
 
   input:
@@ -17,8 +17,8 @@ process addBcInHeader {
   do
   base=\$(echo \$fastq | grep -o .R[1,2].fastq.gz)
   prefix=\$(basename \$fastq \$base)
-  seqkit replace -p " " -r '_CELL'\$prefix' '  \$fastq > "addBcInHeader/rename_"\$prefix".fastq"
-  gzip "addBcInHeader/rename_"\$prefix".fastq"
+  seqkit replace -p " " -r '_CELL'\$prefix' '  \$fastq > "addBcInHeader/rename_"\$prefix\$base
+  gzip "addBcInHeader/rename_"\$prefix\$base
   done
   """
 }

@@ -1,7 +1,7 @@
 process createBatch {
   label 'samtools'
   label 'minCpu'
-  label 'minMem'
+  label 'medMem'
   tag "${meta.id}"
 
   input:
