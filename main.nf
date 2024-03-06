@@ -172,18 +172,8 @@ workflow {
    createBatchCh = createBatch.out.reads
 
   createBatchCh.view() 
-  /*[
-  [id:V590], 
-  /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/ab/74316f7c55f80eabea9508fd697519/batch_1.R1.fastq.gz, 
-  /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/ab/74316f7c55f80eabea9508fd697519/batch_1.R2.fastq.gz]
-
-  [id:V590],
-  [batch_1, [/bioinfo/users/lhadjabe/Gitlab/smartseq3/work/ab/74316f7c55f80eabea9508fd697519/batch_1.R1.fastq.gz, 
-            /bioinfo/users/lhadjabe/Gitlab/smartseq3/work/ab/74316f7c55f80eabea9508fd697519/batch_1.R2.fastq.gz]]
-  */
-
-
-  /*createBatchCh.fromFilePairs('*R{1,2}.fastq.gz').view()
+ 
+  createBatchCh.fromFilePairs('*R{1,2}.fastq.gz').view()
   
   createBatchCh
     .map { row ->
@@ -195,8 +185,6 @@ workflow {
   .set{batchFastqsCh}
 
   batchFastqsCh.view()*/
-
-
 
   createBatchCh
   .map { file -> 
