@@ -179,25 +179,36 @@ workflow {
       return [batch, it]}
   .groupTuple()
   .combine(kdiID)
-  .set{fq}
-  fq.view()
+  .map { it -> it[2], it[1]}
+  .set{batchFastqsCh}
+  batchFastqsCh.view()
 
-  //[batch_1, [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R2.fastq.gz]]
-  //[batch_2, [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R2.fastq.gz]]
- 
   // add too each batch, the meta.id
-  fq
+  /*fq
   .map { it -> 
     def meta = it[2]
         meta.batch = it[0]
     return [meta, it[1]]}
-  .set{batchFastqsCh}
+  .set{}
 
-  //[[id:V605, batch:batch_2], [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R2.fastq.gz]]
-  //[[id:V605, batch:batch_2], [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R2.fastq.gz]]
+[[id:V605]] //kdiID
 
-  
-  batchFastqsCh.view()
+[batch_1, 
+[/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R1.fastq.gz, 
+/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R2.fastq.gz], 
+[id:V605, batch:batch_1]] //fq
+
+[batch_2, 
+[/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R1.fastq.gz, 
+/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R2.fastq.gz], 
+[id:V605, batch:batch_1]]
+
+[[id:V605, batch:batch_2], 
+[/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R1.fastq.gz, 
+/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_1.R2.fastq.gz]]
+[[id:V605, batch:batch_2], 
+[/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R1.fastq.gz, 
+/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/ad/6a08ce92a26737c82310df6fa8cc5c/batch_2.R2.fastq.gz]]*/
 
   // extract UMIs in forward reads
   stdin_R1 = Channel.of('R1')    
