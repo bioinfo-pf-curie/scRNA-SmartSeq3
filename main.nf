@@ -183,8 +183,10 @@ workflow {
   fq.view()
 
   fq
-  .collect()
-  .map{ it.name.toString().tokenize('.').get(0) }
+  .flatten()
+  .map{ 
+    def batch = it.name.toString().tokenize('.').get(0) 
+    return [batch, it]}
   .set{fq2}
 
   fq2.view()
