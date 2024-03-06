@@ -155,14 +155,11 @@ workflow {
 
   main:
 
-  rawReadsCh.view()
-
 //changer nftools -> prendre repo
   addBcInHeader(
     rawReadsCh // prendre repo en input
   )
   addBcInHeaderCh = addBcInHeader.out.reads
-
 
   addBcInHeaderCh.view()
 
@@ -182,7 +179,11 @@ workflow {
     .set{fq}
 
   kdiID.view()
-  fq.name.toString().tokenize('.').get(0)
+
+  fq.view()
+
+  fq
+  .map{file -> file.name.toString().tokenize('.').get(0)}
   .set{fq2}
 
   fq2.view()
@@ -195,7 +196,7 @@ workflow {
   .groupTuple()
   .set{batchFastqsCh}
 
-  batchFastqsCh.view()
+  //batchFastqsCh.view()
 
   /*createBatchCh
   .map { file -> 
