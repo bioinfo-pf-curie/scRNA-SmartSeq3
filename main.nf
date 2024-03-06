@@ -190,7 +190,7 @@ workflow {
     return [meta, it[1]]}
   .set{batchFastqsCh}
 
-  batchFastqsCh.view()
+  //batchFastqsCh.view()
   
 /*
 [[id:V605]] //kdiID
