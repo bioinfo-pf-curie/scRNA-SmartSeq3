@@ -431,17 +431,23 @@ Available Profiles
        * @return
        */
 
-      public static Object getSamplePlan(samplePlan, readDir) {
+      public static Object getSamplePlan(samplePlan, reads, readDir) {
         if (samplePlan){
           return Channel
             .fromPath(samplePlan)
             
         } else if(readDir){
 	        return Channel
-            .fromPath(readDir)
+            .fromList(readDir)
             .collectFile() {
 	              item -> ["sample_plan.csv", item[0] + ',' + item[1] + '\n']
              }
+        }else{
+          return Channel
+            .fromList(reads)
+            .collectFile() {
+              item -> ["sample_plan.csv", item[0] + ',' + item[1] + '\n']
+	          }
         }
 	    }
 
