@@ -155,26 +155,20 @@ workflow {
 
   main:
 
-//changer nftools -> prendre repo
   addBcInHeader(
-    rawReadsCh // prendre repo en input
+    rawReadsCh 
   )
   addBcInHeaderCh = addBcInHeader.out.reads
 
-  addBcInHeaderCh.view()
-
    createBatch(
-    addBcInHeaderCh // In future : not to do because it will be directly a directory with all files
+    addBcInHeaderCh 
    )
    createBatchCh = createBatch.out.reads
-
-  createBatchCh.view() 
 
   // save meta.id as kdi ID
   createBatchCh
     .map { row ->[row[0]]}
     .set{kdiID}
-
   // group by batch and extract the batch as name
   createBatchCh
     .map { row -> row[1]}
@@ -184,7 +178,7 @@ workflow {
       return [batch, it]}
   .groupTuple()
   .set{fq}
-
+  fq.view()
   // add too each batch, the meta.id
   kdiID
   .combine(fq)
@@ -196,10 +190,10 @@ workflow {
   
   batchFastqsCh.view()
 
-    // extract UMIs in forward reads
+  // extract UMIs in forward reads
   stdin_R1 = Channel.of('R1')    
   umiExtractionR1R2(
-    batchFastqsCh, // problème prefix =[batch_1  -> [
+    batchFastqsCh, 
     stdin_R1
   )
   umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
