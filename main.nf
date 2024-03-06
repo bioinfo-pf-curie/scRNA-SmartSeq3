@@ -183,7 +183,7 @@ workflow {
   fq.view()
 
   fq
-  .map{file -> file.name.toString().tokenize('.').get(0)}
+  .map{ it.name.toString().tokenize('.').get(0) }
   .set{fq2}
 
   fq2.view()
