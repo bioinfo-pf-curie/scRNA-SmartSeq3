@@ -167,7 +167,7 @@ workflow {
 
   // save meta.id as kdi ID
   createBatchCh
-    .map { row ->[row[0][0]]}
+    .map { row ->[row[0]]}
     .set{kdiID}
 
   // group by batch and extract the batch as name
@@ -178,7 +178,7 @@ workflow {
       def batch = it.name.toString().tokenize('.').get(0) 
       return [batch, it]}
   .groupTuple()
-  .combine(kdiID)
+  .join(createBatchCh)
   .set{fq}
 
   fq.view()
