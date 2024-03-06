@@ -190,7 +190,7 @@ workflow {
   .groupTuple()
   .set{fq2}
 
-  fq2.view()
+  kdiID.combine(fq2).view()
 
   createBatchCh
     // .map { row ->
