@@ -169,6 +169,7 @@ workflow {
   createBatchCh
     .map { row ->[row[0]]}
     .set{kdiID}
+  kdiID.view()
   // group by batch and extract the batch as name
   createBatchCh
     .map { row -> row[1]}
