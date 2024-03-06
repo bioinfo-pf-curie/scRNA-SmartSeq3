@@ -177,10 +177,11 @@ workflow {
       def batch = it.name.toString().tokenize('.').get(0) 
       return [batch, it]}
   .groupTuple()
-  .combine(kdiID)
   .set{fq}
 
   fq.view()
+
+  //  .combine(kdiID) [batch_1, [/data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/d4/7dd43d7b4456aedfbb412ea46ff3da/batch_1.R1.fastq.gz, /data/kdi_prod/.kdi/project_workspace_0/1564/acl/10.00/smartseq3/work/d4/7dd43d7b4456aedfbb412ea46ff3da/batch_1.R2.fastq.gz], [id:V605, batch:batch_2]]
 
   // add too each batch, the meta.id
   fq
