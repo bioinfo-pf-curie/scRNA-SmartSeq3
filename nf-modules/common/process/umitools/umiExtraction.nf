@@ -3,14 +3,14 @@
  */
 
 process umiExtraction {
-  tag "${meta.batch}"
+  tag "${meta}"
   label 'umiTools'
   label 'lowCpu'
   label 'medMem'
 
   input: 
   tuple val(meta), path(reads)
-  val(stdin_read)
+  val (stdin_read)
 
   output:
   tuple val(meta), path("*_UMIsExtractedinR*"), emit: fastq_umi
