@@ -9,7 +9,7 @@ process umiExtraction {
   label 'medMem'
 
   input: 
-  tuple stdin(meta), path(reads)
+  tuple val(meta), path(reads)
   val (stdin_read)
 
   output:
