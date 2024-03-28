@@ -188,21 +188,20 @@ workflow {
   batchFastqsCh.view()
 
   // extract UMIs in forward reads
-  stdin_R1 = Channel.of('R1')    
   umiExtractionR1R2(
-    batchFastqsCh, 
-    stdin_R1
+    batchFastqsCh,
+    Channel.value('R1')
   )
+
   umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
   umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumi
   umiExtraction_logR1Ch = umiExtractionR1R2.out.log
   versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
 
   // extract UMIs in reverse reads
-  stdin_R2 = Channel.of('R2')
   umiExtractionR2R1(
     umiExtraction_fastqR1Ch,
-    stdin_R2
+    Channel.value('R2')
   )
   umiExtraction_fastqR2Ch = umiExtractionR2R1.out.fastq_umi
   umiExtraction_fastqNoUmiR2Ch = umiExtractionR2R1.out.fastq_noumi
@@ -225,6 +224,7 @@ workflow {
   trimLinker_fastqCh=trimLinker.out.fastq
   trimLinker_logCh=trimLinker.out.log
   versionsCh = versionsCh.mix(trimLinker.out.versions)
+
 
   // subroutines
   outputDocumentation(
@@ -268,16 +268,16 @@ workflow {
       versionsCh.unique().collectFile()
     )
 
-    multiqc(
-      customRunName,
-      sPlanCh.collect(),
-      metadataCh.ifEmpty([]),
-      multiqcConfigCh.ifEmpty([]),
-      getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
-      workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
-      warnCh.collect().ifEmpty([])
-    )
-    mqcReport = multiqc.out.report.toList()
+  //  multiqc(
+  //    customRunName,
+  //    sPlanCh.collect(),
+  //    metadataCh.ifEmpty([]),
+  //    multiqcConfigCh.ifEmpty([]),
+  //    getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
+  //    workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
+  //    warnCh.collect().ifEmpty([])
+  //  )
+  //  mqcReport = multiqc.out.report.toList()
   }
 }
 
