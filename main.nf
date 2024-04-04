@@ -206,6 +206,8 @@ workflow {
   umiExtraction_logR2Ch = umiExtractionR2R1.out.log
   versionsCh = versionsCh.mix(umiExtractionR2R1.out.versions)
   
+  batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR1Ch).join(umiExtraction_fastqNoUmiR2Ch).view()
+
   // summarize UMI extraction
   umiExtractionSummary(
     batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR1Ch).join(umiExtraction_fastqNoUmiR2Ch)
