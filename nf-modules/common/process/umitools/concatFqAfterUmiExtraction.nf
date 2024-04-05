@@ -5,7 +5,8 @@ process concatFqAfterUmiExtraction {
   label 'lowMem'
 
   input: 
-  tuple val(meta), path(raw_reads), path(umiExtraction_r1), path(umiExtraction_r2), path(fastqNoUmi_R1), path(fastqNoUmi_R2)
+  tuple val(meta), path(raw_reads), path(umiExtraction_r1), path(umiExtraction_r2), path(fastqNoUmi_R1.R1),  path(fastqNoUmi_R1.R2), path(fastqNoUmi_R2), path(fastqNoUmi_R2.R1), path(fastqNoUmi_R2.R2)
+  
 
   output:
   tuple val(meta), path("*_totReads.R1.fastq.gz"), path("*_totReads.R2.fastq.gz"), emit: fastq
@@ -19,13 +20,14 @@ process concatFqAfterUmiExtraction {
   seqkit seq -j 4 -n -i ${fastqNoUmi_R2} -o ${prefix}_nonUmisReadsIDs.txt
 
   # concat all .R1.fastq.gz [0]
-  cat ${umiExtraction_r2[0]}>> ${umiExtraction_r1[0]}
-  cat ${fastqNoUmi_R1} >> ${umiExtraction_r1[0]} 
   cp ${umiExtraction_r1[0]} ${prefix}_totReads.R1.fastq.gz
+  cat ${umiExtraction_r2[0]} >> ${prefix}_totReads.R1.fastq.gz
+  cat ${fastqNoUmi_R2.R1} >> ${prefix}_totReads.R1.fastq.gz
+  
 
   # concat all .R2.fastq.gz [1]
-  cat ${umiExtraction_r2[1]} >> ${umiExtraction_r1[1]}
-  cat ${fastqNoUmi_R2} >> ${umiExtraction_r1[1]}
   cp ${umiExtraction_r1[1]} ${prefix}_totReads.R2.fastq.gz
+  cat ${umiExtraction_r2[1]} >> ${prefix}_totReads.R2.fastq.gz
+  cat ${fastqNoUmi_R2.R2} >> ${prefix}_totReads.R2.fastq.gz
   """
 }
