@@ -129,19 +129,22 @@ sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readDir)
 
 // Workflows
 
-// Processes
+// COMMON 
+  // utils
 include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/utils/outputDocumentation'
+  // umitools
 include { umiExtraction as umiExtractionR1R2 } from './nf-modules/common/process/umitools/umiExtraction'
 include { umiExtraction as umiExtractionR2R1 } from './nf-modules/common/process/umitools/umiExtraction'
+include { concatFqAfterUmiExtraction } from './nf-modules/common/process/umitools/concatFqAfterUmiExtraction'
 include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
+  //cutadapt
 include { trimLinker } from './nf-modules/common/process/cutadapt/trimLinker'
+  //star
 include { starAlign } from './nf-modules/common/process/star/starAlign'
-
-//include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
+// LOCAL
 include { createBatch } from './nf-modules/local/process/createBatch'
 include { addBcInHeader } from './nf-modules/local/process/addBcInHeader'
-
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -206,14 +209,16 @@ workflow {
   umiExtraction_logR2Ch = umiExtractionR2R1.out.log
   versionsCh = versionsCh.mix(umiExtractionR2R1.out.versions)
   
-  batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR1Ch).join(umiExtraction_fastqNoUmiR2Ch).view()
-
-  // summarize UMI extraction
-  umiExtractionSummary(
+  concatFqAfterUmiExtraction(
     batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR1Ch).join(umiExtraction_fastqNoUmiR2Ch)
   )
   umiExtractionSummary_fastqCh = umiExtractionSummary.out.fastq
   umiExtractionSummary_nonUmiReadIdCh = umiExtractionSummary.out.nonUmiReadId
+
+  // summarize UMI extraction
+  umiExtractionSummary(
+    batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch)
+  )
   umiExtractionSummary_percentUmi_mqcCh = umiExtractionSummary.out.percentUmi
   umiExtractionSummary_nbTotFrag_mqcCh = umiExtractionSummary.out.nbTotFrag
 
