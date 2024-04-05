@@ -212,8 +212,8 @@ workflow {
   concatFqAfterUmiExtraction(
     batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR1Ch).join(umiExtraction_fastqNoUmiR2Ch)
   )
-  umiExtractionSummary_fastqCh = umiExtractionSummary.out.fastq
-  umiExtractionSummary_nonUmiReadIdCh = umiExtractionSummary.out.nonUmiReadId
+  concatFqAfterUmiExtractionCh = concatFqAfterUmiExtraction.out.fastq
+  concatFqAfterUmiExtraction_nonUmiReadIdCh = concatFqAfterUmiExtraction.out.nonUmiReadId
 
   // summarize UMI extraction
   umiExtractionSummary(
@@ -224,7 +224,7 @@ workflow {
 
   // trim linker in forward reads
   trimLinker(
-    umiExtractionSummary_fastqCh
+    concatFqAfterUmiExtractionCh
   )
   trimLinker_fastqCh=trimLinker.out.fastq
   trimLinker_logCh=trimLinker.out.log
