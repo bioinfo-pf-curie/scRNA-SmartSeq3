@@ -21,11 +21,11 @@ process concatFqAfterUmiExtraction {
   # concat all .R1.fastq.gz [0]
   cat ${umiExtraction_r2[0]}>> ${umiExtraction_r1[0]}
   cat ${fastqNoUmi_R1} >> ${umiExtraction_r1[0]} 
-  mv ${umiExtraction_r1[0]} ${prefix}_totReads.R1.fastq.gz
+  cp ${umiExtraction_r1[0]} ${prefix}_totReads.R1.fastq.gz
 
   # concat all .R2.fastq.gz [1]
   cat ${umiExtraction_r2[1]} >> ${umiExtraction_r1[1]}
   cat ${fastqNoUmi_R2} >> ${umiExtraction_r1[1]}
-  mv ${umiExtraction_r1[1]}${prefix}_totReads.R2.fastq.gz
+  cp ${umiExtraction_r1[1]} ${prefix}_totReads.R2.fastq.gz
   """
 }
