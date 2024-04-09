@@ -5,7 +5,7 @@ process concatFqAfterUmiExtraction {
   label 'lowMem'
 
   input: 
-  tuple val(meta), path(raw_reads), path(umiExtraction_r1), path(umiExtraction_r2), path(fastqNoUmi_R1),  path(fastqNoUmi_R2)
+  tuple val(meta), path(raw_reads), path(umiExtraction_r1), path(umiExtraction_r2),  path(fastqNoUmi_R2)
 
   output:
   tuple val(meta), path("*_totReads.R1.fastq.gz"), path("*_totReads.R2.fastq.gz"), emit: fastq
@@ -13,7 +13,7 @@ process concatFqAfterUmiExtraction {
 
   script:
   def args = task.ext.args ?: ''
-  def prefix = task.ext.prefix ?: "${meta.id}"
+  def prefix = task.ext.prefix ?: "${meta.batch}"
   """
   # save no umi read IDs to extract them after alignment 
   seqkit seq -j 4 -n -i ${fastqNoUmi_R2} -o ${prefix}_nonUmisReadsIDs.txt

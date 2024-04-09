@@ -17,7 +17,7 @@ process umiExtractionSummary {
 
   script:
   def args = task.ext.args ?: ''
-  def prefix = task.ext.prefix ?: "${meta.id}"
+  def prefix = task.ext.prefix ?: "${meta.batch}"
   """
   ############## Save % UMIs reads
   nb_lines=`wc -l < <(gzip -cd ${raw_reads[0]})`

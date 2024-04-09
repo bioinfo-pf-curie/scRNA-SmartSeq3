@@ -193,7 +193,6 @@ workflow {
     batchFastqsCh,
     Channel.value('R1')
   )
-
   umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
   umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumi
   umiExtraction_logR1Ch = umiExtractionR1R2.out.log
@@ -212,7 +211,7 @@ workflow {
   umiExtraction_fastqNoUmiR2Ch.view()
   
   concatFqAfterUmiExtraction(
-    batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR1Ch).join(umiExtraction_fastqNoUmiR2Ch)
+    batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR2Ch)
   )
   concatFqAfterUmiExtractionCh = concatFqAfterUmiExtraction.out.fastq
   concatFqAfterUmiExtraction_nonUmiReadIdCh = concatFqAfterUmiExtraction.out.nonUmiReadId
