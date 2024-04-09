@@ -201,7 +201,7 @@ workflow {
 
   // extract UMIs in reverse reads
   umiExtractionR2R1(
-    umiExtraction_fastqR1Ch,
+    umiExtraction_fastqNoUmiR1Ch,
     Channel.value('R2')
   )
   umiExtraction_fastqR2Ch = umiExtractionR2R1.out.fastq_umi
