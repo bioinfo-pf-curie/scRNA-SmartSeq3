@@ -35,7 +35,7 @@ process umiExtractionSummary {
   tot_umis=\$(( \$nb_umis_R1 + \$nb_umis_R2 ))
   echo "#UMIs R1+R2: \$tot_umis" >> ${prefix}_nbTotFrag.txt
 
-  tot_umis_percent=\$(( (\$nb_umis_R1 + \$nb_umis_R2 / \$nb_totFrag) * 100 ))
+  tot_umis_percent=\$((\$tot_umis * 100 / \$nb_totFrag))
   echo "percentUMI: \$tot_umis_percent" > ${prefix}_pUMIs.txt
   ##############
 
