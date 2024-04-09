@@ -195,7 +195,7 @@ workflow {
   )
 
   umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
-  umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumiR1.join(umiExtractionR1R2.out.fastq_noumiR2)
+  umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumiR1.join(umiExtractionR1R2.out.fastq_noumiR2).groupTuple()
   umiExtraction_logR1Ch = umiExtractionR1R2.out.log
   versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
 
@@ -205,13 +205,11 @@ workflow {
     Channel.value('R2')
   )
   umiExtraction_fastqR2Ch = umiExtractionR2R1.out.fastq_umi
-  umiExtraction_fastqNoUmiR2Ch = umiExtractionR2R1.out.fastq_noumiR1.join(umiExtractionR1R2.out.fastq_noumiR2)
+  umiExtraction_fastqNoUmiR2Ch = umiExtractionR2R1.out.fastq_noumiR1.join(umiExtractionR1R2.out.fastq_noumiR2).groupTuple()
   umiExtraction_logR2Ch = umiExtractionR2R1.out.log
   versionsCh = versionsCh.mix(umiExtractionR2R1.out.versions)
 
   umiExtraction_fastqNoUmiR2Ch.view()
-  batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR1Ch).join(umiExtraction_fastqNoUmiR2Ch).view()
-
   
   concatFqAfterUmiExtraction(
     batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR1Ch).join(umiExtraction_fastqNoUmiR2Ch)
