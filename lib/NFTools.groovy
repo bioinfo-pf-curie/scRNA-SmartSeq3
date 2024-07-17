@@ -395,8 +395,10 @@ Available Profiles
             .splitCsv(header: false)
             .map { row ->
               def meta = [:]
-                    meta.id = row[0] // KDI ID
-              return [meta, row[1]]
+              meta.id = row[0]
+              meta.name = row[1]
+              meta.protocol = params.protocol
+              return [meta, row[2]]
             }
         } else if (readDir) {
           return Channel

@@ -85,6 +85,7 @@ if ( params.metadata ){
 chStarIndex  = params.starIndex  ? Channel.fromPath(params.starIndex, checkIfExists: true).collect()         : Channel.empty()
 chBed12      = params.bed12    ? Channel.fromPath(params.bed12, checkIfExists: true).collect()         : Channel.empty()
 chGtf        = params.gtf   ? Channel.fromPath(params.gtf, checkIfExists: true).collect()               : Channel.empty()
+chBatchSize     = params.batchSize     ? Channel.value(params.batchSize)                                    : Channel.value([])
 
 /*
 ===========================
@@ -116,7 +117,7 @@ workflowSummaryCh = NFTools.summarize(summary, workflow, params)
 */
 
 // Load raw reads
-rawReadsCh = NFTools.getInputData(params.samplePlan, params.reads, params.readDir, params)
+chRawReads = NFTools.getInputData(params.samplePlan, params.reads, params.readDir, params)
 
 // Make samplePlan if not available
 sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readDir)
@@ -128,23 +129,24 @@ sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readDir)
 */ 
 
 // Workflows
+include { createBatchesFlow } from './nf-modules/common/subworkflow/createBatchesFlow'
 
-// COMMON 
-  // utils
+// Process
 include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/utils/outputDocumentation'
-  // umitools
-include { umiExtraction as umiExtractionR1R2 } from './nf-modules/common/process/umitools/umiExtraction'
-include { umiExtraction as umiExtractionR2R1 } from './nf-modules/common/process/umitools/umiExtraction'
-include { concatFqAfterUmiExtraction } from './nf-modules/common/process/umitools/concatFqAfterUmiExtraction'
-include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
-  //cutadapt
-include { trimLinker } from './nf-modules/common/process/cutadapt/trimLinker'
-  //star
+include { umiExtract as umiExtractR1 } from './nf-modules/common/process/umitools/umiExtract'
+include { umiExtract as umiExtractR2 } from './nf-modules/common/process/umitools/umiExtract'
+include { seqkitSeq } from './nf-modules/common/process/seqkit/seqkitSeq'
+include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
+
+//include { concatFqAfterUmiExtraction } from './nf-modules/common/process/umitools/concatFqAfterUmiExtraction'
+//include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
+include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
-// LOCAL
-include { createBatch } from './nf-modules/local/process/createBatch'
-include { addBcInHeader } from './nf-modules/local/process/addBcInHeader'
+include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
+include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
+include { samtoolsIndex } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { featureCounts } from './nf-modules/common/process/featureCounts/featureCounts'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -154,113 +156,98 @@ include { multiqc } from './nf-modules/local/process/multiqc'
 */
 
 workflow {
-  versionsCh = Channel.empty()
+  chVersions = Channel.empty()
 
   main:
 
-  addBcInHeader(
-    rawReadsCh 
+  createBatchesFlow(
+    chRawReads,
+    chBatchSize
   )
-  addBcInHeaderCh = addBcInHeader.out.reads
-
-   createBatch(
-    addBcInHeaderCh 
-   )
-   createBatchCh = createBatch.out.reads
-
-  // group by batch and extract the batch as name
-  createBatchCh
-    .map { row -> row[1]} // get the fastq list [,,,]
-    .flatten()
-    .map{ fastq -> 
-      def batch = fastq.name.toString().tokenize('.').get(0)  // get the batch
-      return [batch, fastq]}
-  .groupTuple() // groupe R1 and R2 per batch
-  .combine(createBatchCh.map{ row -> row[0].id}) // get the meta.id
-  .set{fq}
-
-  // create the meta.batch
-  fq
-  .map { it -> 
-    def meta = [:]
-        meta.id = it[2]
-        meta.batch = it[0]
-    return [meta, it[1]]}
-  .set{batchFastqsCh}
+  chVersions = createBatchesFlow.out.versions
 
   // extract UMIs in forward reads
-  umiExtractionR1R2(
-    batchFastqsCh,
+  umiExtractR1(
+    createBatchesFlow.out.reads,
     Channel.value('R1')
   )
-  umiExtraction_fastqR1Ch = umiExtractionR1R2.out.fastq_umi
-  umiExtraction_fastqNoUmiR1Ch = umiExtractionR1R2.out.fastq_noumi
-  umiExtraction_logR1Ch = umiExtractionR1R2.out.log
-  versionsCh = versionsCh.mix(umiExtractionR1R2.out.versions)
+  ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
 
   // extract UMIs in reverse reads
-  umiExtractionR2R1(
-    umiExtraction_fastqNoUmiR1Ch,
+  umiExtractR2(
+    umiExtractR1.out.noumi,
     Channel.value('R2')
   )
-  umiExtraction_fastqR2Ch = umiExtractionR2R1.out.fastq_umi
-  umiExtraction_fastqNoUmiR2Ch = umiExtractionR2R1.out.fastq_noumi
-  umiExtraction_logR2Ch = umiExtractionR2R1.out.log
-  versionsCh = versionsCh.mix(umiExtractionR2R1.out.versions)
+  chVersions = chVersions.mix(umiExtractR2.out.versions)
 
-  umiExtraction_fastqNoUmiR2Ch.view()
-  
-  concatFqAfterUmiExtraction(
-    batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch).join(umiExtraction_fastqNoUmiR2Ch)
+  // Get name of reads without UMIs
+  seqkitSeq(
+    umiExtractR2.out.noumi
   )
-  concatFqAfterUmiExtractionCh = concatFqAfterUmiExtraction.out.fastq
-  concatFqAfterUmiExtraction_nonUmiReadIdCh = concatFqAfterUmiExtraction.out.nonUmiReadId
+  chVersions = chVersions.mix(seqkitSeq.out.versions)
 
-  // summarize UMI extraction
-  umiExtractionSummary(
-    batchFastqsCh.join(umiExtraction_fastqR1Ch).join(umiExtraction_fastqR2Ch)
+  // Concat UMI reads
+  chReadsUMI = umiExtractR1.out.fastq
+    .join(umiExtractR2.out.fastq)
+    .map{meta,umi1,umi2 -> [meta, [umi1[0], umi1[1], umi2[0], umi2[1]]]}
+
+  concatFastq(
+    chReadsUMI,
+    Channel.value(2)
   )
-  umiExtractionSummary_percentUmi_mqcCh = umiExtractionSummary.out.percentUmi
-  umiExtractionSummary_nbTotFrag_mqcCh = umiExtractionSummary.out.nbTotFrag
+  chVersions = chVersions.mix(concatFastq.out.versions)
 
   // trim linker in forward reads
-  trimLinker(
-    concatFqAfterUmiExtractionCh
+  cutadapt(
+    concatFastq.out.reads
   )
-  trimLinker_fastqCh=trimLinker.out.fastq
-  trimLinker_logCh=trimLinker.out.log
-  versionsCh = versionsCh.mix(trimLinker.out.versions)
+  chVersions = chVersions.mix(cutadapt.out.versions)
 
+  starAlign(
+    cutadapt.out.fastq,
+    chStarIndex,
+    chGtf
+  )
+  chVersions = chVersions.mix(starAlign.out.versions)
+
+  // Merge multiple BAM files from the same sample
+  chAlignedBams = starAlign.out.bam
+    .map{meta, bam ->
+       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part ]
+       [ groupKey(newMeta, meta.part), bam ]
+     }.groupTuple()
+     .branch {
+       single: it[0].part <= 1
+       multiple: it[0].part > 1
+     }
+
+  samtoolsMerge(
+    chAlignedBams.multiple
+  )
+  chBams = samtoolsMerge.out.bam.mix(chAlignedBams.single)
+  chVersions = chVersions.mix(samtoolsMerge.out.versions)
+
+  samtoolsStats(
+    chBams,
+    Channel.value([])
+  )
+  chVersions = chVersions.mix(samtoolsStats.out.versions)
+
+  samtoolsIndex(
+    chBams
+  )
+  chVersions = chVersions.mix(samtoolsIndex.out.versions)
+
+  featureCounts(
+    chBams.join(samtoolsIndex.out.bai).combine(chGtf)
+  )
+  chVersions = chVersions.mix(featureCounts.out.versions)
 
   // subroutines
-  outputDocumentation(
-    outputDocsCh,
-    outputDocsImagesCh
-  )
-
-  // // add prefix ex: batch1, ...
-  // trimLinker_fastqCh
-  // .collate(3)
-  // .set{fastqBatch}
-  
-  // fastqBatch.view()
-
-  // faire batch de cellules
-  // concatFastq(
-  // fastqBatch.map{fastq->[2,fastq.flatten()]},
-  // )
-  // concatFastqCh = concatFastq.out.reads
-
-  // concatFastqCh.view()
-
-  // starAlign(
-  //   trimLinker_fastqCh,
-  //   chStarIndex,
-  //   chGtf
-  // )
-  // chAlignedBam = starAlign.out.bam
-  // chAlignedLogs = starAlign.out.logs
-  // versionsCh = versionsCh.mix(starAlign.out.versions)
+  //outputDocumentation(
+  //  outputDocsCh,
+  //  outputDocsImagesCh
+  //)
 
   //*******************************************
   // MULTIQC
@@ -271,7 +258,7 @@ workflow {
   if (!params.skipMultiQC){
 
     getSoftwareVersions(
-      versionsCh.unique().collectFile()
+      chVersions.unique().collectFile()
     )
 
   //  multiqc(

@@ -2,8 +2,8 @@
  * Umitools extract UMI
  */
 
-process umiExtraction {
-  tag "${meta.batch}"
+process umiExtract {
+  tag "${meta.id}"
   label 'umiTools'
   label 'lowCpu'
   label 'medMem'
@@ -13,8 +13,8 @@ process umiExtraction {
   val (stdin_read)
 
   output:
-  tuple val(meta), path("*_UMIsExtractedinR*"), emit: fastq_umi
-  tuple val(meta), path("*_noUMIinR*"), emit: fastq_noumi
+  tuple val(meta), path("*_UMIsExtractedinR*"), emit: fastq
+  tuple val(meta), path("*_noUMIinR*"), emit: noumi
   tuple val(meta), path("*.log"), emit: log
   path("versions.txt"), emit: versions
 
@@ -25,12 +25,12 @@ process umiExtraction {
                                    "--stdin=${reads[1]} --read2-in=${reads[0]}"
   def outCmd = stdin_read == "R1" ? "--stdout=${prefix}_UMIsExtractedinR1.R1.fastq.gz --read2-out=${prefix}_UMIsExtractedinR1.R2.fastq.gz" : 
                                      "--stdout=${prefix}_UMIsExtractedinR2.R2.fastq.gz --read2-out=${prefix}_UMIsExtractedinR2.R1.fastq.gz"
-  def filtredOut = stdin_read == "R1" ? "--filtered-out ${prefix}_noUMIinR1.R1.fastq.gz --filtered-out2 ${prefix}_noUMIinR1.R2.fastq.gz" :
+  def filteredOut = stdin_read == "R1" ? "--filtered-out ${prefix}_noUMIinR1.R1.fastq.gz --filtered-out2 ${prefix}_noUMIinR1.R2.fastq.gz" :
                                       "--filtered-out ${prefix}_noUMIinR2.R2.fastq.gz --filtered-out2 ${prefix}_noUMIinR2.R1.fastq.gz"
   def logOut = stdin_read == "R1" ? "--log=${prefix}_umiExtractR1.log" : 
                                   "--log=${prefix}_umiExtractR2.log"
   """
-  umi_tools extract ${args} $inputCmd $outCmd $filtredOut $logOut 
+  umi_tools extract ${args} $inputCmd $outCmd $filteredOut $logOut 
   umi_tools --version | cut -f1,3 -d" " &> versions.txt
   """
 }

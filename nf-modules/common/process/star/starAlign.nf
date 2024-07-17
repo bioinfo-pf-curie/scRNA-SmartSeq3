@@ -37,7 +37,7 @@ process starAlign {
        --readFilesCommand zcat \\
        --runDirPerm All_RWX \\
        --outTmpDir "${params.tmpDir}/star_\$(date +%d%s%S%N)"\\
-       --outFileNamePrefix $meta.id  \\
+       --outFileNamePrefix ${prefix}  \\
        --outSAMattrRGline ID:$meta.id \\
        ${gtfOpts} \\
        ${args}
