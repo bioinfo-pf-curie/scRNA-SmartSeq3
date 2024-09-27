@@ -18,7 +18,7 @@ def splitByPairs(row){
   return map
 }
 
-workflow createBatches {
+workflow createBatchesFlow {
 
   take:
   reads
