@@ -146,6 +146,8 @@ include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 include { samtoolsIndex } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsFilter } from './nf-modules/common/process/samtools/samtoolsFilter'
+include { samtoolsIndex as samtoolsIndexFilter } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { featureCounts } from './nf-modules/common/process/featureCounts/featureCounts'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
@@ -210,15 +212,16 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
-  // Merge multiple BAM files from the same sample
+  // Merge multiple BAM of batchs but still keep the number of total batch info in meta.part
+  // meta.chunk (==#cells in a batch) info is deleted
   chAlignedBams = starAlign.out.bam
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part ]
        [ groupKey(newMeta, meta.part), bam ]
      }.groupTuple()
      .branch {
-       single: it[0].part <= 1
-       multiple: it[0].part > 1
+       single: it[0].part <= 1 // if only one batch
+       multiple: it[0].part > 1 // if several batch
      }
 
   samtoolsMerge(
@@ -233,13 +236,21 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsStats.out.versions)
 
-  samtoolsIndex(
+  //********************************************************
+  // Filter out aligned reads
+  
+  samtoolsFilter(
     chBams
   )
-  chVersions = chVersions.mix(samtoolsIndex.out.versions)
+  chVersions = chVersions.mix(samtoolsFilter.out.versions)
+                                                                                                                                                                                                       
+  samtoolsIndexFilter(
+    samtoolsFilter.out.bam
+  )
+  chVersions = chVersions.mix(samtoolsIndexFilter.out.versions)
 
   featureCounts(
-    chBams.join(samtoolsIndex.out.bai).combine(chGtf)
+    samtoolsFilter.out.bam.join(samtoolsIndexFilter.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCounts.out.versions)
 
