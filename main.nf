@@ -164,48 +164,61 @@ workflow {
 
   main:
 
+  //********************************************************
+  // Merge cell fastqs into one 
   createBatchesFlow(
     chRawReads,
     chBatchSize
   )
   chVersions = createBatchesFlow.out.versions
 
-  // extract UMIs in forward reads
+  //********************************************************
+  // Extract UMIs info 
+
+  // extract UMIs in forward reads (R1)
   umiExtractR1(
     createBatchesFlow.out.reads,
     Channel.value('R1')
   )
   ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
 
-  // extract UMIs in reverse reads
+  // extract UMIs in reverse reads (R2)
   umiExtractR2(
-    umiExtractR1.out.noumi,
+    umiExtractR1.out.noumi, // reads without umi in R1 (but maybe in R2)
     Channel.value('R2')
   )
+  chNoUmiReads = umiExtractR2.out.noumi
   chVersions = chVersions.mix(umiExtractR2.out.versions)
+
+  // Reconcatenate umi fastqs (R1umi + R2umis)
+  chUmiReads = umiExtractR1.out.fastq
+    .join(umiExtractR2.out.fastq)
+    .map{meta,umi1,umi2 -> [meta, [umi1[0], umi1[1], umi2[0], umi2[1]]]}
+    .view()
+
+  chNoUmiReads.view()
 
   // Get name of reads without UMIs
   seqkitSeq(
-    umiExtractR2.out.noumi
+    chNoUmiReads // reads without umi in R1 and R2
   )
   chVersions = chVersions.mix(seqkitSeq.out.versions)
 
-  // Concat UMI reads
-  chReadsUMI = umiExtractR1.out.fastq
-    .join(umiExtractR2.out.fastq)
-    .map{meta,umi1,umi2 -> [meta, [umi1[0], umi1[1], umi2[0], umi2[1]]]}
-
   concatFastq(
-    chReadsUMI,
+    chUmiReads,
     Channel.value(2)
   )
   chVersions = chVersions.mix(concatFastq.out.versions)
 
-  // trim linker in forward reads
+  //********************************************************
+  // trim polyA/T linker 
   cutadapt(
     concatFastq.out.reads
   )
   chVersions = chVersions.mix(cutadapt.out.versions)
+
+  //********************************************************
+  // Sequence alignement
 
   starAlign(
     cutadapt.out.fastq,
@@ -237,6 +250,36 @@ workflow {
     Channel.value([])
   )
   chVersions = chVersions.mix(samtoolsStats.out.versions)
+
+  //********************************************************
+  // Mark PCR reads duplicates
+
+  samtoolsFixmate(
+    chNameSortedBam
+  )
+  chVersions = chVersions.mix(samtoolsFixmate.out.versions)
+
+  samtoolsSort(
+    samtoolsFixmate.out.bam
+  )
+  chVersions = chVersions.mix(samtoolsSort.out.versions)
+
+  samtoolsMarkdup(
+    samtoolsSort.out.bam
+  )
+  chVersions = chVersions.mix(samtoolsMarkdup.out.versions)
+
+  // Stats on mapped reads including duplicates
+  markdupStat(
+    chMdBam
+  )
+  chVersions = chVersions.mix(markdupStat.out.versions)
+
+  // Index markdup file
+  samtoolsIndex(
+    chMdBam
+  )
+  chVersions = chVersions.mix(samtoolsIndex.out.versions)
 
   //********************************************************
   // Filter out aligned reads
