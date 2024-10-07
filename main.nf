@@ -140,14 +140,14 @@ include { umiExtract as umiExtractR1 } from './nf-modules/common/process/umitool
 include { umiExtract as umiExtractR2 } from './nf-modules/common/process/umitools/umiExtract'
 include { seqkitSeq } from './nf-modules/common/process/seqkit/seqkitSeq'
 include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
-
-//include { concatFqAfterUmiExtraction } from './nf-modules/common/process/umitools/concatFqAfterUmiExtraction'
-//include { umiExtractionSummary } from './nf-modules/common/process/umitools/umiExtractionSummary'
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
-include { samtoolsIndex } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsFixmate } from './nf-modules/common/process/samtools/samtoolsFixmate'
+include { samtoolsSort } from './nf-modules/common/process/samtools/samtoolsSort'
+include { samtoolsMarkdup } from './nf-modules/common/process/samtools/samtoolsMarkdup'
+include { samtoolsFlagstat as markdupStat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
 include { samtoolsFilter } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsIndex as samtoolsIndexFilter } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { featureCounts } from './nf-modules/common/process/featureCounts/featureCounts'
@@ -227,7 +227,7 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
-  // Merge multiple BAM of batchs but still keep the number of total batch info in meta.part
+  // Merge BAM of batchs but still keep the number of total batch info in meta.part
   // meta.chunk (==#cells in a batch) info is deleted
   chAlignedBams = starAlign.out.bam
     .map{meta, bam ->
@@ -236,7 +236,7 @@ workflow {
      }.groupTuple()
      .branch {
        single: it[0].part <= 1 // if only one batch
-       multiple: it[0].part > 1 // if several batch
+       multiple: it[0].part > 1 // if several batchs
      }
 
   samtoolsMerge(
@@ -255,7 +255,7 @@ workflow {
   // Mark PCR reads duplicates
 
   samtoolsFixmate(
-    chNameSortedBam
+    chBams
   )
   chVersions = chVersions.mix(samtoolsFixmate.out.versions)
 
@@ -271,21 +271,15 @@ workflow {
 
   // Stats on mapped reads including duplicates
   markdupStat(
-    chMdBam
+    samtoolsMarkdup.out.bam
   )
   chVersions = chVersions.mix(markdupStat.out.versions)
-
-  // Index markdup file
-  samtoolsIndex(
-    chMdBam
-  )
-  chVersions = chVersions.mix(samtoolsIndex.out.versions)
 
   //********************************************************
   // Filter out aligned reads
   
   samtoolsFilter(
-    chBams
+    samtoolsMarkdup.out.bam
   )
   chVersions = chVersions.mix(samtoolsFilter.out.versions)
                                                                                                                                                                                                        
@@ -293,6 +287,9 @@ workflow {
     samtoolsFilter.out.bam
   )
   chVersions = chVersions.mix(samtoolsIndexFilter.out.versions)
+
+  //********************************************************
+  // Assign all reads 
 
   featureCounts(
     samtoolsFilter.out.bam.join(samtoolsIndexFilter.out.bai).combine(chGtf)
