@@ -217,6 +217,8 @@ workflow {
   )
   chVersions = chVersions.mix(cutadapt.out.versions)
 
+  concatFastq.out.reads.view()
+
   //********************************************************
   // Sequence alignement
 
@@ -264,7 +266,7 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsSort.out.versions)
 
-  samtoolsMarkdup(
+  /*samtoolsMarkdup(
     samtoolsSort.out.bam
   )
   chVersions = chVersions.mix(samtoolsMarkdup.out.versions)
@@ -294,7 +296,7 @@ workflow {
   featureCounts(
     samtoolsFilter.out.bam.join(samtoolsIndexFilter.out.bai).combine(chGtf)
   )
-  chVersions = chVersions.mix(featureCounts.out.versions)
+  chVersions = chVersions.mix(featureCounts.out.versions)*/
 
   // subroutines
   //outputDocumentation(
