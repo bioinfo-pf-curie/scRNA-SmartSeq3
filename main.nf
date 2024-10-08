@@ -184,7 +184,7 @@ workflow {
   )
   ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
 
-  umiExtractR1.out.noumi.view()
+  umiExtractR1.out.noumi.view() // V660_part1_noUMIinR1.R1.fastq.gz
 
   // extract UMIs in reverse reads (R2)
   umiExtractR2(
