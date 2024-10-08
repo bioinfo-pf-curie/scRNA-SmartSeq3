@@ -138,7 +138,7 @@ include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftw
 include { outputDocumentation } from './nf-modules/common/process/utils/outputDocumentation'
 include { umiExtract as umiExtractR1 } from './nf-modules/common/process/umitools/umiExtract'
 include { umiExtract as umiExtractR2 } from './nf-modules/common/process/umitools/umiExtract'
-include { seqkitSeq } from './nf-modules/common/process/seqkit/seqkitSeq'
+//include { seqkitSeq } from './nf-modules/common/process/seqkit/seqkitSeq'
 include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
@@ -198,17 +198,17 @@ workflow {
 
   chNoUmiReads.view()
 
-  // Get name of reads without UMIs
-  seqkitSeq(
-    chNoUmiReads // reads without umi in R1 and R2
-  )
-  chVersions = chVersions.mix(seqkitSeq.out.versions)
-
   concatFastq(
-    chUmiReads,
+    chUmiReads, 
     Channel.value(2)
   )
   chVersions = chVersions.mix(concatFastq.out.versions)
+
+  // Get name of reads without UMIs
+  /*seqkitSeq(
+    chNoUmiReads // reads without umi in R1 and R2
+  )
+  chVersions = chVersions.mix(seqkitSeq.out.versions)*/
 
   //********************************************************
   // trim polyA/T linker 
@@ -227,8 +227,8 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
-  // Merge BAM of batchs but still keep the number of total batch info in meta.part
-  // meta.chunk (==#cells in a batch) info is deleted
+  // Merge BAM of batchs but still keep the number of total batchs info in meta.part
+  // meta.chunk (==batch number) info is deleted
   chAlignedBams = starAlign.out.bam
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part ]
