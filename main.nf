@@ -172,6 +172,8 @@ workflow {
   )
   chVersions = createBatchesFlow.out.versions
 
+  createBatchesFlow.out.reads.view()
+
   //********************************************************
   // Extract UMIs info 
 
@@ -199,11 +201,10 @@ workflow {
     chUmiReads, 
     Channel.value(2)
   )
-  chUmiReadsConcat = concatFastq.out.reads
+  chUmiReadsConcat = concatFastq.out.reads //V660_R1.concat.fastq, V660_R2.concat.fastq
   chVersions = chVersions.mix(concatFastq.out.versions)
 
-  chUmiReadsConcat.view()
-  chNoUmiReads.view()
+  chNoUmiReads // V660_part1_noUMIinR2.R1.fastq.gz, V660_part1_noUMIinR2.R2.fastq.gz
 
   chReads = chUmiReadsConcat.concat(chNoUmiReads).view()
 
@@ -216,7 +217,7 @@ workflow {
   //********************************************************
   // trim polyA/T linker 
   cutadapt(
-    chUmiReadsConcat
+    chReads
   )
   chVersions = chVersions.mix(cutadapt.out.versions)
 
