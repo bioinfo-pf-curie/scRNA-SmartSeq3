@@ -184,7 +184,7 @@ workflow {
   )
   ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
 
-  createBatchesFlow.out.reads.view()
+  umiExtractR1.out.noumi.view()
 
   // extract UMIs in reverse reads (R2)
   umiExtractR2(
