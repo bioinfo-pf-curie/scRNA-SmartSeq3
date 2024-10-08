@@ -223,7 +223,7 @@ workflow {
   )
   chVersions = chVersions.mix(cutadapt.out.versions)
 
-  concatFastq.out.reads.view()
+  cutadapt.out.fastq.view()
 
   //********************************************************
   // Sequence alignement
