@@ -205,7 +205,7 @@ workflow {
   chUmiReadsConcat.view()
   chNoUmiReads.view()
 
-  chReads = chUmiReadsConcat.join(chNoUmiReads).view()
+  chReads = chUmiReadsConcat.concat(chNoUmiReads).view()
 
   // Get name of reads without UMIs
   /*seqkitSeq(
