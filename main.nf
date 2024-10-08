@@ -172,7 +172,7 @@ workflow {
   )
   chVersions = createBatchesFlow.out.versions
 
-  createBatchesFlow.out.reads.view()
+  createBatchesFlow.out.reads.view() // V660_batch1.R2.fastq.gz]
 
   //********************************************************
   // Extract UMIs info 
@@ -183,6 +183,8 @@ workflow {
     Channel.value('R1')
   )
   ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
+
+  createBatchesFlow.out.reads.view()
 
   // extract UMIs in reverse reads (R2)
   umiExtractR2(
