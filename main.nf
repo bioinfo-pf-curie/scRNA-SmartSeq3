@@ -194,15 +194,18 @@ workflow {
   chUmiReads = umiExtractR1.out.fastq
     .join(umiExtractR2.out.fastq)
     .map{meta,umi1,umi2 -> [meta, [umi1[0], umi1[1], umi2[0], umi2[1]]]}
-    .view()
-
-  chNoUmiReads.view()
 
   concatFastq(
     chUmiReads, 
     Channel.value(2)
   )
+  chUmiReadsConcat = concatFastq.out.reads
   chVersions = chVersions.mix(concatFastq.out.versions)
+
+  chUmiReadsConcat.view()
+  chNoUmiReads.view()
+
+  chReads = chUmiReadsConcat.join(chNoUmiReads).view()
 
   // Get name of reads without UMIs
   /*seqkitSeq(
@@ -213,7 +216,7 @@ workflow {
   //********************************************************
   // trim polyA/T linker 
   cutadapt(
-    concatFastq.out.reads
+    chUmiReadsConcat
   )
   chVersions = chVersions.mix(cutadapt.out.versions)
 

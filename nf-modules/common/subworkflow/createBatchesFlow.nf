@@ -27,7 +27,6 @@ workflow createBatchesFlow {
   main:
   chVersions = Channel.empty()
 
-  reads.view()
   seqkitReplace(
     reads
   )
@@ -43,7 +42,6 @@ workflow createBatchesFlow {
   chPairedFastq = createBatches.out.reads
     .flatMap { it -> splitByPairs(it) }
     .collate(2)
-    .view()
 
   emit:
   versions = chVersions 
