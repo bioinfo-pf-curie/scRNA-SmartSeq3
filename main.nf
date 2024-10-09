@@ -218,8 +218,6 @@ workflow {
     [newMeta, fastqs]
     }.view()
 
-  chNoUmiReads2
-
   chReads = chUmiReads.concat(chNoUmiReads)
 
   // Get name of reads without UMIs
