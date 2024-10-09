@@ -209,8 +209,7 @@ workflow {
   chNoUmiReads // V660_part1_noUMIinR2.R1.fastq.gz, V660_part1_noUMIinR2.R2.fastq.gz
 
   chNoUmiReads2=chNoUmiReads
-  .map{meta, fastqs -> [[ meta.id, meta.name, meta.protocol, meta.chunk ,meta.part, umi:"no"], [fastqs]]
-    }
+  .map{meta, fastqs -> [ meta.id, meta.name, meta.protocol, meta.chunk ,meta.part, umi:"no", [fastqs]]}
 
   chNoUmiReads2.view()
   chReads = chUmiReadsConcat.concat(chNoUmiReads).view()
