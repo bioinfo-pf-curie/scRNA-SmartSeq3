@@ -191,35 +191,40 @@ workflow {
     umiExtractR1.out.noumi, // reads without umi in R1 (but maybe in R2)
     Channel.value('R2')
   )
-  chNoUmiReads = umiExtractR2.out.noumi
+  chNoUmi = umiExtractR2.out.noumi
   chVersions = chVersions.mix(umiExtractR2.out.versions)
 
   // Reconcatenate umi fastqs (R1umi + R2umis)
-  chUmiReads = umiExtractR1.out.fastq
+  chUmi = umiExtractR1.out.fastq
     .join(umiExtractR2.out.fastq)
     .map{meta,umi1,umi2 -> [meta, [umi1[0], umi1[1], umi2[0], umi2[1]]]}
 
   concatFastq(
-    chUmiReads, 
+    chUmi, 
     Channel.value(2)
   )
   chUmiReadsConcat = concatFastq.out.reads //V660_chunk1_R1.concat.fastq.gz, V660_chunk1_R2.concat.fastq.gz
   chVersions = chVersions.mix(concatFastq.out.versions)
 
-  chNoUmiReads // V660_part1_noUMIinR2.R1.fastq.gz, V660_part1_noUMIinR2.R2.fastq.gz
-
-  chNoUmiReads2=chNoUmiReads
+  chUmiReads=chUmiReadsConcat
   .map{meta, fastqs ->
-    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunck:meta.chunk ,part:meta.part, umi:"no"]
+    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunck:meta.chunk ,part:meta.part, umi:"umi"]
+    [newMeta, fastqs]
+    }.view()
+
+  chNoUmiReads=chNoUmi
+  .map{meta, fastqs ->
+    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunck:meta.chunk ,part:meta.part, umi:"noUmi"]
     [newMeta, fastqs]
     }.view()
 
   chNoUmiReads2
-  chReads = chUmiReadsConcat.concat(chNoUmiReads).view()
+
+  chReads = chUmiReads.concat(chNoUmiReads)
 
   // Get name of reads without UMIs
   /*seqkitSeq(
-    chNoUmiReads // reads without umi in R1 and R2
+    chNoUmi // reads without umi in R1 and R2
   )
   chVersions = chVersions.mix(seqkitSeq.out.versions)*/
 
