@@ -235,7 +235,7 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
-  // Merge BAM of batchs but still keep the number of total batchs info in meta.part
+  // Merge BAM of batchs but still keep the number of total number of batchs info in meta.part
   // meta.chunk (==batch number) info is deleted
   chAlignedBams = starAlign.out.bam
     .map{meta, bam ->
