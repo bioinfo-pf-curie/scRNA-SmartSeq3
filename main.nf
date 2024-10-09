@@ -209,8 +209,7 @@ workflow {
   chNoUmiReads // V660_part1_noUMIinR2.R1.fastq.gz, V660_part1_noUMIinR2.R2.fastq.gz
 
   chNoUmiReads2=chNoUmiReads
-  .map{meta, fastqs ->
-    def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunck:meta.chunk ,part:meta.part, umi:"no"]
+  .map{meta, fastqs -> [[ meta.id, meta.name, meta.protocol, meta.chunk ,meta.part, umi:"no"], [fastqs]]
     }
 
   chNoUmiReads2.view()
