@@ -209,9 +209,12 @@ workflow {
   chNoUmiReads // V660_part1_noUMIinR2.R1.fastq.gz, V660_part1_noUMIinR2.R2.fastq.gz
 
   chNoUmiReads2=chNoUmiReads
-  .map{meta, fatsqs -> [ meta, umi:"no", [fastqs]]}
+  .map{meta, fastqs ->
+    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunck:meta.chunk ,part:meta.part, umi:"no"]
+    [newMeta, fastqs]
+    }.view()
 
-  chNoUmiReads2.view()
+  chNoUmiReads2
   chReads = chUmiReadsConcat.concat(chNoUmiReads).view()
 
   // Get name of reads without UMIs
