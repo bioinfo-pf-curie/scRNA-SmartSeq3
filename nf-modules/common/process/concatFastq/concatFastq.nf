@@ -13,7 +13,7 @@ process concatFastq {
   val(by)
 
   output:
-  tuple val(meta), path("*.concat.fastq.gz"), emit: reads
+  tuple val(meta), path("*_concat.R*.gz"), emit: reads
   path "versions.txt"                       , emit: versions
 
   when:
@@ -34,8 +34,8 @@ process concatFastq {
       def read1 = readList[(0..maxIdx).step(2)]
       def read2 = readList[(1..maxIdx).step(2)]
       """
-      zcat ${read1.join(' ')} > ${prefix}_R1.concat.fastq
-      zcat ${read2.join(' ')} > ${prefix}_R2.concat.fastq
+      zcat ${read1.join(' ')} > ${prefix}_concat.R1.fastq
+      zcat ${read2.join(' ')} > ${prefix}_concat.R2.fastq
       gzip *.fastq
       echo "gzip "\$(gzip --version | awk 'NR==1{print \$NF}') > versions.txt
       """
@@ -44,9 +44,9 @@ process concatFastq {
       def read2 = readList[(1..maxIdx).step(3)]
       def read3 = readList[(2..maxIdx).step(3)]
       """
-      zcat ${read1.join(' ')} > ${prefix}_R1.concat.fastq
-      zcat ${read2.join(' ')} > ${prefix}_R2.concat.fastq
-      zcat ${read3.join(' ')} > ${prefix}_R3.concat.fastq
+      zcat ${read1.join(' ')} > ${prefix}_concat.R1.fastq
+      zcat ${read2.join(' ')} > ${prefix}_concat.R2.fastq
+      zcat ${read3.join(' ')} > ${prefix}_concat.R3.fastq
       gzip *.fastq
       echo "gzip "\$(gzip --version | awk 'NR==1{print \$NF}') > versions.txt
       """

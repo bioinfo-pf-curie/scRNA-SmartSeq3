@@ -203,7 +203,7 @@ workflow {
     chUmiReads, 
     Channel.value(2)
   )
-  chUmiReadsConcat = concatFastq.out.reads //V660_R1.concat.fastq, V660_R2.concat.fastq
+  chUmiReadsConcat = concatFastq.out.reads //V660_chunk1_R1.concat.fastq.gz, V660_chunk1_R2.concat.fastq.gz
   chVersions = chVersions.mix(concatFastq.out.versions)
 
   chNoUmiReads // V660_part1_noUMIinR2.R1.fastq.gz, V660_part1_noUMIinR2.R2.fastq.gz
