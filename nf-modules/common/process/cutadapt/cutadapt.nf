@@ -22,12 +22,11 @@ process cutadapt {
   script:
   def prefix = task.ext.prefix ?: "${meta.id}"
   def args = task.ext.args ?: ''
-  def outputs = meta.singleEnd ? "-o ${prefix}_trimmed.fastq.gz" : "-o ${prefix}_trimmed_R1.fastq.gz -p ${prefix}_trimmed_R2.fastq.gz"
   """
   cutadapt \
     ${args} \
     --cores=${task.cpus} \
-    ${outputs} \
+    -o ${prefix}_trimmed_R1.fastq.gz -p ${prefix}_trimmed_R2.fastq.gz \
     ${reads} > ${prefix}_cutadapt.log
   echo "cutadapt "\$(cutadapt --version) > versions.txt
   """
