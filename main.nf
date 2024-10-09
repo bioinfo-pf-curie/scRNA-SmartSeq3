@@ -208,13 +208,13 @@ workflow {
 
   chUmiReads=chUmiReadsConcat
   .map{meta, fastqs ->
-    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunck:meta.chunk ,part:meta.part, umi:"umi"]
+    newMeta = [ meta, umi:"umi"]
     [newMeta, fastqs]
     }.view()
 
   chNoUmiReads=chNoUmi
   .map{meta, fastqs ->
-    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunck:meta.chunk ,part:meta.part, umi:"noUmi"]
+    newMeta = [ meta, umi:"noUmi"]
     [newMeta, fastqs]
     }.view()
 
