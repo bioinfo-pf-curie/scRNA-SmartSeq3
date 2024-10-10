@@ -154,6 +154,8 @@ include { samtoolsIndex as samtoolsIndexFilterUnaligned } from './nf-modules/com
 include { samtoolsIndex as samtoolsIndexFilterMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { featureCounts as featureCountsNonUmis} from './nf-modules/common/process/featureCounts/featureCounts'
+include { umitoolsCount as umitoolsCountUmi} from './nf-modules/common/process/featureCounts/umitoolsCount'
+
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 

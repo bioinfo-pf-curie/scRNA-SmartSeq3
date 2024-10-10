@@ -2,7 +2,7 @@
  * Umitools count UMIs to generate tab delimited matrix
  */
 
-process umiCount {
+process umitoolsCount {
   tag "${meta.id}"
   label 'umiTools'
   label 'lowCpu'
