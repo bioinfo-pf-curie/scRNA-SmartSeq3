@@ -267,14 +267,14 @@ workflow {
 
   filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai).view()
 
-  filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai)
+  /*filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai)
   .branch {
         umi: it[0].umi == "umi"
         noUmi: it[0].umi == "noUmi"
     }
     .set { chAlignedBams }
 
-    chAlignedBams.view()
+    chAlignedBams.view()*/
 
   //********************************************************
   // Assign UMI reads
