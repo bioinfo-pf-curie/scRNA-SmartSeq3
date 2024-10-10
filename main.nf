@@ -297,6 +297,11 @@ workflow {
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
+  umitoolsCountUmi(
+    featureCountsUmis.umi
+  )
+  chVersions = chVersions.mix(umitoolsCountUmi.out.versions)
+
   //********************************************************
   // Mark PCR reads duplicates non Non UMI reads
 
