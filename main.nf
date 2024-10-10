@@ -256,8 +256,8 @@ workflow {
      }
 
 
-  /*filterUnaligned(
-    chStar.out.bam
+ filterUnaligned(
+    chStar
   )
   chVersions = chVersions.mix(filterUnaligned.out.versions)
                                                                                                                                                                                                        
@@ -283,7 +283,7 @@ workflow {
   featureCountsUmis(
     chAlignedBams.umi.combine(chGtf)
   )
-  chVersions = chVersions.mix(featureCountsUmis.out.versions)*/
+  chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
 
   /***************TODO*************************
