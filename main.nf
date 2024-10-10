@@ -148,9 +148,13 @@ include { samtoolsFixmate } from './nf-modules/common/process/samtools/samtoolsF
 include { samtoolsSort } from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsMarkdup } from './nf-modules/common/process/samtools/samtoolsMarkdup'
 include { samtoolsFlagstat as markdupStat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
-include { samtoolsFilter } from './nf-modules/common/process/samtools/samtoolsFilter'
-include { samtoolsIndex as samtoolsIndexFilter } from './nf-modules/common/process/samtools/samtoolsIndex'
-include { featureCounts } from './nf-modules/common/process/featureCounts/featureCounts'
+include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
+include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
+include { samtoolsIndex as samtoolsIndexFilterUnaligned } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsIndex as samtoolsIndexFilterMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
+include { featureCounts as featureCountsNonUmis} from './nf-modules/common/process/featureCounts/featureCounts'
+
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -172,8 +176,6 @@ workflow {
   )
   chVersions = createBatchesFlow.out.versions
 
-  createBatchesFlow.out.reads.view() // V660_batch1.R2.fastq.gz]
-
   //********************************************************
   // Extract UMIs info 
 
@@ -183,8 +185,6 @@ workflow {
     Channel.value('R1')
   )
   ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
-
-  umiExtractR1.out.noumi.view() // V660_part1_noUMIinR1.R1.fastq.gz
 
   // extract UMIs in reverse reads (R2)
   umiExtractR2(
@@ -199,6 +199,7 @@ workflow {
     .join(umiExtractR2.out.fastq)
     .map{meta,umi1,umi2 -> [meta, [umi1[0], umi1[1], umi2[0], umi2[1]]]}
 
+  // concatenate R1 together and R2 together 
   concatFastq(
     chUmi, 
     Channel.value(2)
@@ -206,18 +207,17 @@ workflow {
   chUmiReadsConcat = concatFastq.out.reads //V660_chunk1_R1.concat.fastq.gz, V660_chunk1_R2.concat.fastq.gz
   chVersions = chVersions.mix(concatFastq.out.versions)
 
+  // add umi info into meta
   chUmiReads=chUmiReadsConcat
   .map{meta, fastqs ->
     newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunk:meta.chunk ,part:meta.part, umi:"umi"]
     [newMeta, fastqs]
-    }.view()
-
+    }
   chNoUmiReads=chNoUmi
   .map{meta, fastqs ->
     newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunk:meta.chunk ,part:meta.part, umi:"noUmi"]
     [newMeta, fastqs]
-    }.view()
-
+    }
   chReads = chUmiReads.concat(chNoUmiReads)
 
   // Get name of reads without UMIs
@@ -233,8 +233,6 @@ workflow {
   )
   chVersions = chVersions.mix(cutadapt.out.versions)
 
-  cutadapt.out.fastq.view()
-
   //********************************************************
   // Sequence alignement
 
@@ -247,7 +245,7 @@ workflow {
 
   // Merge BAM of batchs but still keep the number of total number of batchs info in meta.part
   // meta.chunk (==batch number) info is deleted
-  chAlignedBams = starAlign.out.bam
+  chStar = starAlign.out.bam
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part ]
        [ groupKey(newMeta, meta.part), bam ]
@@ -256,6 +254,41 @@ workflow {
        single: it[0].part <= 1 // if only one batch
        multiple: it[0].part > 1 // if several batchs
      }
+
+  filterUnaligned(
+    chStar.out.bam
+  )
+  chVersions = chVersions.mix(filterUnaligned.out.versions)
+                                                                                                                                                                                                       
+  samtoolsIndexFilterUnaligned(
+    filterUnaligned.out.bam
+  )
+  chVersions = chVersions.mix(samtoolsIndexFilterUnaligned.out.versions)
+
+  filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai).view()
+
+  filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai)
+  .branch {
+        umi: it[0].umi == "umi"
+        noUmi: it[0].umi == "noUmi"
+    }
+    .set { chAlignedBams }
+
+    chAlignedBams.view()
+
+  //********************************************************
+  // Assign UMI reads
+
+  featureCountsUmis(
+    chAlignedBams.umi.combine(chGtf)
+  )
+  chVersions = chVersions.mix(featureCountsUmis.out.versions)
+
+
+  /***************TODO*************************
+  samtools merge umi+nonUMI
+  samtools stats 
+  preseq
 
   samtoolsMerge(
     chAlignedBams.multiple
@@ -268,11 +301,12 @@ workflow {
     Channel.value([])
   )
   chVersions = chVersions.mix(samtoolsStats.out.versions)
+  *****************************************/
 
   //********************************************************
-  // Mark PCR reads duplicates
+  // Mark PCR reads duplicates non Non UMI reads
 
-  samtoolsFixmate(
+  /*samtoolsFixmate(
     chBams
   )
   chVersions = chVersions.mix(samtoolsFixmate.out.versions)
@@ -282,7 +316,7 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsSort.out.versions)
 
-  /*samtoolsMarkdup(
+  samtoolsMarkdup(
     samtoolsSort.out.bam
   )
   chVersions = chVersions.mix(samtoolsMarkdup.out.versions)
@@ -294,9 +328,9 @@ workflow {
   chVersions = chVersions.mix(markdupStat.out.versions)
 
   //********************************************************
-  // Filter out aligned reads
+  // Filter out pcr duplicates
   
-  samtoolsFilter(
+  filterMarkdup(
     samtoolsMarkdup.out.bam
   )
   chVersions = chVersions.mix(samtoolsFilter.out.versions)
@@ -304,16 +338,9 @@ workflow {
   samtoolsIndexFilter(
     samtoolsFilter.out.bam
   )
-  chVersions = chVersions.mix(samtoolsIndexFilter.out.versions)
+  chVersions = chVersions.mix(samtoolsIndexFilter.out.versions)*/
 
-  //********************************************************
-  // Assign all reads 
-
-  featureCounts(
-    samtoolsFilter.out.bam.join(samtoolsIndexFilter.out.bai).combine(chGtf)
-  )
-  chVersions = chVersions.mix(featureCounts.out.versions)*/
-
+  
   // subroutines
   //outputDocumentation(
   //  outputDocsCh,
