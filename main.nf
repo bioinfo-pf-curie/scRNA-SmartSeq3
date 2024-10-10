@@ -146,6 +146,7 @@ include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMer
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 include { samtoolsFixmate } from './nf-modules/common/process/samtools/samtoolsFixmate'
 include { samtoolsSort } from './nf-modules/common/process/samtools/samtoolsSort'
+include { samtoolsSort as samtoolsSortFeatureCounts} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsMarkdup } from './nf-modules/common/process/samtools/samtoolsMarkdup'
 include { samtoolsFlagstat as markdupStat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
@@ -300,14 +301,18 @@ workflow {
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
-  samtoolsIndexFeatureCounts(
+  samtoolsSortFeatureCounts(
     featureCountsUmis.out.bam
+  )
+  chVersions = chVersions.mix(samtoolsSort.out.versions)
+
+  samtoolsIndexFeatureCounts(
+    samtoolsSortFeatureCounts.out.bam
   )
   chVersions = chVersions.mix(samtoolsIndexFeatureCounts.out.versions)
 
-
   umitoolsCountUmi(
-    featureCountsUmis.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
+    samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
   )
   chVersions = chVersions.mix(umitoolsCountUmi.out.versions)
 
