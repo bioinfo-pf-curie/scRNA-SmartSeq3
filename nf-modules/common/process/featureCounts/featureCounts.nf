@@ -12,6 +12,7 @@ process featureCounts{
   tuple val(meta), path(bams), path(bai), path(annot)
 
   output:
+  tuple val(meta), path("*bam"), emit: bam
   tuple val(meta), path("*csv"), emit: counts
   path("*summary"), emit: logs
   path("versions.txt"), emit: versions 
