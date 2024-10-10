@@ -280,7 +280,8 @@ workflow {
     }
     .set { chAlignedBams }
 
-    chAlignedBams.view()
+    chAlignedBams.umi.view()
+    chAlignedBams.noUmi.view()
 
   //********************************************************
   // Assign UMI reads
