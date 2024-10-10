@@ -247,7 +247,7 @@ workflow {
   // meta.chunk (==batch number) info is deleted
   chStar = starAlign.out.bam
     .map{meta, bam ->
-       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part ]
+       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part, umi:meta.umi]
        [ groupKey(newMeta, meta.part), bam ]
      }.groupTuple()
      .branch {
@@ -255,9 +255,14 @@ workflow {
        multiple: it[0].part > 1 // if several batchs
      }
 
+  samtoolsMerge(
+    chStar.multiple
+  )
+  chBams = samtoolsMerge.out.bam.mix(chStar.single)
+  chVersions = chVersions.mix(samtoolsMerge.out.versions)
 
- filterUnaligned(
-    chStar
+  filterUnaligned(
+    chBams
   )
   chVersions = chVersions.mix(filterUnaligned.out.versions)
                                                                                                                                                                                                        
