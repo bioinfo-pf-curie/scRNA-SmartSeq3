@@ -260,14 +260,14 @@ workflow {
   )
   chVersions = chVersions.mix(filterUnaligned.out.versions)
                                                                                                                                                                                                        
-  samtoolsIndexFilterUnaligned(
+  /*samtoolsIndexFilterUnaligned(
     filterUnaligned.out.bam
   )
   chVersions = chVersions.mix(samtoolsIndexFilterUnaligned.out.versions)
 
   filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai).view()
 
-  /*filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai)
+  filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai)
   .branch {
         umi: it[0].umi == "umi"
         noUmi: it[0].umi == "noUmi"
