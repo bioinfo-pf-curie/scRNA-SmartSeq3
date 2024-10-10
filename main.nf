@@ -255,12 +255,13 @@ workflow {
        multiple: it[0].part > 1 // if several batchs
      }
 
-  filterUnaligned(
+
+  /*filterUnaligned(
     chStar.out.bam
   )
   chVersions = chVersions.mix(filterUnaligned.out.versions)
                                                                                                                                                                                                        
-  /*samtoolsIndexFilterUnaligned(
+  samtoolsIndexFilterUnaligned(
     filterUnaligned.out.bam
   )
   chVersions = chVersions.mix(samtoolsIndexFilterUnaligned.out.versions)
