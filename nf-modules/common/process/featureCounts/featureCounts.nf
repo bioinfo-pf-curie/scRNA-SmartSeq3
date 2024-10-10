@@ -29,7 +29,7 @@ process featureCounts{
       featureCountsDirection = 2
   }
   def peOpts = meta.single_end ? '' : '-p'
-  def prefix = task.ext.prefix ?: "${meta.id}"
+  def prefix = task.ext.prefix ?: "${bam.baseName}"
   def inOpts = annot.toString().endsWith('.saf') ? "-F SAF" : ""
   """
   echo \$(featureCounts -v 2>&1 | sed '/^\$/d') > versions.txt

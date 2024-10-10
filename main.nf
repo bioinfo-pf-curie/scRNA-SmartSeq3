@@ -145,7 +145,7 @@ include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 include { samtoolsFixmate } from './nf-modules/common/process/samtools/samtoolsFixmate'
-include { samtoolsSort } from './nf-modules/common/process/samtools/samtoolsSort'
+//include { samtoolsSort } from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortFeatureCounts} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsMarkdup } from './nf-modules/common/process/samtools/samtoolsMarkdup'
 include { samtoolsFlagstat as markdupStat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
@@ -304,7 +304,7 @@ workflow {
   samtoolsSortFeatureCounts(
     featureCountsUmis.out.bam
   )
-  chVersions = chVersions.mix(samtoolsSort.out.versions)
+  chVersions = chVersions.mix( samtoolsSortFeatureCounts.out.versions)
 
   samtoolsIndexFeatureCounts(
     samtoolsSortFeatureCounts.out.bam

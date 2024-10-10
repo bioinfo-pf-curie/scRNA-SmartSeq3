@@ -20,6 +20,7 @@ process samtoolsMerge{
 
   script:
   def args = task.ext.args ?: ''
+  def prefix = task.ext.prefix ?: "${bam.baseName}"
   inputs = bams.collect{"${it}"}.join(' ')
   """
   samtools merge --threads ${task.cpus} ${args} ${meta.id}_merged.bam ${inputs}

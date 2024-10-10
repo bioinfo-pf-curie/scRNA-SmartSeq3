@@ -17,7 +17,7 @@ process umitoolsCount {
 
   script:
   def args = task.ext.args ?: ''
-  def prefix = task.ext.prefix ?: "${meta.id}"
+  def prefix = task.ext.prefix ?: "${bam.baseName}"
   """
   umi_tools count ${args} \\
     -I ${bam} -S ${prefix}_matrix.tsv.gz > ${prefix}_UmiCounts.log

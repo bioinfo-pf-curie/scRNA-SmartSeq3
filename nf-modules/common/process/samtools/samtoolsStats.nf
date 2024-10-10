@@ -21,7 +21,7 @@ process samtoolsStats {
 
   script:
   def args = task.ext.args ?: ''
-  def prefix = task.ext.prefix ?: "${meta.id}"
+  def prefix = task.ext.prefix ?: "${bam.baseName}"
   targetOpts = bed ? "-t ${bed}" : ""
   """
   echo \$(samtools --version | head -1) > versions.txt
