@@ -6,7 +6,6 @@ process umitoolsCount {
   tag "${meta.id}"
   label 'umiTools'
   label 'lowCpu'
-  label 'medMem'
 
   input: 
   tuple val(meta), path(bam)

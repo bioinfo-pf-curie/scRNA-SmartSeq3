@@ -300,7 +300,7 @@ workflow {
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
   umitoolsCountUmi(
-    featureCountsUmis
+    featureCountsUmis.out.bam
   )
   chVersions = chVersions.mix(umitoolsCountUmi.out.versions)
 
