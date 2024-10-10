@@ -8,7 +8,7 @@ process umitoolsCount {
   label 'lowCpu'
 
   input: 
-  tuple val(meta), path(bam)
+  tuple val(meta), path(bam), path(bai)
 
   output:
   tuple val(meta), path("*_matrix.tsv.gz"), emit: matrix
