@@ -261,6 +261,14 @@ workflow {
   chBams = samtoolsMerge.out.bam.mix(chStar.single)
   chVersions = chVersions.mix(samtoolsMerge.out.versions)
 
+  samtoolsStats(
+    chBams,
+    Channel.value([])
+  )
+  chVersions = chVersions.mix(samtoolsStats.out.versions)
+
+  ////* rajouter preseq ici *////
+
   filterUnaligned(
     chBams
   )
@@ -270,8 +278,6 @@ workflow {
     filterUnaligned.out.bam
   )
   chVersions = chVersions.mix(samtoolsIndexFilterUnaligned.out.versions)
-
-  filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai).view()
 
   filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai)
   .branch {
@@ -290,25 +296,6 @@ workflow {
     chAlignedBams.umi.combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
-
-
-  /***************TODO*************************
-  samtools merge umi+nonUMI
-  samtools stats 
-  preseq
-
-  samtoolsMerge(
-    chAlignedBams.multiple
-  )
-  chBams = samtoolsMerge.out.bam.mix(chAlignedBams.single)
-  chVersions = chVersions.mix(samtoolsMerge.out.versions)
-
-  samtoolsStats(
-    chBams,
-    Channel.value([])
-  )
-  chVersions = chVersions.mix(samtoolsStats.out.versions)
-  *****************************************/
 
   //********************************************************
   // Mark PCR reads duplicates non Non UMI reads
