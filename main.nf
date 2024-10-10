@@ -274,7 +274,7 @@ workflow {
     }
     .set { chAlignedBams }
 
-    chAlignedBams.view()*/
+    chAlignedBams.view()
 
   //********************************************************
   // Assign UMI reads
@@ -282,7 +282,7 @@ workflow {
   featureCountsUmis(
     chAlignedBams.umi.combine(chGtf)
   )
-  chVersions = chVersions.mix(featureCountsUmis.out.versions)
+  chVersions = chVersions.mix(featureCountsUmis.out.versions)*/
 
 
   /***************TODO*************************
