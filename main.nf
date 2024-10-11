@@ -259,8 +259,10 @@ workflow {
        multiple: it[0].part > 1 // if several batchs
      }
 
+  chStar.multiple.view()
+
   samtoolsMerge(
-    chStar.multiple.bam
+    chStar.multiple
   )
   chBams = samtoolsMerge.out.bam.mix(chStar.single)
   chVersions = chVersions.mix(samtoolsMerge.out.versions)
