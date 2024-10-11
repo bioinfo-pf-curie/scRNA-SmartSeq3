@@ -156,6 +156,7 @@ include { samtoolsIndex as samtoolsIndexFilterMarkdup } from './nf-modules/commo
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { featureCounts as featureCountsNonUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountUmi} from './nf-modules/common/process/umitools/umitoolsCount'
+include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
 include { samtoolsIndex as samtoolsIndexFeatureCounts} from './nf-modules/common/process/samtools/samtoolsIndex'
 
 
@@ -310,6 +311,12 @@ workflow {
     samtoolsSortFeatureCounts.out.bam
   )
   chVersions = chVersions.mix(samtoolsIndexFeatureCounts.out.versions)
+
+  umitoolsDedup(
+    samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
+  )
+  chUmiDedup=umitoolsDedup.out.bam
+  chVersions = chVersions.mix(umitoolsCountUmi.out.versions)
 
   umitoolsCountUmi(
     samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)

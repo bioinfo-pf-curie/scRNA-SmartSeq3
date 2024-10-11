@@ -1,8 +1,8 @@
 /*
- * Umitools count UMIs to generate tab delimited matrix
+ * Umitools remove PCR duplicates
  */
 
-process umitoolsCount {
+process umitoolsDedup {
   tag "${meta.id}"
   label 'umiTools'
   label 'lowCpu'
@@ -11,7 +11,7 @@ process umitoolsCount {
   tuple val(meta), path(bam), path(bai)
 
   output:
-  tuple val(meta), path("*_matrix.tsv.gz"), emit: matrix
+  tuple val(meta), path("*.bam"), emit: bam
   tuple val(meta), path("*.log"), emit: log
   path("versions.txt"), emit: versions
 
@@ -20,7 +20,7 @@ process umitoolsCount {
   def prefix = task.ext.prefix ?: "${bam.baseName}"
   """
   umi_tools count ${args} \\
-    -I ${bam} -S ${prefix}_matrix.tsv.gz > ${prefix}_umitoolsCount.log
+    -I ${bam} -S ${prefix}_umitoolsDedup.bam > ${prefix}_umitoolsDedup.log
   umi_tools --version | cut -f1,3 -d" " &> versions.txt
   """
 }
