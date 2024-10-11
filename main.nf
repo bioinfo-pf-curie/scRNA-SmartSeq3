@@ -260,7 +260,7 @@ workflow {
      }
 
   samtoolsMerge(
-    chStar.multiple
+    chStar.multiple.bam
   )
   chBams = samtoolsMerge.out.bam.mix(chStar.single)
   chVersions = chVersions.mix(samtoolsMerge.out.versions)

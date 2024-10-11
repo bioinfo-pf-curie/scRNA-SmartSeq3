@@ -23,7 +23,7 @@ process samtoolsMerge{
   def prefix = task.ext.prefix ?: "${bam.baseName}"
   inputs = bams.collect{"${it}"}.join(' ')
   """
-  samtools merge --threads ${task.cpus} ${args} ${meta.id}_merged.bam ${inputs}
+  samtools merge --threads ${task.cpus} ${args} ${prefix}_merged.bam ${inputs}
   echo \$(samtools --version | head -1) > versions.txt
   """
 }
