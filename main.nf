@@ -316,7 +316,7 @@ workflow {
     samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
   )
   chUmiDedup=umitoolsDedup.out.bam
-  chVersions = chVersions.mix(umitoolsCountUmi.out.versions)
+  chVersions = chVersions.mix(umitoolsDedup.out.versions)
 
   umitoolsCountUmi(
     samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
