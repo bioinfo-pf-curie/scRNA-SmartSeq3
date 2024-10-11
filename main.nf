@@ -261,8 +261,6 @@ workflow {
 
   chStar.multiple.view()
 
-  chStar.multiple.collect{"${it}"}.join(' ').view()
-
   samtoolsMerge(
     chStar.multiple
   )
