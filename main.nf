@@ -132,6 +132,7 @@ sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readDir)
 
 // Workflows
 include { createBatchesFlow } from './nf-modules/common/subworkflow/createBatchesFlow'
+include { markdupFlow } from './nf-modules/common/subworkflow/markdupFlow'
 
 // Process
 include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftwareVersions'
@@ -144,21 +145,19 @@ include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
-include { samtoolsFixmate } from './nf-modules/common/process/samtools/samtoolsFixmate'
 //include { samtoolsSort } from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortFeatureCounts} from './nf-modules/common/process/samtools/samtoolsSort'
-include { samtoolsMarkdup } from './nf-modules/common/process/samtools/samtoolsMarkdup'
-include { samtoolsFlagstat as markdupStat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
+
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
-include { samtoolsIndex as samtoolsIndexFilterUnaligned } from './nf-modules/common/process/samtools/samtoolsIndex'
-include { samtoolsIndex as samtoolsIndexFilterMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsIndex as samtoolsIndexAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsIndex as samtoolsIndexFeatureCounts} from './nf-modules/common/process/samtools/samtoolsIndex'
+
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { featureCounts as featureCountsNonUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountUmi} from './nf-modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
-include { samtoolsIndex as samtoolsIndexFeatureCounts} from './nf-modules/common/process/samtools/samtoolsIndex'
-
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 
@@ -279,12 +278,12 @@ workflow {
   )
   chVersions = chVersions.mix(filterUnaligned.out.versions)
                                                                                                                                                                                                        
-  samtoolsIndexFilterUnaligned(
+  samtoolsIndexAligned(
     filterUnaligned.out.bam
   )
-  chVersions = chVersions.mix(samtoolsIndexFilterUnaligned.out.versions)
+  chVersions = chVersions.mix(samtoolsIndexAligned.out.versions)
 
-  filterUnaligned.out.bam.join(samtoolsIndexFilterUnaligned.out.bai)
+  filterUnaligned.out.bam.join(samtoolsIndexAligned.out.bai)
   .branch {
         umi: it[0].umi == "umi"
         noUmi: it[0].umi == "noUmi"
@@ -326,41 +325,27 @@ workflow {
   //********************************************************
   // Mark PCR reads duplicates non Non UMI reads
 
-  /*samtoolsFixmate(
-    chBams
+  markdupFlow(
+    chAlignedBams.noUmi
   )
-  chVersions = chVersions.mix(samtoolsFixmate.out.versions)
-
-  samtoolsSort(
-    samtoolsFixmate.out.bam
-  )
-  chVersions = chVersions.mix(samtoolsSort.out.versions)
-
-  samtoolsMarkdup(
-    samtoolsSort.out.bam
-  )
-  chVersions = chVersions.mix(samtoolsMarkdup.out.versions)
-
-  // Stats on mapped reads including duplicates
-  markdupStat(
-    samtoolsMarkdup.out.bam
-  )
-  chVersions = chVersions.mix(markdupStat.out.versions)
+  chVersions = chVersions.mix(markdupFlow.out.versions)
 
   //********************************************************
   // Filter out pcr duplicates
   
   filterMarkdup(
-    samtoolsMarkdup.out.bam
+    markdupFlow.out.bam
   )
-  chVersions = chVersions.mix(samtoolsFilter.out.versions)
+  chVersions = chVersions.mix(filterMarkdup.out.versions)
                                                                                                                                                                                                        
-  samtoolsIndexFilter(
+  samtoolsIndexMarkdup(
     samtoolsFilter.out.bam
   )
-  chVersions = chVersions.mix(samtoolsIndexFilter.out.versions)*/
+  chVersions = chVersions.mix(samtoolsIndexMarkdup.out.versions)*/
 
-  
+  // featureCountsNoUmis
+  // umitoolsCountNoUmis
+
   // subroutines
   //outputDocumentation(
   //  outputDocsCh,
