@@ -340,9 +340,9 @@ workflow {
   chVersions = chVersions.mix(filterMarkdup.out.versions)
                                                                                                                                                                                                        
   samtoolsIndexMarkdup(
-    samtoolsFilter.out.bam
+    filterMarkdup.out.bam
   )
-  chVersions = chVersions.mix(samtoolsIndexMarkdup.out.versions)*/
+  chVersions = chVersions.mix(samtoolsIndexMarkdup.out.versions)
 
   // featureCountsNoUmis
   // umitoolsCountNoUmis
