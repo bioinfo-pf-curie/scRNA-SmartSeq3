@@ -2,6 +2,7 @@ include { samtoolsMarkdup } from '../process/samtools/samtoolsMarkdup'
 include { samtoolsFlagstat } from '../process/samtools/samtoolsFlagstat'
 include { samtoolsFixmate } from '../process/samtools/samtoolsFixmate'
 include { samtoolsSort } from '../process/samtools/samtoolsSort'
+include { samtoolsCollate } from '../process/samtools/samtoolsCollate'
 
 workflow markdupFlow {
 
@@ -11,8 +12,13 @@ workflow markdupFlow {
   main:
   chVersions = Channel.empty()
 
-  samtoolsFixmate(
+  samtoolsCollate(
     bam
+  )
+  chVersions = chVersions.mix(samtoolsSort.out.versions)
+
+  samtoolsFixmate(
+    samtoolsCollate.out.bam
   )
   chVersions = chVersions.mix(samtoolsFixmate.out.versions)
 

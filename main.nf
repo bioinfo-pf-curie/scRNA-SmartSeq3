@@ -145,18 +145,20 @@ include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
-include { samtoolsSort as samtoolsSortFeatureCounts} from './nf-modules/common/process/samtools/samtoolsSort'
 
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsIndex as samtoolsIndexAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
-include { samtoolsIndex as samtoolsIndexFeatureCounts} from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
+include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
 
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
-include { featureCounts as featureCountsNonUmis} from './nf-modules/common/process/featureCounts/featureCounts'
-include { umitoolsCount as umitoolsCountUmi} from './nf-modules/common/process/umitools/umitoolsCount'
+include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
+
+include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
+include { umitoolsCount as umitoolsCountNoUmis} from './nf-modules/common/process/umitools/umitoolsCount'
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 
@@ -300,28 +302,28 @@ workflow {
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
-  samtoolsSortFeatureCounts(
+  samtoolsSortUmis(
     featureCountsUmis.out.bam
   )
-  chVersions = chVersions.mix( samtoolsSortFeatureCounts.out.versions)
+  chVersions = chVersions.mix( samtoolsSortUmis.out.versions)
 
-  samtoolsIndexFeatureCounts(
-    samtoolsSortFeatureCounts.out.bam
+  samtoolsIndexUmis(
+    samtoolsSortUmis.out.bam
   )
-  chVersions = chVersions.mix(samtoolsIndexFeatureCounts.out.versions)
+  chVersions = chVersions.mix(samtoolsIndexUmis.out.versions)
   
+  // generate matrix
+  umitoolsCountUmis(
+    samtoolsSortUmis.out.bam.join(samtoolsIndexUmis.out.bai)
+  )
+  chVersions = chVersions.mix(umitoolsCountUmis.out.versions)
+
   // generate dedup bam
   umitoolsDedup(
-    samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
+    samtoolsSortUmis.out.bam.join(samtoolsIndexUmis.out.bai)
   )
   chUmiDedup=umitoolsDedup.out.bam
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
-  
-  // generate matrix
-  umitoolsCountUmi(
-    samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
-  )
-  chVersions = chVersions.mix(umitoolsCountUmi.out.versions)
 
   //********************************************************
   // Mark PCR reads duplicates non UMI reads
@@ -344,8 +346,30 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsIndexMarkdup.out.versions)
 
-  // featureCountsNoUmis
-  // umitoolsCountNoUmis
+  //********************************************************
+  // Assign non UMI reads
+
+  featureCountsNoUmis(
+    chAlignedBams.noUmi.combine(chGtf)
+  )
+  chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
+
+  samtoolsSortNoUmis(
+    featureCountsNoUmis.out.bam
+  )
+  chVersions = chVersions.mix( samtoolsSortNoUmis.out.versions)
+
+  samtoolsIndexNoUmis(
+    samtoolsSortNoUmis.out.bam
+  )
+  chVersions = chVersions.mix(samtoolsIndexNoUmis.out.versions)
+  
+  // generate matrix
+  umitoolsCountNoUmis(
+    samtoolsSortNoUmis.out.bam.join(samtoolsIndexNoUmis.out.bai)
+  )
+  chVersions = chVersions.mix(umitoolsCountNoUmis.out.versions)
+
 
   // subroutines
   //outputDocumentation(
