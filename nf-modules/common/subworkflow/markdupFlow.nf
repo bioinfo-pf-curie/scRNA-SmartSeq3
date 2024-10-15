@@ -1,6 +1,6 @@
-include { samtoolsMarkdup } from './nf-modules/common/process/samtools/samtoolsMarkdup'
-include { samtoolsFlagstat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
-include { samtoolsFixmate } from './nf-modules/common/process/samtools/samtoolsFixmate'
+include { samtoolsMarkdup } from '../process/samtools/samtoolsMarkdup'
+include { samtoolsFlagstat } from '../process/samtools/samtoolsFlagstat'
+include { samtoolsFixmate } from '../process/samtools/samtoolsFixmate'
 
 workflow markdupFlow {
 
