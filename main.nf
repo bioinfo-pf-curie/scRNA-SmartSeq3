@@ -145,7 +145,6 @@ include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
-//include { samtoolsSort } from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortFeatureCounts} from './nf-modules/common/process/samtools/samtoolsSort'
 
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
@@ -325,7 +324,7 @@ workflow {
   chVersions = chVersions.mix(umitoolsCountUmi.out.versions)
 
   //********************************************************
-  // Mark PCR reads duplicates non Non UMI reads
+  // Mark PCR reads duplicates non UMI reads
 
   markdupFlow(
     chAlignedBams.noUmi
