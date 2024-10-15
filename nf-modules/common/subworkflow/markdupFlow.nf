@@ -15,7 +15,7 @@ workflow markdupFlow {
   samtoolsCollate(
     bam
   )
-  chVersions = chVersions.mix(samtoolsSort.out.versions)
+  chVersions = chVersions.mix(samtoolsCollate.out.versions)
 
   samtoolsFixmate(
     samtoolsCollate.out.bam
