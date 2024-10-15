@@ -158,6 +158,7 @@ include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
 
 
+include { samtoolsIndex as samtoolsIndexNoUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsSort as samtoolsSortNoUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountNoUmis} from './nf-modules/common/process/umitools/umitoolsCount'
