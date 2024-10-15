@@ -2,7 +2,7 @@ include { samtoolsMarkdup } from './nf-modules/common/process/samtools/samtoolsM
 include { samtoolsFlagstat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
 include { samtoolsFixmate } from './nf-modules/common/process/samtools/samtoolsFixmate'
 
-workflow createBatchesFlow {
+workflow markdupFlow {
 
   take:
   bam

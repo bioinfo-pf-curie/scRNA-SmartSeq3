@@ -310,13 +310,15 @@ workflow {
     samtoolsSortFeatureCounts.out.bam
   )
   chVersions = chVersions.mix(samtoolsIndexFeatureCounts.out.versions)
-
+  
+  // generate dedup bam
   umitoolsDedup(
     samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
   )
   chUmiDedup=umitoolsDedup.out.bam
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
-
+  
+  // generate matrix
   umitoolsCountUmi(
     samtoolsSortFeatureCounts.out.bam.join(samtoolsIndexFeatureCounts.out.bai)
   )
