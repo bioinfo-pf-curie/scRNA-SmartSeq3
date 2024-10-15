@@ -350,7 +350,7 @@ workflow {
   // Assign non UMI reads
 
   featureCountsNoUmis(
-    chAlignedBams.noUmi.combine(chGtf)
+    filterMarkdup.out.bam.join(samtoolsIndexMarkdup.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
