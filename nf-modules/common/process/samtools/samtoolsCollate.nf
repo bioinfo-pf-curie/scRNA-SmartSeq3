@@ -9,7 +9,7 @@ process samtoolsCollate {
   label 'medMem'
 
   input:
-  tuple val(meta), path (bam)
+  tuple val(meta), path (bam), path(bai)
 
   output:
   tuple val(meta), path ("*_collate.bam"), emit: bam

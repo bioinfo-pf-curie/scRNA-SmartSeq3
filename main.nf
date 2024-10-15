@@ -332,7 +332,7 @@ workflow {
   // Mark PCR reads duplicates non UMI reads
 
   markdupFlow(
-    chAlignedBams.noUmi
+    chAlignedBams.noUmi.bam
   )
   chVersions = chVersions.mix(markdupFlow.out.versions)
 
