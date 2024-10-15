@@ -1,5 +1,5 @@
 include { samtoolsMarkdup } from './nf-modules/common/process/samtools/samtoolsMarkdup'
-include { samtoolsFlagstat as markdupStat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
+include { samtoolsFlagstat } from './nf-modules/common/process/samtools/samtoolsFlagstat'
 include { samtoolsFixmate } from './nf-modules/common/process/samtools/samtoolsFixmate'
 
 workflow createBatchesFlow {
@@ -11,7 +11,7 @@ workflow createBatchesFlow {
   chVersions = Channel.empty()
 
   samtoolsFixmate(
-    
+    bam
   )
   chVersions = chVersions.mix(samtoolsFixmate.out.versions)
 
