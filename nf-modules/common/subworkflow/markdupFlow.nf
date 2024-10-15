@@ -1,7 +1,7 @@
 include { samtoolsMarkdup } from '../process/samtools/samtoolsMarkdup'
 include { samtoolsFlagstat } from '../process/samtools/samtoolsFlagstat'
 include { samtoolsFixmate } from '../process/samtools/samtoolsFixmate'
-include { samtoolsSort } from './nf-modules/common/process/samtools/samtoolsSort'
+include { samtoolsSort } from '../process/samtools/samtoolsSort'
 
 workflow markdupFlow {
 
