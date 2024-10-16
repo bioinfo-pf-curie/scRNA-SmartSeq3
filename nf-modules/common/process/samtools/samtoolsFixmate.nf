@@ -22,7 +22,7 @@ process samtoolsFixmate {
   def args = task.ext.args ?: ''
   def prefix = task.ext.prefix ?: "${bam.baseName}"
   """
-  samtools fixmate \\
+  samtools fixmate -m \\
     -@  ${task.cpus}  \\
     ${bam} \\
     ${prefix}_fixmate.bam \\
