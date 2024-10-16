@@ -352,8 +352,6 @@ workflow {
   //********************************************************
   // Assign non UMI reads
 
-  filterMarkdup.out.bam.join(samtoolsIndexMarkdup.out.bai).combine(chGtf).view()
-
   featureCountsNoUmis(
     filterMarkdup.out.bam.join(samtoolsIndexMarkdup.out.bai).combine(chGtf)
   )
