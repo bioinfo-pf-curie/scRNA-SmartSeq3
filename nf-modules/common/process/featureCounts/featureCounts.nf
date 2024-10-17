@@ -39,6 +39,6 @@ process featureCounts{
                 -s ${featureCountsDirection} \\
                 ${peOpts} \\
                 ${args} \\
-                -O ${bams} 2> featureCounts_${prefix}.log
+                ${bams} 2> featureCounts_${prefix}.log
   """
 }

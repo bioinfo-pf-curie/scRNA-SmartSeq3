@@ -38,7 +38,6 @@ process starAlign {
        --runDirPerm All_RWX \\
        --outTmpDir "${params.tmpDir}/star_\$(date +%d%s%S%N)"\\
        --outFileNamePrefix ${prefix}  \\
-       --outSAMattrRGline ID:$meta.id \\
        ${gtfOpts} \\
        ${args}
 
