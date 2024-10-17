@@ -157,11 +157,8 @@ include { featureCounts as featureCountsUmis} from './nf-modules/common/process/
 include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
 
-
-include { samtoolsIndex as samtoolsIndexNoUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
-include { samtoolsSort as samtoolsSortNoUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
-include { umitoolsCount as umitoolsCountNoUmis} from './nf-modules/common/process/umitools/umitoolsCount'
+include { samtoolsFilter as filterUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 
@@ -251,9 +248,15 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
+  // Add barcodes as read tag
+  barcode2tag(
+    starAlign.out.bam.map{meta, bam -> [meta, bam, []]}
+  )
+  chVersions = chVersions.mix(barcode2tag.out.versions)
+
   // Merge BAM of batchs but still keep the number of total number of batchs info in meta.part
   // meta.chunk (==batch number) info is deleted
-  chStar = starAlign.out.bam
+  chStar = barcode2tag.out.bam
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part, umi:meta.umi]
        [ groupKey(newMeta, meta.part), bam ]
@@ -359,22 +362,14 @@ workflow {
 
   //samtools view -d XS:Assigned fastq_noUmi_dedup_filtered.bam.featureCounts_sorte
 
-  samtoolsSortNoUmis(
+  filterUnassigned(
     featureCountsNoUmis.out.bam
   )
-  chVersions = chVersions.mix( samtoolsSortNoUmis.out.versions)
+  chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
-  samtoolsIndexNoUmis(
-    samtoolsSortNoUmis.out.bam
+  featureCountsMatrix(
+    featureCountsNoUmis.out.counts
   )
-  chVersions = chVersions.mix(samtoolsIndexNoUmis.out.versions)
-  
-  // generate matrix
-  umitoolsCountNoUmis(
-    samtoolsSortNoUmis.out.bam.join(samtoolsIndexNoUmis.out.bai)
-  )
-  chVersions = chVersions.mix(umitoolsCountNoUmis.out.versions)
-
 
   // subroutines
   //outputDocumentation(
