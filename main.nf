@@ -159,6 +159,8 @@ include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDed
 
 include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { samtoolsFilter as filterUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
+include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
+include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 
