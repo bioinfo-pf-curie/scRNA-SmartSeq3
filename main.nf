@@ -143,6 +143,10 @@ include { umiExtract as umiExtractR2 } from './nf-modules/common/process/umitool
 include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
+
+include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
+include { barcode2tag} from './nf-modules/local/process/barcode2tag'
+
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 
@@ -162,7 +166,6 @@ include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDed
 include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { samtoolsFilter as filterUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
-include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 
@@ -213,7 +216,7 @@ workflow {
     chUmi, 
     Channel.value(2)
   )
-  chUmiReadsConcat = concatFastq.out.reads //V660_chunk1_R1.concat.fastq.gz, V660_chunk1_R2.concat.fastq.gz
+  chUmiReadsConcat = concatFastq.out.reads 
   chVersions = chVersions.mix(concatFastq.out.versions)
 
   // add umi info into meta
@@ -257,9 +260,13 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsIndexStar.out.versions)
 
+  barcodeListPerBatch(
+    starAlign.out.bam
+  )
+
   // Add barcodes as read tag
   barcode2tag(
-    starAlign.out.bam.join(samtoolsIndexStar.out.bai).map{meta, bam, bai -> [meta, bam, bai, []]}
+    starAlign.out.bam.join(samtoolsIndexStar.out.bai).join(barcodeListPerBatch.out.barcodes)
   )
   chVersions = chVersions.mix(barcode2tag.out.versions)
 

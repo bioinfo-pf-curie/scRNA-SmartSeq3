@@ -38,7 +38,7 @@ workflow createBatchesFlow {
   )
   chVersions = chVersions.mix(createBatches.out.versions)
 
-  // group by read pairs
+  // group by read pairs (R1 - R2)
   chPairedFastq = createBatches.out.reads
     .flatMap { it -> splitByPairs(it) }
     .collate(2)
