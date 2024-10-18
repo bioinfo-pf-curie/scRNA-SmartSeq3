@@ -144,7 +144,7 @@ include { concatFastq } from './nf-modules/common/process/concatFastq/concatFast
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
 
-
+include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
 
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
