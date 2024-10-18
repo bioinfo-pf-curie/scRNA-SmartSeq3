@@ -362,8 +362,7 @@ workflow {
   )
   chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
-  //samtools view -d XS:Assigned fastq_noUmi_dedup_filtered.bam.featureCounts_sorte
-
+  //samtools view -d XS:Assigned 
   filterUnassigned(
     featureCountsNoUmis.out.bam
   )
