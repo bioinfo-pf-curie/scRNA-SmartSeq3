@@ -144,8 +144,8 @@ include { concatFastq } from './nf-modules/common/process/concatFastq/concatFast
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
 
+
 include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
-include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
@@ -255,13 +255,18 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
+  samtoolsIndexStar(
+    starAlign.out.bam
+  )
+  chVersions = chVersions.mix(samtoolsIndexStar.out.versions)
+
   barcodeListPerBatch(
     starAlign.out.bam
   )
 
   // Add barcodes as read tag
   barcode2tag(
-    starAlign.out.bam.join(starAlign.out.bai).join(barcodeListPerBatch.out.barcodes)
+    starAlign.out.bam.join(samtoolsIndexStar.out.bai).join(barcodeListPerBatch.out.barcodes)
   )
   chVersions = chVersions.mix(barcode2tag.out.versions)
 
