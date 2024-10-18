@@ -9,7 +9,7 @@ process barcode2tag {
   label 'medMem'
 
   input:
-  tuple val(meta), path(bam), path(barcodes)
+  tuple val(meta), path(bam), path(bai), path(barcodes)
 
   output:
   tuple val(meta), path("*bam"), emit: bam
