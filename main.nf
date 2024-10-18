@@ -148,10 +148,12 @@ include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsSta
 
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
+include { samtoolsIndex as samtoolsIndexStar } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
-include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
+
+include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
@@ -249,6 +251,11 @@ workflow {
     chGtf
   )
   chVersions = chVersions.mix(starAlign.out.versions)
+
+  samtoolsIndexStar(
+    starAlign.out.bam
+  )
+  chVersions = chVersions.mix(samtoolsIndexStar.out.versions)
 
   // Add barcodes as read tag
   barcode2tag(
