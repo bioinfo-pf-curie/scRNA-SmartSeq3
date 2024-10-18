@@ -255,18 +255,13 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
-  samtoolsIndexStar(
-    starAlign.out.bam
-  )
-  chVersions = chVersions.mix(samtoolsIndexStar.out.versions)
-
   barcodeListPerBatch(
     starAlign.out.bam
   )
 
   // Add barcodes as read tag
   barcode2tag(
-    starAlign.out.bam.join(samtoolsIndexStar.out.bai).join(barcodeListPerBatch.out.barcodes)
+    starAlign.out.bam.join(starAlign.out.bai).join(barcodeListPerBatch.out.barcodes)
   )
   chVersions = chVersions.mix(barcode2tag.out.versions)
 

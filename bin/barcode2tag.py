@@ -75,7 +75,7 @@ def add_tag_to_BAM(bam, output, header, tag):
     for count, read in enumerate(bamfile.fetch(until_eof=True)):
         name = read.query_name
         read_group = name.split("_")[-1]
-        read.qname = ' '.join(name.split("_")[:-1])
+        #read.qname = ' '.join(name.split("_")[:-1])
         new_tags = read.get_tags()
         new_tags.append((tag, read_group))
         read.set_tags(new_tags)
