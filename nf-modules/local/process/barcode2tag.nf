@@ -20,7 +20,7 @@ process barcode2tag {
   def args = task.ext.args ?: ''
   def barcodesOpts = barcodes ? "--barcode ${barcodes}" : ''
   """
-  barcode2tag.py -i ${bam} -o ${prefix}_BCtag.bam ${barcodesOpts} -SM ${meta.id} ${args} 2> ${prefix}_barcode2rg.log
+  barcode2tag.py -i ${bam} -o ${prefix}_BCtag.bam ${barcodesOpts} -SM ${meta.id} --tag ${params.barcodeTag} ${args} 2> ${prefix}_barcode2rg.log
   echo \$(python --version 2>&1) > versions.txt 
   """
 }
