@@ -259,7 +259,7 @@ workflow {
 
   // Add barcodes as read tag
   barcode2tag(
-    starAlign.out.bam.map{meta, bam -> [meta, bam, []]}
+    starAlign.out.bam.join(samtoolsIndexStar.out.bai).map{meta, bam, bai -> [meta, bam, bai, []]}
   )
   chVersions = chVersions.mix(barcode2tag.out.versions)
 

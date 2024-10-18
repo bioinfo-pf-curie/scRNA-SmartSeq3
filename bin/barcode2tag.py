@@ -61,7 +61,7 @@ def add_RG_to_header(header, barcodes, sname):
                 barcode_rg.append(RG_template)
 
     header['RG']=barcode_rg
-    return new_header
+    return header
 
 def add_tag_to_BAM(bam, output, header, tag):
     """Generates the correct @RG header and adds a RG field to a bam file."""
