@@ -383,7 +383,8 @@ workflow {
   chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
   featureCountsMatrix(
-    featureCountsNoUmis.out.counts
+    featureCountsNoUmis.out.counts,
+    filterMarkdup.out.bam
   )
 
   // subroutines
