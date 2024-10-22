@@ -149,7 +149,6 @@ include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBa
 
 include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
-
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsIndex as samtoolsIndexStar } from './nf-modules/common/process/samtools/samtoolsIndex'
@@ -158,7 +157,6 @@ include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/proc
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
 
 include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
-
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
@@ -167,6 +165,8 @@ include { featureCounts as featureCountsNoUmis} from './nf-modules/common/proces
 include { samtoolsFilter as filterUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
 
+
+include { preseq } from './nf-modules/common/process/preseq/preseq'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -294,6 +294,8 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsStats.out.versions)
 
+    ////* rajouter preseq ici *////
+
   filterUnaligned(
     chBams
   )
@@ -315,7 +317,7 @@ workflow {
     chAlignedBams.noUmi.view()
 
   //********************************************************
-  // Assign UMI reads
+  // UMI reads
 
   featureCountsUmis(
     chAlignedBams.umi.combine(chGtf)
@@ -346,16 +348,15 @@ workflow {
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
 
   //********************************************************
-  // Mark PCR reads duplicates non UMI reads
+  // Non Umi reads
 
+  // Mark PCR reads duplicates non UMI reads
   markdupFlow(
     chAlignedBams.noUmi
   )
   chVersions = chVersions.mix(markdupFlow.out.versions)
 
-  //********************************************************
   // Filter out pcr duplicates
-  
   filterMarkdup(
     markdupFlow.out.bam
   )
@@ -366,30 +367,28 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsIndexMarkdup.out.versions)
 
-  //********************************************************
-  // Assign non UMI reads
-
+  // Assign 
   featureCountsNoUmis(
     filterMarkdup.out.bam.join(samtoolsIndexMarkdup.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
-  //samtools view -d XS:Assigned 
   filterUnassigned(
     featureCountsNoUmis.out.bam
   )
   chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
+  // Matrix 
   featureCountsMatrix(
     featureCountsNoUmis.out.counts,
     filterMarkdup.out.bam
   )
 
-  // subroutines
-  //outputDocumentation(
-  //  outputDocsCh,
-  //  outputDocsImagesCh
-  //)
+  //subroutines
+  outputDocumentation(
+    outputDocsCh,
+    outputDocsImagesCh
+  )
 
   //*******************************************
   // MULTIQC
@@ -410,19 +409,19 @@ workflow {
       chVersions.unique().collectFile()
     )
 
-  multiqc(
-    customRunName,
-    sPlanCh.collect(),
-    metadataCh.ifEmpty([]),
-    multiqcConfigCh.ifEmpty([]),
-    getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
-    workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
-    warnCh.collect().ifEmpty([]),
-
-    file ('preseq/*') from chPreseq.collect().ifEmpty([])
-  )
-  mqcReport = multiqc.out.report.toList()
+    multiqc(
+      customRunName,
+      sPlanCh.collect(),
+      metadataCh.ifEmpty([]),
+      multiqcConfigCh.ifEmpty([]),
+      getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
+      workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
+      warnCh.collect().ifEmpty([]),
+      file ('preseq/*') from chPreseq.collect().ifEmpty([])
+    )
+    mqcReport = multiqc.out.report.toList()
   }
+
 }
 
 workflow.onComplete {
