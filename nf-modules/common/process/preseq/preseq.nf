@@ -11,7 +11,7 @@ process preseq {
   label 'highMem'
 
   input:
-  tuple val(meta), path(bam), path(bai)
+  tuple val(meta), path(bam)
 
   //errorStrategy 'ignore'
 
