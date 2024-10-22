@@ -391,21 +391,21 @@ workflow {
   // MULTIQC
 
   preseq(
-    starAlign.out.bam
+    starAlign.out.bam.join(samtoolsIndexStar.out.bai)
   )
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(samtoolsMerge.out.versions)
 
 
   // Warnings that will be printed in the mqc report
-  warnCh = Channel.empty()
 
-  /*if (!params.skipMultiQC){
-
+  if (!params.skipMultiQC){
     getSoftwareVersions(
       chVersions.unique().collectFile()
     )
 
+    warnCh = Channel.empty()
+    
     multiqc(
       customRunName,
       sPlanCh.collect(),
@@ -416,8 +416,9 @@ workflow {
       warnCh.collect().ifEmpty([]),
       file ('preseq/*') from chPreseq.collect().ifEmpty([])
     )
-    mqcReport = multiqc.out.report.toList()
-  }*/
+
+    //mqcReport = multiqc.out.report.toList()
+  }
 
 }
 
