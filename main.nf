@@ -396,16 +396,13 @@ workflow {
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(samtoolsMerge.out.versions)
 
-
-  // Warnings that will be printed in the mqc report
-
   if (!params.skipMultiQC){
     getSoftwareVersions(
       chVersions.unique().collectFile()
     )
 
     warnCh = Channel.empty()
-    
+
     multiqc(
       customRunName,
       sPlanCh.collect(),
@@ -414,10 +411,10 @@ workflow {
       getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
-      file ('preseq/*') from chPreseq.collect().ifEmpty([])
+      chPreseq.collect().ifEmpty([])
     )
 
-    //mqcReport = multiqc.out.report.toList()
+    mqcReport = multiqc.out.report.toList()
   }
 
 }
