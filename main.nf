@@ -382,10 +382,10 @@ workflow {
   )
 
   //subroutines
-  outputDocumentation(
+  /*outputDocumentation(
     outputDocsCh,
     outputDocsImagesCh
-  )
+  )*/
 
   //*******************************************
   // MULTIQC
