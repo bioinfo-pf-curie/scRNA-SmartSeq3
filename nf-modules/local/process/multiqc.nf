@@ -17,6 +17,7 @@ process multiqc {
   path ('softwareVersions/*')
   path ('workflowSummary/*')
   path warnings
+  path preseq
 
   output:
   path splan, emit: splan
@@ -30,7 +31,7 @@ process multiqc {
   splanOpts = params.samplePlan ? "--splan ${params.samplePlan}" : ""
   isPE = params.singleEnd ? 0 : 1
     
-  modulesList = "-m custom_content"
+  modulesList = "-m custom_content -m samtools -m star -m featureCounts -m deeptools -m preseq -m rseqc"
   warn = warnings.name == 'warnings.txt' ? "--warn warnings.txt" : ""
   """
   mqc_header.py --name "RNA-seq" --version ${workflow.manifest.version} ${metadataOpts} ${splanOpts} ${warn} > multiqc-config-header.yaml
