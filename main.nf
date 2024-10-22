@@ -294,8 +294,6 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsStats.out.versions)
 
-  ////* rajouter preseq ici *////
-
   filterUnaligned(
     chBams
   )
@@ -396,6 +394,13 @@ workflow {
   //*******************************************
   // MULTIQC
 
+  preseq(
+    filterUnaligned.out.bam
+  )
+  chPreseq = preseq.out.curves
+  chVersions = chVersions.mix(samtoolsMerge.out.versions)
+
+
   // Warnings that will be printed in the mqc report
   warnCh = Channel.empty()
 
@@ -405,16 +410,18 @@ workflow {
       chVersions.unique().collectFile()
     )
 
-  //  multiqc(
-  //    customRunName,
-  //    sPlanCh.collect(),
-  //    metadataCh.ifEmpty([]),
-  //    multiqcConfigCh.ifEmpty([]),
-  //    getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
-  //    workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
-  //    warnCh.collect().ifEmpty([])
-  //  )
-  //  mqcReport = multiqc.out.report.toList()
+  multiqc(
+    customRunName,
+    sPlanCh.collect(),
+    metadataCh.ifEmpty([]),
+    multiqcConfigCh.ifEmpty([]),
+    getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
+    workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
+    warnCh.collect().ifEmpty([]),
+
+    file ('preseq/*') from chPreseq.collect().ifEmpty([])
+  )
+  mqcReport = multiqc.out.report.toList()
   }
 }
 
