@@ -165,7 +165,6 @@ include { featureCounts as featureCountsNoUmis} from './nf-modules/common/proces
 include { samtoolsFilter as filterUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
 
-
 include { preseq } from './nf-modules/common/process/preseq/preseq'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
@@ -294,8 +293,6 @@ workflow {
   )
   chVersions = chVersions.mix(samtoolsStats.out.versions)
 
-    ////* rajouter preseq ici *////
-
   filterUnaligned(
     chBams
   )
@@ -403,7 +400,7 @@ workflow {
   // Warnings that will be printed in the mqc report
   warnCh = Channel.empty()
 
-  if (!params.skipMultiQC){
+  /*if (!params.skipMultiQC){
 
     getSoftwareVersions(
       chVersions.unique().collectFile()
@@ -420,7 +417,7 @@ workflow {
       file ('preseq/*') from chPreseq.collect().ifEmpty([])
     )
     mqcReport = multiqc.out.report.toList()
-  }
+  }*/
 
 }
 
