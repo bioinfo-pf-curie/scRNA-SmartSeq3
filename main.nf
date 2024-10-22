@@ -395,7 +395,7 @@ workflow {
   // MULTIQC
 
   preseq(
-    filterUnaligned.out.bam
+    starAlign.out.bam
   )
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(samtoolsMerge.out.versions)
