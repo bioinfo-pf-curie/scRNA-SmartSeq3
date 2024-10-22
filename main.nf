@@ -390,8 +390,14 @@ workflow {
   //*******************************************
   // MULTIQC
 
+  chBamAll = starAlign.out.bam
+    .map{meta, bam ->
+       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part, umi:meta.umi]
+       [ groupKey(newMeta, meta.part), bam ]
+     }.groupTuple()
+
   preseq(
-    starAlign.out.bam.join(samtoolsIndexStar.out.bai)
+    chBamAll
   )
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(samtoolsMerge.out.versions)
