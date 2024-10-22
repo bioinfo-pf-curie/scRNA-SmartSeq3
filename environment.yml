@@ -6,9 +6,10 @@ channels:
 dependencies:
   # python
   - python=3.7.9=hffdb5ce_100_cpython
-  - pymdown-extensions=8.1.1=pyh44b312d_0
+  - conda-forge::pymdown-extensions=8.1.1=pyh44b312d_0
   - conda-forge::biopython=1.78=py37h5e8e339_2
   - bioconda::python-sortedcontainers=2.3.0=pyh3252c3a_0
+  - conda-forge::markdown=3.6=pyhd8ed1ab_0    
   - conda-forge::zipp=3.4.1=pyhd8ed1ab_0
   # tools
   - bioconda::salmon=0.14.2=ha0cc327_0
