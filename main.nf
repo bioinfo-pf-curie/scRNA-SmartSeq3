@@ -390,11 +390,21 @@ workflow {
   //*******************************************
   // MULTIQC
 
-  chBamAll = starAlign.out.bam
+  chAll = starAlign.out.bam
     .map{meta, bam ->
-       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part, umi:meta.umi]
+       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
        [ groupKey(newMeta, meta.part), bam ]
      }.groupTuple()
+     .branch {
+       single: it[0].part <= 1 // if only one batch
+       multiple: it[0].part > 1 // if several batchs
+     }
+
+  samtoolsMerge(
+    chAll.multiple
+  )
+  chBamAll = samtoolsMerge.out.bam.mix(chAll.single)
+  chVersions = chVersions.mix(samtoolsMerge.out.versions)
 
   preseq(
     chBamAll
