@@ -397,7 +397,7 @@ workflow {
      }.groupTuple()
 
 
-  chAll.groupTuple().view()
+  chAll.collect().groupTuple().view()
 
   samtoolsMergeAll(
     chAll.groupTuple()
