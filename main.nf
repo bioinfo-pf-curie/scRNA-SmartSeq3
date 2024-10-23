@@ -399,7 +399,7 @@ workflow {
 
   chAll.collect().groupTuple().view()
 
-  samtoolsMergeAll(
+  /*samtoolsMergeAll(
     chAll.groupTuple()
   )
   chBamAll = samtoolsMergeAll.out.bam
@@ -411,7 +411,7 @@ workflow {
     chBamAll
   )
   chPreseq = preseq.out.curves
-  chVersions = chVersions.mix(preseq.out.versions)
+  chVersions = chVersions.mix(preseq.out.versions)*/
 
   if (!params.skipMultiQC){
     getSoftwareVersions(
