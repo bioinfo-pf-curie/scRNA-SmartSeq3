@@ -398,20 +398,15 @@ workflow {
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
        [ groupKey(newMeta, meta.part), bam ]
      }.groupTuple()
-     .branch {
-       single: it[0].part <= 1 // if only one batch
-       multiple: it[0].part > 1 // if several batchs
-     }
 
-  chAll.multiple.view()
+
+  chAll.groupTuple().view()
 
   samtoolsMergeAll(
-    chAll.multiple
+    chAll.groupTuple()
   )
-  chBamAll = samtoolsMergeAll.out.bam.mix(chAll.single)
+  chBamAll = samtoolsMergeAll.out.bam
   chVersions = chVersions.mix(samtoolsMergeAll.out.versions)
-
-  chBamAll.view()
 
   preseq(
     chBamAll
