@@ -389,8 +389,7 @@ workflow {
 
   //*******************************************
   // MULTIQC
-
-  starAlign.out.bam.view()
+  
   chAll = starAlign.out.bam
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
@@ -405,6 +404,8 @@ workflow {
   )
   chBamAll = samtoolsMergeAll.out.bam
   chVersions = chVersions.mix(samtoolsMergeAll.out.versions)
+
+  chBamAll.view()
 
   preseq(
     chBamAll
