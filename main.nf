@@ -398,16 +398,16 @@ workflow {
 
   chAll.collect().groupTuple().view()
 
-  samtoolsMergeAll(
+  /*samtoolsMergeAll(
     chAll.groupTuple()
   )
   chBamAll = samtoolsMergeAll.out.bam
   chVersions = chVersions.mix(samtoolsMergeAll.out.versions)
 
-  chBamAll.view()
+  chBamAll.view()*/
 
   preseq(
-    chBamAll
+    chAll
   )
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(preseq.out.versions)
