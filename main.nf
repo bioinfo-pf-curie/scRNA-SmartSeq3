@@ -403,11 +403,15 @@ workflow {
        multiple: it[0].part > 1 // if several batchs
      }
 
+  chAll.view()
+
   samtoolsMergeAll(
     chAll.multiple
   )
   chBamAll = samtoolsMergeAll.out.bam.mix(chAll.single)
   chVersions = chVersions.mix(samtoolsMergeAll.out.versions)
+
+  chBamAll.view()
 
   preseq(
     chBamAll
