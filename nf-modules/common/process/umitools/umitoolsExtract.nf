@@ -2,7 +2,7 @@
  * Umitools extract UMI
  */
 
-process umiExtract {
+process umitoolsExtract {
   tag "${meta.id}"
   label 'umiTools'
   label 'lowCpu'

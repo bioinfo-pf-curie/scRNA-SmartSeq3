@@ -137,8 +137,8 @@ include { markdupFlow } from './nf-modules/common/subworkflow/markdupFlow'
 // Process
 include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/utils/outputDocumentation'
-include { umiExtract as umiExtractR1 } from './nf-modules/common/process/umitools/umiExtract'
-include { umiExtract as umiExtractR2 } from './nf-modules/common/process/umitools/umiExtract'
+include { umitoolsExtract as umiExtractR1 } from './nf-modules/common/process/umitools/umitoolsExtract'
+include { umitoolsExtract as umiExtractR2 } from './nf-modules/common/process/umitools/umitoolsExtract'
 //include { seqkitSeq } from './nf-modules/common/process/seqkit/seqkitSeq'
 include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
@@ -148,7 +148,7 @@ include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
 
 include { samtoolsMerge as samtoolsMergeBatch } from './nf-modules/common/process/samtools/samtoolsMerge'
-include { samtoolsMerge as samtoolsMergeAll } from './nf-modules/common/process/samtools/samtoolsMerge'
+include { samtoolsMerge as samtoolsMergeStar } from './nf-modules/common/process/samtools/samtoolsMerge'
 
 
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
@@ -165,10 +165,11 @@ include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
 
 include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
-include { samtoolsFilter as filterUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
+include { samtoolsFilter as filterNoUmisUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
 
 include { preseq } from './nf-modules/common/process/preseq/preseq'
+include { rseqcGeneBodyCoverage } from './nf-modules/common/process/rseqc/rseqcGeneBodyCoverage'
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -316,7 +317,7 @@ workflow {
   //********************************************************
   // UMI reads
 
-  featureCountsUmis(
+  featureCountsUmis( // IF gene_name exists in gtf !!!! add if not -> gene_id
     chAlignedBams.umi.combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
@@ -341,7 +342,7 @@ workflow {
   umitoolsDedup(
     samtoolsSortUmis.out.bam.join(samtoolsIndexUmis.out.bai)
   )
-  chUmiDedup=umitoolsDedup.out.bam
+  chUmiFilt=umitoolsDedup.out.bam
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
 
   //********************************************************
@@ -365,14 +366,15 @@ workflow {
   chVersions = chVersions.mix(samtoolsIndexMarkdup.out.versions)
 
   // Assign 
-  featureCountsNoUmis(
+  featureCountsNoUmis( // IF gene_name exists in gtf !!!! add if not -> gene_id
     filterMarkdup.out.bam.join(samtoolsIndexMarkdup.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
-  filterUnassigned(
+  filterNoUmisUnassigned(
     featureCountsNoUmis.out.bam
   )
+  chNoUmiFilt=filterNoUmisUnassigned.out.bam
   chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
   // Matrix 
@@ -381,36 +383,96 @@ workflow {
     filterMarkdup.out.bam
   )
 
-  //subroutines
-  /*outputDocumentation(
-    outputDocsCh,
-    outputDocsImagesCh
-  )*/
+  //********************************************************
+  // final BAM
 
-  //*******************************************
-  // MULTIQC
-  
-  chAll = starAlign.out.bam
+  chFiltBams = chNoUmiFilt.concat(chUmiFilt)
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
        [ newMeta, bam ]
      }.groupTuple()
 
-  chAll.view()
-
-  samtoolsMergeAll(
-    chAll
+  samtoolsMergeFinal(
+    chFiltBams
   )
-  chBamAll = samtoolsMergeAll.out.bam
-  chVersions = chVersions.mix(samtoolsMergeAll.out.versions)
+  chFinalBam = samtoolsMergeFinal.out.bam
+  chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
 
-  chBamAll.view()
+  chFinalBam.view()
+
+  //*******************************************
+  // MULTIQC
+
+  //subroutines
+  outputDocumentation(
+    outputDocsCh,
+    outputDocsImagesCh
+  )
+  
+  //-----------umitools
+  //umiExtractionSummary
+
+  //-----------preseq
+  chStarBams = starAlign.out.bam
+    .map{meta, bam ->
+       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
+       [ newMeta, bam ]
+     }.groupTuple()
+
+  samtoolsMergeStar(
+    chStarBams
+  )
+  chStarBam = samtoolsMergeStar.out.bam
+  chVersions = chVersions.mix(samtoolsMergeStar.out.versions)
 
   preseq(
-    chBamAll
+    chStarBam
   )
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(preseq.out.versions)
+
+  //-----------RSeqC
+  if (!params.skipGeneCov){
+    rseqcGeneBodyCoverage(
+      chNoUmiFilt.concat(chUmiFilt),
+      chBed12 // IF EXIST !!!!
+    )
+    chRseqcGeneCov=rseqcGeneBodyCoverage.out.results
+  }
+
+  include { rseqcReadQuality } from './nf-modules/common/process/rseqc/rseqcReadQuality'
+  include { rseqcBamStat } from './nf-modules/common/process/rseqc/rseqcBamStat'
+  include { rseqcInnerDistance } from './nf-modules/common/process/rseqc/rseqcInnerDistance'
+  include { rseqcJunctionAnnotation } from './nf-modules/common/process/rseqc/rseqcJunctionAnnotation'
+  include { rseqcJunctionSaturation } from './nf-modules/common/process/rseqc/rseqcJunctionSaturation'
+
+  rseqcReadQuality(
+    chStarBams
+  )
+  chRseqcReadQuality=rseqcReadQuality.out.results
+
+  rseqcBamStat(
+    chStarBams,
+    chBed12
+  )
+  chRseqcBamStat=rseqcBamStat.out.results
+
+  rseqcInnerDistance(
+    chFinalBam
+  )
+  chRseqcInnerDistance=rseqcInnerDistance.out.results
+
+  rseqcJunctionAnnotation(
+    chFinalBam,
+    chBed12
+  )
+  chRseqcJunctionAnnot=rseqcJunctionAnnotation.out.results
+
+  rseqcJunctionSaturation(
+    chFinalBam,
+    chBed12
+  )
+  chRseqcJunctionSat=rseqcJunctionSaturation.out.results
 
   if (!params.skipMultiQC){
     getSoftwareVersions(
@@ -427,7 +489,14 @@ workflow {
       getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
-      chPreseq.collect().ifEmpty([])
+      //modules
+      chPreseq.collect().ifEmpty([]),
+      chRseqcGeneCov.collect().ifEmpty([]),
+      chRseqcReadQuality.collect().ifEmpty([]),
+      chRseqcBamStat.collect().ifEmpty([]),
+      chRseqcInnerDistance.collect().ifEmpty([]),
+      chRseqcJunctionAnnot.collect().ifEmpty([]),
+      chRseqcJunctionSat.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
