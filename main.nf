@@ -403,7 +403,7 @@ workflow {
        multiple: it[0].part > 1 // if several batchs
      }
 
-  chAll.view()
+  chAll.multiple.view()
 
   samtoolsMergeAll(
     chAll.multiple
