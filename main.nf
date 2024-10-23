@@ -313,9 +313,6 @@ workflow {
     }
     .set { chAlignedBams }
 
-    chAlignedBams.umi.view()
-    chAlignedBams.noUmi.view()
-
   //********************************************************
   // UMI reads
 
@@ -393,6 +390,7 @@ workflow {
   //*******************************************
   // MULTIQC
 
+  starAlign.out.bam.view()
   chAll = starAlign.out.bam
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
