@@ -147,7 +147,10 @@ include { starAlign } from './nf-modules/common/process/star/starAlign'
 include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
 
-include { samtoolsMerge } from './nf-modules/common/process/samtools/samtoolsMerge'
+include { samtoolsMerge as samtoolsMergeBatch } from './nf-modules/common/process/samtools/samtoolsMerge'
+include { samtoolsMerge as samtoolsMergeAll } from './nf-modules/common/process/samtools/samtoolsMerge'
+
+
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
@@ -281,11 +284,11 @@ workflow {
        multiple: it[0].part > 1 // if several batchs
      }
 
-  samtoolsMerge(
+  samtoolsMergeBatch(
     chStar.multiple
   )
-  chBams = samtoolsMerge.out.bam.mix(chStar.single)
-  chVersions = chVersions.mix(samtoolsMerge.out.versions)
+  chBams = samtoolsMergeBatch.out.bam.mix(chStar.single)
+  chVersions = chVersions.mix(samtoolsMergeBatch.out.versions)
 
   samtoolsStats(
     chBams,
@@ -400,17 +403,17 @@ workflow {
        multiple: it[0].part > 1 // if several batchs
      }
 
-  samtoolsMerge(
+  samtoolsMergeAll(
     chAll.multiple
   )
-  chBamAll = samtoolsMerge.out.bam.mix(chAll.single)
-  chVersions = chVersions.mix(samtoolsMerge.out.versions)
+  chBamAll = samtoolsMergeAll.out.bam.mix(chAll.single)
+  chVersions = chVersions.mix(samtoolsMergeAll.out.versions)
 
   preseq(
     chBamAll
   )
   chPreseq = preseq.out.curves
-  chVersions = chVersions.mix(samtoolsMerge.out.versions)
+  chVersions = chVersions.mix(preseq.out.versions)
 
   if (!params.skipMultiQC){
     getSoftwareVersions(
