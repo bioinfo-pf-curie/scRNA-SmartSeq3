@@ -393,13 +393,13 @@ workflow {
   chAll = starAlign.out.bam
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
-       [ groupKey(newMeta, meta.part), bam ]
+       [ newMeta, bam ]
      }.groupTuple()
 
-  chAll.collect().groupTuple().view()
+  chAll.view()
 
   samtoolsMergeAll(
-    chAll.collect().groupTuple()
+    chAll
   )
   chBamAll = samtoolsMergeAll.out.bam
   chVersions = chVersions.mix(samtoolsMergeAll.out.versions)
