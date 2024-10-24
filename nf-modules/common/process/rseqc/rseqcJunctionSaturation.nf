@@ -28,7 +28,6 @@ process rseqcJunctionSaturation {
   junction_saturation.py \\
       -i ${bam} \\
       -o ${prefix}_junctionSat_rseqc \\
-      -r $bed12 ${args}
-  mv log.txt ${prefix}_junctionSat_rseqc_log.txt
+      -r $bed12 ${args} &> ${prefix}_junctionSat_rseqc_log.txt
   """  
 }
