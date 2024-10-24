@@ -18,7 +18,13 @@ process multiqc {
   path ('workflowSummary/*')
   path warnings
   path preseq
-
+  path rseqc_genecov
+  path rseqc_readquality
+  path rseqc_bamstat
+  path rseqc_innerdist
+  path rseqc_junctannot
+  path rseqc_junctsat
+  
   output:
   path splan, emit: splan
   path "*report.html", emit: report
