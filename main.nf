@@ -149,7 +149,7 @@ include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBa
 
 include { samtoolsMerge as samtoolsMergeBatch } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsMerge as samtoolsMergeStar } from './nf-modules/common/process/samtools/samtoolsMerge'
-
+include { samtoolsMerge as samtoolsMergeFinal } from './nf-modules/common/process/samtools/samtoolsMerge'
 
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
@@ -170,6 +170,12 @@ include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMat
 
 include { preseq } from './nf-modules/common/process/preseq/preseq'
 include { rseqcGeneBodyCoverage } from './nf-modules/common/process/rseqc/rseqcGeneBodyCoverage'
+include { rseqcReadQuality } from './nf-modules/common/process/rseqc/rseqcReadQuality'
+include { rseqcBamStat } from './nf-modules/common/process/rseqc/rseqcBamStat'
+include { rseqcInnerDistance } from './nf-modules/common/process/rseqc/rseqcInnerDistance'
+include { rseqcJunctionAnnotation } from './nf-modules/common/process/rseqc/rseqcJunctionAnnotation'
+include { rseqcJunctionSaturation } from './nf-modules/common/process/rseqc/rseqcJunctionSaturation'
+
 include { multiqc } from './nf-modules/local/process/multiqc'
 
 /*
@@ -409,10 +415,10 @@ workflow {
     outputDocsImagesCh
   )
   
-  //-----------umitools
+  //-----------umitools------------------------------
   //umiExtractionSummary
 
-  //-----------preseq
+  //-----------preseq------------------------------
   chStarBams = starAlign.out.bam
     .map{meta, bam ->
        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
@@ -431,7 +437,7 @@ workflow {
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(preseq.out.versions)
 
-  //-----------RSeqC
+  //-----------RSeqC------------------------------
   if (!params.skipGeneCov){
     rseqcGeneBodyCoverage(
       chNoUmiFilt.concat(chUmiFilt),
@@ -439,12 +445,6 @@ workflow {
     )
     chRseqcGeneCov=rseqcGeneBodyCoverage.out.results
   }
-
-  include { rseqcReadQuality } from './nf-modules/common/process/rseqc/rseqcReadQuality'
-  include { rseqcBamStat } from './nf-modules/common/process/rseqc/rseqcBamStat'
-  include { rseqcInnerDistance } from './nf-modules/common/process/rseqc/rseqcInnerDistance'
-  include { rseqcJunctionAnnotation } from './nf-modules/common/process/rseqc/rseqcJunctionAnnotation'
-  include { rseqcJunctionSaturation } from './nf-modules/common/process/rseqc/rseqcJunctionSaturation'
 
   rseqcReadQuality(
     chStarBams
