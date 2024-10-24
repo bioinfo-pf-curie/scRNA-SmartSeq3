@@ -28,7 +28,6 @@ process rseqcReadDistribution {
   read_distribution.py \\
       -i ${bam} \\
       -o ${prefix}_readDist_rseqc \\
-      -r $bed12 ${args}
-  mv log.txt ${prefix}_readDist_rseqc_log.txt
+      -r $bed12 ${args} &> ${prefix}_readDist_rseqc_log.txt
   """  
 }

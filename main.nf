@@ -173,6 +173,7 @@ include { rseqcGeneBodyCoverage } from './nf-modules/common/process/rseqc/rseqcG
 include { rseqcReadQuality } from './nf-modules/common/process/rseqc/rseqcReadQuality'
 include { rseqcBamStat } from './nf-modules/common/process/rseqc/rseqcBamStat'
 include { rseqcInnerDistance } from './nf-modules/common/process/rseqc/rseqcInnerDistance'
+include { rseqcReadDistribution } from './nf-modules/common/process/rseqc/rseqcReadDistribution'
 include { rseqcJunctionAnnotation } from './nf-modules/common/process/rseqc/rseqcJunctionAnnotation'
 include { rseqcJunctionSaturation } from './nf-modules/common/process/rseqc/rseqcJunctionSaturation'
 
@@ -461,6 +462,13 @@ workflow {
   )
   chRseqcInnerDistance=rseqcInnerDistance.out.results
 
+  rseqcReadDistribution(
+    chFinalBam,
+    chBed12
+  )
+  chRseqcReadDist=rseqcReadDistribution.out.results
+
+
   rseqcJunctionAnnotation(
     chFinalBam,
     chBed12
@@ -495,7 +503,8 @@ workflow {
       chRseqcBamStat.collect().ifEmpty([]),
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
-      chRseqcJunctionSat.collect().ifEmpty([])
+      chRseqcJunctionSat.collect().ifEmpty([]),
+      chRseqcReadDist.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
