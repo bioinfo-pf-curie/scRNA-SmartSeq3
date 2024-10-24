@@ -432,7 +432,7 @@ workflow {
   chVersions = chVersions.mix(samtoolsMergeStar.out.versions)
 
   preseq(
-    chStarBam
+    samtoolsMergeStar.out.bam
   )
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(preseq.out.versions)
@@ -447,12 +447,12 @@ workflow {
   }
 
   rseqcReadQuality(
-    chStarBams
+    samtoolsMergeStar.out.bam
   )
   chRseqcReadQuality=rseqcReadQuality.out.results
 
   rseqcBamStat(
-    chStarBams
+    samtoolsMergeStar.out.bam
   )
   chRseqcBamStat=rseqcBamStat.out.results
 
