@@ -452,8 +452,7 @@ workflow {
   chRseqcReadQuality=rseqcReadQuality.out.results
 
   rseqcBamStat(
-    chStarBams,
-    chBed12
+    chStarBams
   )
   chRseqcBamStat=rseqcBamStat.out.results
 
