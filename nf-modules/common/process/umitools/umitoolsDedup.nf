@@ -19,7 +19,7 @@ process umitoolsDedup {
   def args = task.ext.args ?: ''
   def prefix = task.ext.prefix ?: "${bam.baseName}"
   """
-  umi_tools count ${args} \\
+  umi_tools dedup ${args} \\
     -I ${bam} -S ${prefix}_umitoolsDedup.bam > ${prefix}_umitoolsDedup.log
   umi_tools --version | cut -f1,3 -d" " &> versions.txt
   """
