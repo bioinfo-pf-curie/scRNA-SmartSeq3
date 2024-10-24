@@ -26,7 +26,7 @@ process rseqcBamStat {
 
   bam_stat.py \\
       -i ${bam} \\
-      -o ${prefix}_bamStat_rseqc ${args}
+      ${args}
   mv log.txt ${prefix}_bamStat_rseqc_log.txt
   """  
 }
