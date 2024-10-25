@@ -324,7 +324,7 @@ workflow {
   //********************************************************
   // UMI reads
 
-  featureCountsUmis( // IF gene_name exists in gtf !!!! add if not -> gene_id
+  featureCountsUmis( 
     chAlignedBams.umi.combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
