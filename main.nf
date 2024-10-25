@@ -458,7 +458,8 @@ workflow {
   chRseqcBamStat=rseqcBamStat.out.results
 
   rseqcInnerDistance(
-    chFinalBam
+    chFinalBam,
+    chBed12
   )
   chRseqcInnerDistance=rseqcInnerDistance.out.results
 
