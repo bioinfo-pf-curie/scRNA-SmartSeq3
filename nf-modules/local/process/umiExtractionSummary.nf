@@ -24,10 +24,12 @@ process umiExtractionSummary {
   nb_totFrag=\$(( \$nb_lines / 4 ))
   echo "totFrag: \$nb_totFrag" > ${prefix}_nbTotFrag.txt
 
+  ## umis in R1
   nb_line_R1=`wc -l < <(gzip -cd ${umiExtraction_r1[0]}) `
   nb_umis_R1=\$(( \$nb_line_R1 / 4 ))
   echo "#UMIs in R1: \$nb_umis_R1" >> ${prefix}_nbTotFrag.txt
 
+  ## umis in R2
   nb_line_R2=`wc -l < <(gzip -cd ${umiExtraction_r2[0]}) `
   nb_umis_R2=\$(( \$nb_line_R2 / 4 ))
   echo "#UMIs in R2: \$nb_umis_R2" >> ${prefix}_nbTotFrag.txt
