@@ -9,7 +9,7 @@ process nbCells {
   label 'medMem'
 
   input:
-  tuple val(meta), path(reads)
+  tuple val(meta), path(dir)
 
   output:
   tuple val(meta), path("*txt"), emit: count
@@ -18,6 +18,6 @@ process nbCells {
   def prefix = task.ext.prefix ?: "${meta.id}"
   def args = task.ext.args ?: ''
   """
-  ls *R1* | wc -l > ${meta.id}_nbCells.txt
+  ls ${dir}/*R1* | wc -l > ${meta.id}_nbCells.txt
   """
 }
