@@ -18,12 +18,12 @@ process multiqc {
   path ('workflowSummary/*')
   path warnings
   path preseq
-  path ('*geneBodyCoverage.txt')
+  path rseqc_genecov
   path rseqc_bamstat
   path rseqc_innerdist
   path rseqc_junctannot
   path rseqc_junctsat
-  //path rseqc_readquality
+  //path rseqc_readquality not a module
   //path rseqc_readdistrib
   
   output:

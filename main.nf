@@ -511,7 +511,7 @@ workflow {
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
-      //chRseqcReadQuality.collect().ifEmpty([]), // no output
+      //chRseqcReadQuality.collect().ifEmpty([]), // not with mqc by default
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
     )
 

@@ -26,6 +26,6 @@ process rseqcBamStat {
 
   bam_stat.py \\
       -i ${bam} \\
-      ${args} 2> ${prefix}_bamStat_rseqc_log.txt
+      ${args} > ${prefix}_bamStat_rseqc_log.txt
   """  
 }

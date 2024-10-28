@@ -27,6 +27,6 @@ process rseqcReadDistribution {
 
   read_distribution.py \\
       -i ${bam} \\
-      -r $bed12 ${args} 2> ${prefix}_readDist_rseqc_log.txt
+      -r $bed12 ${args} > ${prefix}_readDist_rseqc_log.txt
   """  
 }

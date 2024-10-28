@@ -26,6 +26,6 @@ process rseqcReadQuality {
 
   read_quality.py \\
       -i ${bam} \\
-      -o ${prefix}_readQuality_rseqc ${args}
+      -o ${prefix}_readQuality_rseqc ${args} &> ${prefix}_readQuality_rseqc_log.txt
   """  
 }
