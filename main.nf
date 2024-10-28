@@ -192,6 +192,11 @@ workflow {
 
   main:
 
+  nbCells(
+    chRawReads
+  )
+  chNbCells = createBatchesFlow.out.count
+
   //********************************************************
   // Merge cell fastqs into one 
   createBatchesFlow(
@@ -199,12 +204,6 @@ workflow {
     chBatchSize
   )
   chVersions = createBatchesFlow.out.versions
-
-
-  nbCells(
-    createBatchesFlow.out.reads
-  )
-  chNbCells = createBatchesFlow.out.count
 
   //********************************************************
   // Extract UMIs info 
