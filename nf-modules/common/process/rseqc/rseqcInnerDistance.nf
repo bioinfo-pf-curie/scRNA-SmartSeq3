@@ -28,6 +28,6 @@ process rseqcInnerDistance {
   inner_distance.py \\
       -i ${bam} \\
       -o ${prefix}_innerDist_rseqc \\
-      -r $bed12 ${args} &> ${prefix}_innerDist_rseqc_log.txt
+      -r $bed12 ${args} 2> ${prefix}_innerDist_rseqc_log.txt
   """  
 }

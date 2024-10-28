@@ -228,10 +228,6 @@ workflow {
     .join(umiExtractR2.out.fastq)
     .map{meta,umi1,umi2 -> [meta, [umi1[0], umi1[1], umi2[0], umi2[1]]]}
 
-  umiExtractionSummary(
-
-  )
-
   // concatenate R1 together and R2 together 
   concatFastq(
     chUmi, 
@@ -511,12 +507,12 @@ workflow {
       //modules
       chPreseq.collect().ifEmpty([]),
       chRseqcGeneCov.collect().ifEmpty([]),
-      chRseqcReadQuality.collect().ifEmpty([]), // no output
       chRseqcBamStat.collect().ifEmpty([]),
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
-      chRseqcReadDist.collect().ifEmpty([])
+      //chRseqcReadQuality.collect().ifEmpty([]), // no output
+      //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
     )
 
     mqcReport = multiqc.out.report.toList()
