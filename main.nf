@@ -195,7 +195,7 @@ workflow {
   nbCells(
     chRawReads
   )
-  chNbCells = createBatchesFlow.out.count
+  chNbCells = nbCells.out.count
 
   //********************************************************
   // Merge cell fastqs into one 
