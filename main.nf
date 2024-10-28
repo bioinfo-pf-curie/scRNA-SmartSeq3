@@ -146,6 +146,7 @@ include { starAlign } from './nf-modules/common/process/star/starAlign'
 
 include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
+include { nbCells} from './nf-modules/local/process/nbCells'
 
 include { samtoolsMerge as samtoolsMergeBatch } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsMerge as samtoolsMergeStar } from './nf-modules/common/process/samtools/samtoolsMerge'
@@ -198,7 +199,12 @@ workflow {
     chBatchSize
   )
   chVersions = createBatchesFlow.out.versions
-  chNbCells = createBatchesFlow.out.nbcells
+
+
+  nbCells(
+    createBatchesFlow.out.reads
+  )
+  chNbCells = createBatchesFlow.out.count
 
   //********************************************************
   // Extract UMIs info 
