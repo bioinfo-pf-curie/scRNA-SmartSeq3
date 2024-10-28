@@ -24,7 +24,7 @@ process multiqc {
   path rseqc_innerdist
   path rseqc_junctannot
   path rseqc_junctsat
-  path rseqc_readdistrib
+  //path rseqc_readdistrib
   
   output:
   path splan, emit: splan
