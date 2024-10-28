@@ -25,6 +25,7 @@ process rseqcGeneBodyCoverage {
   """
   echo \$(infer_experiment.py --version | awk '{print "rseqc "\$2}') > versions.txt    
 
+  samtools index ${bam}
   geneBody_coverage.py \\
       -i ${bam} \\
       -o ${prefix}_geneCov_rseqc \\
