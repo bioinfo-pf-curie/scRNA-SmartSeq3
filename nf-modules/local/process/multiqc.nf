@@ -17,7 +17,7 @@ process multiqc {
   path ('softwareVersions/*')
   path ('workflowSummary/*')
   path warnings
-  //path preseq
+  path preseq
   path rseqc_genecov
   path rseqc_readquality
   path rseqc_bamstat
@@ -33,7 +33,7 @@ process multiqc {
 
   script:
   rtitle = customRunName ? "--title \"$customRunName\"" : ''
-  rfilename = customRunName ? "--filename " + customRunName + "_rnaseq_report" : "--filename rnaseq_report"
+  rfilename = customRunName ? "--filename " + customRunName + "_rnaseq_report" : "--filename ${params.protocol}_report"
   metadataOpts = params.metadata ? "--metadata ${metadata}" : ""
   splanOpts = params.samplePlan ? "--splan ${params.samplePlan}" : ""
   isPE = params.singleEnd ? 0 : 1
@@ -41,7 +41,7 @@ process multiqc {
   modulesList = "-m custom_content -m samtools -m star -m featurecounts -m deeptools -m preseq -m rseqc"
   warn = warnings.name == 'warnings.txt' ? "--warn warnings.txt" : ""
   """
-  mqc_header.py --name "RNA-seq" --version ${workflow.manifest.version} ${metadataOpts} ${splanOpts} ${warn} > multiqc-config-header.yaml
+  mqc_header.py --name "scRNA-seq" --version ${workflow.manifest.version} ${metadataOpts} ${splanOpts} ${warn} > multiqc-config-header.yaml
   multiqc . -f $rtitle $rfilename -c $multiqcConfig -c multiqc-config-header.yaml $modulesList
   """    
 }

@@ -27,6 +27,10 @@ workflow createBatchesFlow {
   main:
   chVersions = Channel.empty()
 
+  nbCells(
+    reads
+  )
+
   seqkitReplace(
     reads
   )
@@ -46,4 +50,5 @@ workflow createBatchesFlow {
   emit:
   versions = chVersions 
   reads = chPairedFastq
+  nbcells = nbCells.out.count
 }

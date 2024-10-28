@@ -28,7 +28,7 @@ paramsWithUsage = NFTools.readParamsFromJsonSettings("${projectDir}/parameters.s
 params.putAll(NFTools.lint(params, paramsWithUsage))
 
 // Run name
-customRunName = NFTools.checkRunName(workflow.runName, params.name)
+customRunName = NFTools.checkRunName(workflow.runName, params.protocol)
 
 // Custom functions/variables
 mqcReport = []
@@ -168,6 +168,7 @@ include { featureCounts as featureCountsNoUmis} from './nf-modules/common/proces
 include { samtoolsFilter as filterNoUmisUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
 
+// multiqc modules
 include { preseq } from './nf-modules/common/process/preseq/preseq'
 include { rseqcGeneBodyCoverage } from './nf-modules/common/process/rseqc/rseqcGeneBodyCoverage'
 include { rseqcReadQuality } from './nf-modules/common/process/rseqc/rseqcReadQuality'
@@ -197,6 +198,7 @@ workflow {
     chBatchSize
   )
   chVersions = createBatchesFlow.out.versions
+  chNbCells = createBatchesFlow.out.nbcells
 
   //********************************************************
   // Extract UMIs info 
@@ -299,7 +301,7 @@ workflow {
   chVersions = chVersions.mix(samtoolsMergeBatch.out.versions)
 
   samtoolsStats(
-    chBams,
+    chBams, // umi et non umi seperat
     Channel.value([])
   )
   chVersions = chVersions.mix(samtoolsStats.out.versions)
@@ -498,14 +500,15 @@ workflow {
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
       //modules
-      //chPreseq.collect().ifEmpty([]),
+      chPreseq.collect().ifEmpty([]),
       chRseqcGeneCov.collect().ifEmpty([]),
       chRseqcReadQuality.collect().ifEmpty([]),
       chRseqcBamStat.collect().ifEmpty([]),
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
-      chRseqcJunctionSat.collect().ifEmpty([]),
-      chRseqcReadDist.collect().ifEmpty([])
+      chRseqcJunctionSat.collect().ifEmpty([])
+      //,
+      //chRseqcReadDist.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
