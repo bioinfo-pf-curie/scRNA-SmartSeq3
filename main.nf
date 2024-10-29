@@ -460,6 +460,8 @@ workflow {
       chBed12 // IF EXIST !!!!
     )
     chRseqcGeneCov=rseqcGeneBodyCoverage.out.results
+  } else {
+    chRseqcGeneCov=Channel.empty()
   }
 
   rseqcReadQuality(
