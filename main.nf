@@ -450,14 +450,14 @@ workflow {
   //-----------RSeqC------------------------------
   if (!params.skipGeneCov){
 
-    samtoolsSortNoUmis(//// rajouter en include
+    samtoolsSortNoUmis(
       chNoUmiFilt
     )
     chVersions = chVersions.mix( samtoolsSortUmis.out.versions)
 
     rseqcGeneBodyCoverage(
       samtoolsSortNoUmis.out.bam.concat(chUmiFilt), 
-      chBed12 // IF EXIST !!!!
+      chBed12 
     )
     chRseqcGeneCov=rseqcGeneBodyCoverage.out.results
   } else {
