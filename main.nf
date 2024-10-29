@@ -161,6 +161,8 @@ include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/proc
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
 
 include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
+include { samtoolsSort as samtoolsSortNoUmis} from './nf-modules/common/process/samtools/samtoolsSort'
+
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
@@ -447,8 +449,14 @@ workflow {
 
   //-----------RSeqC------------------------------
   if (!params.skipGeneCov){
+
+    samtoolsSortNoUmis(//// rajouter en include
+      chNoUmiFilt
+    )
+    chVersions = chVersions.mix( samtoolsSortUmis.out.versions)
+
     rseqcGeneBodyCoverage(
-      chNoUmiFilt.concat(chUmiFilt),
+      samtoolsSortNoUmis.out.bam.concat(chUmiFilt), 
       chBed12 // IF EXIST !!!!
     )
     chRseqcGeneCov=rseqcGeneBodyCoverage.out.results
