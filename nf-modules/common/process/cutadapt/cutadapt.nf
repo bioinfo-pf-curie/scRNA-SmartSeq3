@@ -13,7 +13,7 @@ process cutadapt {
 
   output:
   tuple val(meta), path("*trimmed*fastq.gz"), emit: fastq
-  tuple val(meta), path("*log"), emit: logs
+  path ("${meta.id}*log"), emit: logs
   path ("versions.txt"), emit: versions
 
   when:
