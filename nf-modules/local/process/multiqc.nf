@@ -17,7 +17,7 @@ process multiqc {
   path ('softwareVersions/*')
   path ('workflowSummary/*')
   path warnings
-  âth cutadapt
+  path cutadapt
   path preseq
   path rseqc_genecov
   path rseqc_bamstat

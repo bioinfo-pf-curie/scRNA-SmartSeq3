@@ -225,11 +225,11 @@ workflow {
   chNoUmi = umiExtractR2.out.noumi
   chVersions = chVersions.mix(umiExtractR2.out.versions)
 
-  umiReadsLog(
+  /*umiReadsLog(
     umiExtractR1.out.log.join(umiExtractR2.out.log).collect()
   )
   chTotFrag=
-  chPercentUmis=
+  chPercentUmis=*/
 
   // Reconcatenate umi fastqs (R1umi + R2umis)
   chUmi = umiExtractR1.out.fastq
