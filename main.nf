@@ -225,6 +225,12 @@ workflow {
   chNoUmi = umiExtractR2.out.noumi
   chVersions = chVersions.mix(umiExtractR2.out.versions)
 
+  umiReadsLog(
+    umiExtractR1.out.log.join(umiExtractR2.out.log).collect()
+  )
+  chTotFrag=
+  chPercentUmis=
+
   // Reconcatenate umi fastqs (R1umi + R2umis)
   chUmi = umiExtractR1.out.fastq
     .join(umiExtractR2.out.fastq)
@@ -262,6 +268,7 @@ workflow {
   cutadapt(
     chReads
   )
+  chCutadaptLogs=cutadapt.out.logs
   chVersions = chVersions.mix(cutadapt.out.versions)
 
   //********************************************************
@@ -515,13 +522,14 @@ workflow {
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
       //modules
+      chCutadaptLogs.collect().ifEmpty([]),
       chPreseq.collect().ifEmpty([]),
       chRseqcGeneCov.collect().ifEmpty([]),
       chRseqcBamStat.collect().ifEmpty([]),
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
-      //chRseqcReadQuality.collect().ifEmpty([]), // not with mqc by default
+      //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
     )
 

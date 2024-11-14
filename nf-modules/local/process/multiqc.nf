@@ -17,6 +17,7 @@ process multiqc {
   path ('softwareVersions/*')
   path ('workflowSummary/*')
   path warnings
+  âth cutadapt
   path preseq
   path rseqc_genecov
   path rseqc_bamstat
@@ -24,7 +25,7 @@ process multiqc {
   path rseqc_junctannot
   path rseqc_junctsat
   //path rseqc_readquality not a module
-  //path rseqc_readdistrib
+  //path rseqc_readdistrib not working
   
   output:
   path splan, emit: splan
