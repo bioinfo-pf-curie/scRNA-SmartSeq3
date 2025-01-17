@@ -57,21 +57,23 @@ do
 
     nb_frag=0
     if [[ -e barcodes/${sample}*_addbarcodes.log ]]; then
-	for batches in $(ls barcodes/${sample}*_addbarcodes.log)
-	do
-	    nb_frag_batch=$(awk  '$0~"Total"{print $NF}' $batches)
-	    nb_frag=$(( $nb_frag + $nb_frag_batch ))
-	done
+        for batches in $(ls barcodes/${sample}*_addbarcodes.log)
+        do
+            #grep "Input Reads:" results/preprocessing/umitoolsExtract/fastq_chunk*R1* | awk '{print $6}' >> totFragChunk
+            #grep "Reads output: " results/preprocessing/umitoolsExtract/fastq_chunk* | awk '{print $6}' >> nbumireads
+            nb_frag_batch=$(awk  '$0~"Total"{print $NF}' $batches)
+            nb_frag=$(( $nb_frag + $nb_frag_batch ))
+        done
         nb_reads=$(( $nb_frag * 2 ))
-	header+=",Number_of_frag,Number_of_reads"
-	output+=",${nb_frag},${nb_reads}"
+        header+=",Number_of_frag,Number_of_reads"
+        output+=",${nb_frag},${nb_reads}"
     else
-	nb_reads=$(grep "raw total sequences" stats/${sample}.stats | awk '{print $5}')
-	nb_frag=$(( $nb_reads / 2 ))
-	nb_reads_barcoded=$nb_reads
-	perc_barcoded=$(echo "${nb_reads_barcoded} ${nb_reads}" | awk ' { printf "%.*f",2,$1*100/$2 } ')
-	header+=",Number_of_frag,Number_of_reads,Number_barcoded_reads,Percent_barcoded"
-	output+=",${nb_frag},${nb_reads},${nb_reads_barcoded},${perc_barcoded}"
+        nb_reads=$(grep "raw total sequences" stats/${sample}.stats | awk '{print $5}')
+        nb_frag=$(( $nb_reads / 2 ))
+        nb_reads_barcoded=$nb_reads
+        perc_barcoded=$(echo "${nb_reads_barcoded} ${nb_reads}" | awk ' { printf "%.*f",2,$1*100/$2 } ')
+        header+=",Number_of_frag,Number_of_reads,Number_barcoded_reads,Percent_barcoded"
+        output+=",${nb_frag},${nb_reads},${nb_reads_barcoded},${perc_barcoded}"
     fi
 
 

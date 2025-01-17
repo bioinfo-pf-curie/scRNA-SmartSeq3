@@ -5,11 +5,11 @@ include { createBatches } from '../process/createBatches/createBatches'
 def splitByPairs(row){
   def map = []
   int chunk_nb = 1
-  int part = row[1].size()/2
+  int totchunk = row[1].size()/2
   for (i=0; i<row[1].size(); i+=2) { 
     meta = row[0].clone()
     meta.chunk = chunk_nb
-    meta.part = part
+    meta.totchunk = totchunk
     r1 = row[1][i]
     r2 = row[1][i+1]
     map += [meta, [r1,r2]]

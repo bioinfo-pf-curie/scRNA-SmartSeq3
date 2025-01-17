@@ -17,6 +17,7 @@ process multiqc {
   path ('softwareVersions/*')
   path ('workflowSummary/*')
   path warnings
+  // MODULES
   path cutadapt
   path preseq
   path rseqc_genecov
@@ -24,8 +25,11 @@ process multiqc {
   path rseqc_innerdist
   path rseqc_junctannot
   path rseqc_junctsat
+  path qualimap
   //path rseqc_readquality not a module
   //path rseqc_readdistrib not working
+  // stat2mqc
+  path ("umiextract/*")
   
   output:
   path splan, emit: splan
@@ -39,7 +43,7 @@ process multiqc {
   splanOpts = params.samplePlan ? "--splan ${params.samplePlan}" : ""
   isPE = params.singleEnd ? 0 : 1
     
-  modulesList = "-m custom_content -m samtools -m star -m featurecounts -m deeptools -m preseq -m rseqc -m cutadapt"
+  modulesList = "-m custom_content -m samtools -m star -m featurecounts -m deeptools -m preseq -m rseqc -m cutadapt -m qualimap"
   warn = warnings.name == 'warnings.txt' ? "--warn warnings.txt" : ""
   """
   mqc_header.py --name "scRNA-seq" --version ${workflow.manifest.version} ${metadataOpts} ${splanOpts} ${warn} > multiqc-config-header.yaml

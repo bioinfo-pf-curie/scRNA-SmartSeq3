@@ -225,6 +225,9 @@ workflow {
   chNoUmi = umiExtractR2.out.noumi
   chVersions = chVersions.mix(umiExtractR2.out.versions)
 
+
+  chUmiExtractLogs=umiExtractR1.out.log.join(umiExtractR2.out.log)
+
   /*umiReadsLog(
     umiExtractR1.out.log.join(umiExtractR2.out.log).collect()
   )
@@ -247,12 +250,12 @@ workflow {
   // add umi info into meta
   chUmiReads=chUmiReadsConcat
   .map{meta, fastqs ->
-    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunk:meta.chunk ,part:meta.part, umi:"umi"]
+    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunk:meta.chunk ,totchunk:meta.totchunk, umi:"umi"]
     [newMeta, fastqs]
     }
   chNoUmiReads=chNoUmi
   .map{meta, fastqs ->
-    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunk:meta.chunk ,part:meta.part, umi:"noUmi"]
+    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunk:meta.chunk ,totchunk:meta.totchunk, umi:"noUmi"]
     [newMeta, fastqs]
     }
   chReads = chUmiReads.concat(chNoUmiReads)
@@ -296,16 +299,16 @@ workflow {
   )
   chVersions = chVersions.mix(barcode2tag.out.versions)
 
-  // Merge BAM of batchs but still keep the number of total number of batchs info in meta.part
+  // Merge BAM of batchs but still keep the number of total number of batchs info in meta.totchunk
   // meta.chunk (==batch number) info is deleted
   chStar = barcode2tag.out.bam
     .map{meta, bam ->
-       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part, umi:meta.umi]
-       [ groupKey(newMeta, meta.part), bam ]
+       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, umi:meta.umi]
+       [ groupKey(newMeta, meta.totchunk), bam ]
      }.groupTuple()
      .branch {
-       single: it[0].part <= 1 // if only one batch
-       multiple: it[0].part > 1 // if several batchs
+       single: it[0].totchunk <= 1 // if only one batch
+       multiple: it[0].totchunk > 1 // if several batchs
      }
 
   samtoolsMergeBatch(
@@ -411,7 +414,7 @@ workflow {
 
   chFiltBams = chNoUmiFilt.concat(chUmiFilt)
     .map{meta, bam ->
-       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
+       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk]
        [ newMeta, bam ]
      }.groupTuple()
 
@@ -438,7 +441,7 @@ workflow {
   //-----------preseq------------------------------
   chStarBams = starAlign.out.bam
     .map{meta, bam ->
-       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, part:meta.part]
+       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk]
        [ newMeta, bam ]
      }.groupTuple()
 
@@ -493,7 +496,6 @@ workflow {
   )
   chRseqcReadDist=rseqcReadDistribution.out.results
 
-
   rseqcJunctionAnnotation(
     chFinalBam,
     chBed12
@@ -505,6 +507,15 @@ workflow {
     chBed12
   )
   chRseqcJunctionSat=rseqcJunctionSaturation.out.results
+
+  //-----------Qualimap------------------------------
+  qualimapRNAseq(
+          chBamPassed,
+          chGtf.collect()
+        )
+	chQualimapMqc = qualimapRNAseq.out.results.collect()
+        chVersions = chVersions.mix(qualimapRNAseq.out.versions)
+
 
   if (!params.skipMultiQC){
     getSoftwareVersions(
@@ -529,8 +540,12 @@ workflow {
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
+      chQualimapMqc.ifEmpty([]),
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
+      //stat2mqc
+      chUmiExtractLogs.collect().ifEmpty([]),
+
     )
 
     mqcReport = multiqc.out.report.toList()
