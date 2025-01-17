@@ -180,6 +180,8 @@ include { rseqcInnerDistance } from './nf-modules/common/process/rseqc/rseqcInne
 include { rseqcReadDistribution } from './nf-modules/common/process/rseqc/rseqcReadDistribution'
 include { rseqcJunctionAnnotation } from './nf-modules/common/process/rseqc/rseqcJunctionAnnotation'
 include { rseqcJunctionSaturation } from './nf-modules/common/process/rseqc/rseqcJunctionSaturation'
+include { qualimapRNAseq } from './nf-modules/common/process/qualimap/qualimapRNAseq'
+
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 
