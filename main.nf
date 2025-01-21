@@ -531,6 +531,7 @@ workflow {
         chVersions = chVersions.mix(qualimapRNAseq.out.versions)
 
 
+  //-----------MultiQC------------------------------
   if (!params.skipMultiQC){
     getSoftwareVersions(
       chVersions.unique().collectFile()
@@ -554,7 +555,7 @@ workflow {
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
-      chQualimapMqc.ifEmpty([]),
+      chQualimapMqc.collect().ifEmpty([]),
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
       //stat2mqc
