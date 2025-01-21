@@ -519,7 +519,7 @@ workflow {
 
   //-----------Qualimap------------------------------
   qualimapRNAseq(
-          chFinalBam,
+          chFinalBam.join(chFinalBai),
           chGtf.collect()
         )
 	chQualimapMqc = qualimapRNAseq.out.results.collect()
