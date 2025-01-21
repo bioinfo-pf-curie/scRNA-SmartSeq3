@@ -536,10 +536,12 @@ workflow {
 
   //-----------MultiQC------------------------------
   if (!params.skipMultiQC){
+    chGetSoftwareVersions = Channel.empty()
     if (!params.skipSoftVersions){
       getSoftwareVersions(
         chVersions.unique().collectFile()
       )
+      chGetSoftwareVersions=getSoftwareVersions.out.versionsYaml
     }
 
     warnCh = Channel.empty()
@@ -549,7 +551,7 @@ workflow {
       sPlanCh.collect(),
       metadataCh.ifEmpty([]),
       multiqcConfigCh.ifEmpty([]),
-      getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
+      chGetSoftwareVersions.collect().ifEmpty([]),
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
       //modules
