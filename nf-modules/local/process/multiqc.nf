@@ -29,7 +29,7 @@ process multiqc {
   //path rseqc_readquality not a module
   //path rseqc_readdistrib not working
   // stat2mqc
-  path umiextract
+  //path umiextract
   
   output:
   path splan, emit: splan

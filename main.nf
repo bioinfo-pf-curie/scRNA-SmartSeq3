@@ -566,7 +566,7 @@ workflow {
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
       //stat2mqc
-      chUmiExtractLogs.collect().ifEmpty([])
+      //chUmiExtractLogs.collect().ifEmpty([])
 
     )
 
