@@ -528,7 +528,7 @@ workflow {
           chGtf.collect()
         )
 	chQualimapMqc = qualimapRNAseq.out.results.collect()
-        chVersions = chVersions.mix(qualimapRNAseq.out.versions)
+  chVersions = chVersions.mix(qualimapRNAseq.out.versions)
 
 
   //-----------MultiQC------------------------------
@@ -555,7 +555,7 @@ workflow {
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
-      chQualimapMqc.collect().ifEmpty([]),
+      chQualimapMqc.ifEmpty([]),
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
       //stat2mqc

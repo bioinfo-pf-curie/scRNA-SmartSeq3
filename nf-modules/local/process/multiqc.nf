@@ -25,7 +25,7 @@ process multiqc {
   path rseqc_innerdist
   path rseqc_junctannot
   path rseqc_junctsat
-  path qualimap
+  path ('qualimap/*')
   //path rseqc_readquality not a module
   //path rseqc_readdistrib not working
   // stat2mqc
