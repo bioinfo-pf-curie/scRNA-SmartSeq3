@@ -48,8 +48,7 @@ all_samples=$(awk -F, '{print $1}' $splan)
 n_header=0
 
 for sample in $all_samples
-do
-                                                                                                                                                                                                          
+do                                                                                                                                                                                  
     ## sample name
     sname=$(awk -F, -v sname=$sample '$1==sname{print $2}' $splan | uniq)
     header="Sample_id,Sample_name"
@@ -75,7 +74,6 @@ do
         header+=",Number_of_frag,Number_of_reads,Number_barcoded_reads,Percent_barcoded"
         output+=",${nb_frag},${nb_reads},${nb_reads_barcoded},${perc_barcoded}"
     fi
-
 
     # Median reads per cell with more than 1000 reads
     countsfiles=$(ls barcodes/${sample}_final_barcodes_counts.txt)

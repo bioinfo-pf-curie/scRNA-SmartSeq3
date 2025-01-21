@@ -231,6 +231,7 @@ workflow {
 
 
   chUmiExtractLogs=umiExtractR1.out.log.join(umiExtractR2.out.log)
+  chUmiExtractLogs.view()
 
   /*umiReadsLog(
     umiExtractR1.out.log.join(umiExtractR2.out.log).collect()
@@ -535,9 +536,11 @@ workflow {
 
   //-----------MultiQC------------------------------
   if (!params.skipMultiQC){
-    getSoftwareVersions(
-      chVersions.unique().collectFile()
-    )
+    if (!params.skipSoftVersions){
+      getSoftwareVersions(
+        chVersions.unique().collectFile()
+      )
+    }
 
     warnCh = Channel.empty()
 
@@ -550,18 +553,18 @@ workflow {
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
       //modules
-      //chCutadaptLogs.collect().ifEmpty([]),
+      chCutadaptLogs.collect().ifEmpty([]),
       chPreseq.collect().ifEmpty([]),
       chRseqcGeneCov.collect().ifEmpty([]),
       chRseqcBamStat.collect().ifEmpty([]),
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
-      //chQualimapMqc.ifEmpty([]),
+      chQualimapMqc.ifEmpty([]),
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
       //stat2mqc
-      chUmiExtractLogs.collect().ifEmpty([]),
+      chUmiExtractLogs.collect().ifEmpty([])
 
     )
 
