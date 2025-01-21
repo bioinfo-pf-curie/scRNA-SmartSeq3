@@ -422,6 +422,8 @@ workflow {
        [ newMeta, bam ]
      }.groupTuple()
 
+  chFiltBams.view()
+
   samtoolsMergeFinal(
     chFiltBams
   )
@@ -555,7 +557,7 @@ workflow {
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
-      chQualimapMqc.ifEmpty([]),
+      //chQualimapMqc.ifEmpty([]),
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
       //stat2mqc
