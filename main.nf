@@ -163,6 +163,7 @@ include { samtoolsIndex as samtoolsIndexFinalBam} from './nf-modules/common/proc
 
 include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortNoUmis} from './nf-modules/common/process/samtools/samtoolsSort'
+include { samtoolsSort as samtoolsSortFinalBam} from './nf-modules/common/process/samtools/samtoolsSort'
 
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
@@ -427,10 +428,14 @@ workflow {
   chFinalBam = samtoolsMergeFinal.out.bam
   chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
 
-  chFinalBam.view()
+  samtoolsSortFinalBam(
+    chFinalBam
+  )
+  chFinalBamSorted = samtoolsSortFinalBam.out.bam
+  chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
 
   samtoolsIndexFinalBam(
-    chFinalBam
+    chFinalBamSorted
   )
   chFinalBai = samtoolsIndexFinalBam.out.bai
   chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
@@ -494,32 +499,32 @@ workflow {
   chRseqcBamStat=rseqcBamStat.out.results
 
   rseqcInnerDistance(
-    chFinalBam,
+    chFinalBamSorted,
     chBed12
   )
   chRseqcInnerDistance=rseqcInnerDistance.out.results
 
   rseqcReadDistribution(
-    chFinalBam,
+    chFinalBamSorted,
     chBed12
   )
   chRseqcReadDist=rseqcReadDistribution.out.results
 
   rseqcJunctionAnnotation(
-    chFinalBam,
+    chFinalBamSorted,
     chBed12
   )
   chRseqcJunctionAnnot=rseqcJunctionAnnotation.out.results
 
   rseqcJunctionSaturation(
-    chFinalBam,
+    chFinalBamSorted,
     chBed12
   )
   chRseqcJunctionSat=rseqcJunctionSaturation.out.results
 
   //-----------Qualimap------------------------------
   qualimapRNAseq(
-          chFinalBam.join(chFinalBai),
+          chFinalBamSorted.join(chFinalBai),
           chGtf.collect()
         )
 	chQualimapMqc = qualimapRNAseq.out.results.collect()
