@@ -13,7 +13,7 @@ process qualimapRNAseq {
   path gtf
 
   output:
-  path ("${prefix}"), emit: results
+  path ("${prefix}_qualimap"), emit: results
   path ("versions.txt"), emit: versions
 
   when:
@@ -40,7 +40,7 @@ process qualimapRNAseq {
     -gtf ${gtf} \\
     -p ${strandnessOpts} \\
     ${peOpts} \\
-    -outdir ${prefix}
+    -outdir ${prefix}_qualimap 
   echo \$(qualimap -h 2>&1 |  grep "QualiMap" | sed -e 's/v.//') > versions.txt
   """
 }
