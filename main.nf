@@ -550,7 +550,7 @@ workflow {
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
       //modules
-      chCutadaptLogs.collect().ifEmpty([]),
+      //chCutadaptLogs.collect().ifEmpty([]),
       chPreseq.collect().ifEmpty([]),
       chRseqcGeneCov.collect().ifEmpty([]),
       chRseqcBamStat.collect().ifEmpty([]),
