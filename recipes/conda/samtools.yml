@@ -1,0 +1,9 @@
+name: samtools
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Add required software dependencies here
+  - bioconda::samtools=1.11=h6270b1f_0
+  

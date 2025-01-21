@@ -1,0 +1,8 @@
+name: star
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Add required software dependencies here
+  - bioconda::star=2.7.8a=h9ee0642_1

@@ -159,6 +159,7 @@ include { samtoolsIndex as samtoolsIndexStar } from './nf-modules/common/process
 include { samtoolsIndex as samtoolsIndexAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsIndex as samtoolsIndexFinalBam} from './nf-modules/common/process/samtools/samtoolsIndex'
 
 include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortNoUmis} from './nf-modules/common/process/samtools/samtoolsSort'
@@ -427,6 +428,12 @@ workflow {
   chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
 
   chFinalBam.view()
+
+  samtoolsIndexFinalBam(
+    chFinalBam
+  )
+  chFinalBai = samtoolsIndexFinalBam.out.bai
+  chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
 
   //*******************************************
   // MULTIQC

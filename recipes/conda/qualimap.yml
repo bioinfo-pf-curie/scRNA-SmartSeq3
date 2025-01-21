@@ -1,0 +1,8 @@
+name: qualimap
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Add required software dependencies here
+  - bioconda::qualimap=2.2.2a=1

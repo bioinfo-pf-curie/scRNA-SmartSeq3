@@ -12,7 +12,7 @@ dependencies:
   - conda-forge::markdown=3.6=pyhd8ed1ab_0    
   - conda-forge::zipp=3.4.1=pyhd8ed1ab_0
   # tools
-  - bioconda::salmon=0.14.2=ha0cc327_0
+  - bioconda::qualimap=2.2.2a=1
   - bioconda::subread=2.0.1=hed695b0_0
   - bioconda::samtools=1.11=h6270b1f_0
   - bioconda::star=2.7.8a=h9ee0642_1
@@ -23,6 +23,9 @@ dependencies:
   - bioconda::deeptools=3.5.0=py_0
   - bioconda::multiqc=1.10=py_1
   - bioconda::preseq=2.0.3=hc216eb9_5
+
+  - bioconda::salmon=0.14.2=ha0cc327_0
+
   # R
   - conda-forge::zip=3.0=h7f98852_1
   - conda-forge::r-base=4.0.3=h8ff2632_7
