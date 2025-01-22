@@ -232,6 +232,7 @@ workflow {
 
   chUmiExtractLogs=umiExtractR1.out.log.join(umiExtractR2.out.log)
   chUmiExtractLogs.view()
+  chUmiExtractLogs.collect().view()
 
   /*umiReadsLog(
     umiExtractR1.out.log.join(umiExtractR2.out.log).collect()
@@ -566,9 +567,8 @@ workflow {
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
       //stat2mqc
-      umiExtractR1.out.log.collect().ifEmpty([]),
-      umiExtractR2.out.log.collect().ifEmpty([])
-
+      chUmiExtractLogs.collect().ifEmpty([]),
+      chNbCells.collect()
     )
 
     mqcReport = multiqc.out.report.toList()

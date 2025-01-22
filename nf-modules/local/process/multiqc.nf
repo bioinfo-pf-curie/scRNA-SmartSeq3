@@ -31,8 +31,8 @@ process multiqc {
   // stat2mqc
   path umiextractR1
   path umiextractR2
+  path nbCells
 
-  
   output:
   path splan, emit: splan
   path "*report.html", emit: report
