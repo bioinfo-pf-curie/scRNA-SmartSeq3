@@ -229,11 +229,8 @@ workflow {
   chNoUmi = umiExtractR2.out.noumi
   chVersions = chVersions.mix(umiExtractR2.out.versions)
 
-
   chUmiExtractLogs=umiExtractR1.out.log.join(umiExtractR2.out.log)
-  chUmiExtractLogs.view()
-  chUmiExtractLogs.collect().view()
-
+  
   /*umiReadsLog(
     umiExtractR1.out.log.join(umiExtractR2.out.log).collect()
   )

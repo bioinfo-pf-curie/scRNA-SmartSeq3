@@ -29,8 +29,7 @@ process multiqc {
   //path rseqc_readquality not a module
   //path rseqc_readdistrib not working
   // stat2mqc
-  path umiextractR1
-  path umiextractR2
+  path umiextract
   path nbCells
 
   output:
