@@ -12,7 +12,7 @@ process nbCells {
   tuple val(meta), path(dir)
 
   output:
-  tuple val(meta), path("*txt"), emit: count
+  path("*txt"), emit: count
  
   script:
   def prefix = task.ext.prefix ?: "${meta.id}"
