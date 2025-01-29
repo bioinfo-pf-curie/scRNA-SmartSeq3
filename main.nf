@@ -565,7 +565,8 @@ workflow {
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
       //stat2mqc
       chUmiExtractLogs.collect().ifEmpty([]),
-      chNbCells.collect()
+      chNbCells.collect(),
+      starAlign.out.logs
     )
 
     mqcReport = multiqc.out.report.toList()
