@@ -28,14 +28,14 @@ process createBatches {
     mkdir -p batchDir
     # tidy fastqs in batch repositories
     for file in *.fastq.gz; do
-        batch=$(echo "$file" | cut -d"." -f1 | cut -d"_" -f2) 
+        batch=\$(echo "$file" | cut -d"." -f1 | cut -d"_" -f2) 
         # create directory if not existing
         mkdir -p batchDir/"$batch"
-        cp "$file" batchDir/"$batch"
+        mv "$file" batchDir/"$batch"
     done
     # Concatenate all R1 and R2 seperatly for each batch
     for dir in batchDir/*; do
-        batch=$(basename $dir)
+        batch=\$(basename $dir)
         zcat "$dir"/*R1.fastq.gz > "${prefix}_${batch}.R1.fastq"
         zcat "$dir"/*R2.fastq.gz > "${prefix}_${batch}.R2.fastq"
     done
