@@ -16,7 +16,7 @@ process createBatches {
   def bsizeOpts = batchSize ? "-L ${batchSize}" : ""
   def prefix = task.ext.prefix ?: "${meta.id}"
   """
-  if (( ${batchSize} =! 0 )); then
+  if (( ${batchPerSize} =! "false" )); then
 
     # merge all R1 fastq files per batchSize
     ls -1 $reads/*R1.fastq.gz | xargs $bsizeOpts echo | awk '{print "zcat " \$0 " > ${prefix}_batch"NR".R1.fastq"}' | bash
