@@ -1,4 +1,10 @@
+***************************************
+version-1.2.1
 
++ add Plasmodium falciparum genome
++ Update environment.yml
++ update stat2mqc genes and umis
++ delete skipBigWig
 
 ***************************************
 version-1.2.0
