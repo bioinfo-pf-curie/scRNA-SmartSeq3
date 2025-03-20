@@ -24,14 +24,22 @@ write.table(Ratio, "RatioPerCell.csv", sep=',', row.names=FALSE, col.names=FALSE
 umiMatrix <- CreateSeuratObject(counts = sparseMtx, min.features = 0)
 if(genome=="hg38" || genome=="hg19"){
     umiMatrix[["percent.mt"]] <- PercentageFeatureSet(umiMatrix, pattern = "^MT-")
+    MT<-cbind(rownames(umiMatrix[["percent.mt"]]), Ratio$`Number of genes`, umiMatrix[["percent.mt"]])
+    colnames(MT)<-c("Samples", "Number of genes", "% Mitochondrial genes")
 }
 # if mouse genome
 if(genome=="mm10" || genome=="mm9" || genome=="dmelr6.28"){
     umiMatrix[["percent.mt"]] <- PercentageFeatureSet(umiMatrix, pattern = "^mt-")
+    MT<-cbind(rownames(umiMatrix[["percent.mt"]]), Ratio$`Number of genes`, umiMatrix[["percent.mt"]])
+    colnames(MT)<-c("Samples", "Number of genes", "% Mitochondrial genes")
 }
 
-MT<-cbind(rownames(umiMatrix[["percent.mt"]]), Ratio$`Number of genes`, umiMatrix[["percent.mt"]])
-colnames(MT)<-c("Samples", "Number of genes", "% Mitochondrial genes")
+if(genome=="Pfalciparum3D7_PlasmoDB-68"){
+    MT<-data.frame(Samples=NA, "Number of genes"=NA, "% Mitochondrial genes"=NA, check.names = F)[numeric(0),]
+}
+
 write.table(MT, "MtGenePerCell.csv", sep=',', row.names=FALSE, col.names=FALSE)
+
+
 
 
