@@ -9,7 +9,7 @@ version-1.2.1
 ***************************************
 version-1.2.0
 
-+ add errorStrategy 'ignore' for geneBodyCoverage process to skip the error when the estimation is not possible
+  - add errorStrategy 'ignore' for geneBodyCoverage process to skip the error when the estimation is not possible
 
 ***************************************
 version-1.1.0
