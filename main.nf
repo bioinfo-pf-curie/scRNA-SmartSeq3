@@ -85,7 +85,8 @@ if ( params.metadata ){
 chStarIndex  = params.starIndex  ? Channel.fromPath(params.starIndex, checkIfExists: true).collect()         : Channel.empty()
 chBed12      = params.bed12    ? Channel.fromPath(params.bed12, checkIfExists: true).collect()         : Channel.empty()
 chGtf        = params.gtf   ? Channel.fromPath(params.gtf, checkIfExists: true).collect()               : Channel.empty()
-chBatchSize     = params.batchSize     ? Channel.value(params.batchSize)                                    : Channel.value([])
+chChunkSize     = params.chunkSize     ? Channel.value(params.chunkSize)                                    : Channel.value([])
+chSampleDescitpion = params.sampleDescription  ? Channel.fromPath(params.sampleDescription, checkIfExists: true).collect()    : Channel.value([])
 
 /*
 ===========================
@@ -131,7 +132,7 @@ sPlanCh = NFTools.getSamplePlan(params.samplePlan, params.reads, params.readDir)
 */ 
 
 // Workflows
-include { createBatchesFlow } from './nf-modules/common/subworkflow/createBatchesFlow'
+include { createBatchFlow } from './nf-modules/common/subworkflow/createBatchFlow'
 include { markdupFlow } from './nf-modules/common/subworkflow/markdupFlow'
 
 // Process
@@ -146,16 +147,16 @@ include { starAlign } from './nf-modules/common/process/star/starAlign'
 
 include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
-include { nbCells} from './nf-modules/local/process/nbCells'
+//include { nbCells} from './nf-modules/local/process/nbCells'
+include { seqkitFx2tab} from './nf-modules/local/process/seqkitFx2tab'
 
-include { samtoolsMerge as samtoolsMergeBatch } from './nf-modules/common/process/samtools/samtoolsMerge'
+include { samtoolsMerge as samtoolsMergeChunk } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsMerge as samtoolsMergeStar } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsMerge as samtoolsMergeFinal } from './nf-modules/common/process/samtools/samtoolsMerge'
 
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
-include { samtoolsIndex as samtoolsIndexStar } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
@@ -198,25 +199,28 @@ workflow {
 
   main:
 
-  nbCells(
-    chRawReads
-  )
-  chNbCells = nbCells.out.count
-
   //********************************************************
   // Merge cell fastqs into one 
-  createBatchesFlow(
+  createBatchFlow(
     chRawReads,
-    chBatchSize
+    chChunkSize,
+    chSampleDescitpion
   )
-  chVersions = createBatchesFlow.out.versions
+  chTaggedReads = createBatchFlow.out.reads
+  chVersions = createBatchFlow.out.versions
+
+  seqkitFx2tab(
+    chTaggedReads
+  )
+  chFastqNbCells=seqkitFx2tab.out.count
+  chVersions = chVersions.mix(seqkitFx2tab.out.versions)
 
   //********************************************************
   // Extract UMIs info 
 
   // extract UMIs in forward reads (R1)
   umiExtractR1(
-    createBatchesFlow.out.reads,
+    chTaggedReads,
     Channel.value('R1')
   )
   ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
@@ -252,15 +256,17 @@ workflow {
 
   // add umi info into meta
   chUmiReads=chUmiReadsConcat
-  .map{meta, fastqs ->
-    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunk:meta.chunk ,totchunk:meta.totchunk, umi:"umi"]
-    [newMeta, fastqs]
-    }
+              .map{meta, fastqs ->
+                    def newMeta = meta.clone()
+                    newMeta.umi = 'umi'
+                    [newMeta, fastqs]
+                  }
   chNoUmiReads=chNoUmi
-  .map{meta, fastqs ->
-    newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, chunk:meta.chunk ,totchunk:meta.totchunk, umi:"noUmi"]
-    [newMeta, fastqs]
-    }
+                .map{meta, fastqs ->
+                      def newMeta = meta.clone()
+                      newMeta.umi = 'noUmi'
+                      [newMeta, fastqs]
+                    }
   chReads = chUmiReads.concat(chNoUmiReads)
 
   // Get name of reads without UMIs
@@ -287,44 +293,48 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
-  samtoolsIndexStar(
-    starAlign.out.bam
-  )
-  chVersions = chVersions.mix(samtoolsIndexStar.out.versions)
-
+  // Add barcodes as read tag
   barcodeListPerBatch(
     starAlign.out.bam
   )
-
-  // Add barcodes as read tag
   barcode2tag(
-    starAlign.out.bam.join(samtoolsIndexStar.out.bai).join(barcodeListPerBatch.out.barcodes)
+    starAlign.out.bam.join(barcodeListPerBatch.out.barcodes)
   )
   chVersions = chVersions.mix(barcode2tag.out.versions)
 
-  // Merge BAM of batchs but still keep the number of total number of batchs info in meta.totchunk
-  // meta.chunk (==batch number) info is deleted
-  chStar = barcode2tag.out.bam
-    .map{meta, bam ->
-       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, umi:meta.umi]
-       [ groupKey(newMeta, meta.totchunk), bam ]
-     }.groupTuple()
-     .branch {
-       single: it[0].totchunk <= 1 // if only one batch
-       multiple: it[0].totchunk > 1 // if several batchs
-     }
+  // info meta.chunk is deleted to merge all chunks
+  if (params.generateBatch == true && params.sampleDescription!=null){
+    // if several chunks within a batch 
+    chTaggedBams = barcode2tag.out.bam
+      .map{meta, bam ->
+        def newMeta = [ id: "${meta.id}_${meta.batch}", name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, batch:meta.batch, umi:meta.umi ]
+        [ newMeta, bam ]
+      }.groupTuple()
+      .branch {
+        single: it[0].totchunk == null
+        multiple: it[0].totchunk != null
+      }
+  }else{
+    chTaggedBams = barcode2tag.out.bam
+      .map{meta, bam ->
+        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, umi:meta.umi ]
+        [ groupKey(newMeta, meta.totchunk), bam ]
+      }.groupTuple()
+      .branch {
+        single: it[0].totchunk <= 1 
+        multiple: it[0].totchunk > 1
+      }
+  }
 
-  samtoolsMergeBatch(
+  samtoolsMergeChunk(
     chStar.multiple
   )
-  chBams = samtoolsMergeBatch.out.bam.mix(chStar.single)
-  chVersions = chVersions.mix(samtoolsMergeBatch.out.versions)
+  chBams = samtoolsMergeChunk.out.bam.mix(chStar.single)
 
   samtoolsStats(
-    chBams, // umi et non umi seperat
+    chBams, // umi et nonUmi separated
     Channel.value([])
   )
-  chVersions = chVersions.mix(samtoolsStats.out.versions)
 
   filterUnaligned(
     chBams
@@ -334,8 +344,8 @@ workflow {
   samtoolsIndexAligned(
     filterUnaligned.out.bam
   )
-  chVersions = chVersions.mix(samtoolsIndexAligned.out.versions)
 
+  // pour appeler séparément ces channels
   filterUnaligned.out.bam.join(samtoolsIndexAligned.out.bai)
   .branch {
         umi: it[0].umi == "umi"
@@ -354,12 +364,13 @@ workflow {
   samtoolsSortUmis(
     featureCountsUmis.out.bam
   )
-  chVersions = chVersions.mix( samtoolsSortUmis.out.versions)
 
   samtoolsIndexUmis(
     samtoolsSortUmis.out.bam
   )
-  chVersions = chVersions.mix(samtoolsIndexUmis.out.versions)
+
+  // umitools counts = umi + gene unique 
+  // umitools dedup = umi + start + end SAUF si option --per-gene
   
   // generate matrix
   umitoolsCountUmis(
@@ -377,22 +388,19 @@ workflow {
   //********************************************************
   // Non Umi reads
 
-  // Mark PCR reads duplicates non UMI reads
+  // Mark duplicated reads
   markdupFlow(
     chAlignedBams.noUmi
   )
-  chVersions = chVersions.mix(markdupFlow.out.versions)
 
   // Filter out pcr duplicates
   filterMarkdup(
     markdupFlow.out.bam
   )
-  chVersions = chVersions.mix(filterMarkdup.out.versions)
                                                                                                                                                                                                        
   samtoolsIndexMarkdup(
     filterMarkdup.out.bam
   )
-  chVersions = chVersions.mix(samtoolsIndexMarkdup.out.versions)
 
   // Assign 
   featureCountsNoUmis( // IF gene_name exists in gtf !!!! add if not -> gene_id
@@ -414,15 +422,15 @@ workflow {
 
   //********************************************************
   // final BAM
-
   chFiltBams = chNoUmiFilt.concat(chUmiFilt)
     .map{meta, bam ->
-       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk]
-       [ newMeta, bam ]
-     }.groupTuple()
+          def cleanedMeta = meta.findAll { k, v -> k != 'umi' }
+          [ cleanedMeta, bam ]
+        }.groupTuple()
 
   chFiltBams.view()
 
+  // merge UMI + nonUMI mais pas batches
   samtoolsMergeFinal(
     chFiltBams
   )
@@ -454,26 +462,14 @@ workflow {
   //umiExtractionSummary
 
   //-----------preseq------------------------------
-  chStarBams = starAlign.out.bam
-    .map{meta, bam ->
-       def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk]
-       [ newMeta, bam ]
-     }.groupTuple()
-
-  samtoolsMergeStar(
-    chStarBams
-  )
-  chStarBam = samtoolsMergeStar.out.bam
-  chVersions = chVersions.mix(samtoolsMergeStar.out.versions)
-
   preseq(
-    samtoolsMergeStar.out.bam
+    chBams
   )
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(preseq.out.versions)
 
   //-----------RSeqC------------------------------
-  if (!params.skipGeneCov){
+  if (!params.skipSatCurvePlot){
 
     samtoolsSortNoUmis(
       chNoUmiFilt
@@ -490,12 +486,12 @@ workflow {
   }
 
   rseqcReadQuality(
-    samtoolsMergeStar.out.bam
+    chBams
   )
   chRseqcReadQuality=rseqcReadQuality.out.results
 
   rseqcBamStat(
-    samtoolsMergeStar.out.bam
+    chBams
   )
   chRseqcBamStat=rseqcBamStat.out.results
 
@@ -552,6 +548,7 @@ workflow {
       chGetSoftwareVersions.collect().ifEmpty([]),
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
+      chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       //modules
       chCutadaptLogs.collect().ifEmpty([]),
       chPreseq.collect().ifEmpty([]),
@@ -565,7 +562,7 @@ workflow {
       //chRseqcReadDist.collect().ifEmpty([]) // fait buguer
       //stat2mqc
       chUmiExtractLogs.collect().ifEmpty([]),
-      chNbCells.collect(),
+      chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs
     )
 

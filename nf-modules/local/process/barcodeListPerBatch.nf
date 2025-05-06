@@ -18,6 +18,6 @@ process barcodeListPerBatch {
   def prefix = task.ext.prefix ?: "${meta.id}"
   def args = task.ext.args ?: ''
   """
-  samtools view $bam | cut -f1 | cut -f2 -d_ | sort | uniq > ${prefix}_barcodes.txt
+  samtools view $bam | awk -F'\t' '{split(\$1, a, "_"); print a[2]}' | sort -u > ${prefix}_barcodes.txt
   """
 }

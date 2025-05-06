@@ -61,7 +61,8 @@ Mandatory arguments:
   Skip options: All are false by default
     --skipSoftVersion [bool]      Do not report software version
     --skipMultiQC [bool]          Skips MultiQC
-    --skipGeneCov [bool]          Skips calculating genebody coverage
+    --skipGeneCovPlot [bool]          Skips genebody coverage plot in multiqc report 
+    --skipSatCurvePlot [bool]          Skips saturation curve plot in multiqc report 
   
   Genomes: If not specified in the configuration file or if you wish to overwrite any of the references given by the --genome field
   --genomeAnnotationPath [file]      Path  to genome annotation folder

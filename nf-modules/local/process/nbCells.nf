@@ -18,6 +18,7 @@ process nbCells {
   def prefix = task.ext.prefix ?: "${meta.id}"
   def args = task.ext.args ?: ''
   """
-  ls ${dir}/*R1* | wc -l > ${meta.id}_nbCells.txt
+  count=$(ls -1 ${dir} | wc -l)
+  echo $((count / 2)) > ${meta.id}_nbCells.txt
   """
 }
