@@ -31,6 +31,7 @@ process multiqc {
   // stat2mqc
   path umiextract
   path nbCells
+  path starLogs
 
   output:
   path splan, emit: splan

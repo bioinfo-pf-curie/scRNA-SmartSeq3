@@ -548,7 +548,6 @@ workflow {
       chGetSoftwareVersions.collect().ifEmpty([]),
       workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
       warnCh.collect().ifEmpty([]),
-      chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       //modules
       chCutadaptLogs.collect().ifEmpty([]),
       chPreseq.collect().ifEmpty([]),
