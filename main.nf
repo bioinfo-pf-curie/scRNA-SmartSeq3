@@ -327,9 +327,9 @@ workflow {
   }
 
   samtoolsMergeChunk(
-    chStar.multiple
+    chTaggedBams.multiple
   )
-  chBams = samtoolsMergeChunk.out.bam.mix(chStar.single)
+  chBams = samtoolsMergeChunk.out.bam.mix(chTaggedBams.single)
 
   samtoolsStats(
     chBams, // umi et nonUmi separated
