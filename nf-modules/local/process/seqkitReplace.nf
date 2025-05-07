@@ -61,7 +61,8 @@ process seqkitReplace {
     prename=\$(echo \$prefix | sed -E "s/(.*).R[12].*/\\1/")
     #if name of the fastq is the bioname then remove _Si_L001
     base=\$(echo \$prename | sed -E 's/_S[0-9]+_L001*//')
-    seqkit replace -p " " -r '_'\$base' ' ${dir}/\$fastq | pigz -p ${task.cpus} -c > "barcodedFastq/"\$base".R1.fastq.gz"
+    baseClean=\$(echo \$prename | sed -e 's/_/--/g')
+    seqkit replace -p " " -r '_'\$baseClean' ' ${dir}/\$fastq | pigz -p ${task.cpus} -c > "barcodedFastq/"\$base".R1.fastq.gz"
     done
 
     for fastq in \$(ls ${dir} | grep -E '(^|[^0-9])R2([^0-9]|\$)')
@@ -70,7 +71,8 @@ process seqkitReplace {
     prename=\$(echo \$prefix | sed -E "s/(.*).R[12].*/\\1/")
     #if name of the fastq is the bioname then remove _Si_L001
     base=\$(echo \$prename | sed -E 's/_S[0-9]+_L001*//')
-    seqkit replace -p " " -r '_'\$base' ' ${dir}/\$fastq | pigz -p ${task.cpus} -c > "barcodedFastq/"\$base".R2.fastq.gz"
+    baseClean=\$(echo \$prename | sed -e 's/_/--/g')
+    seqkit replace -p " " -r '_'\$baseClean' ' ${dir}/\$fastq | pigz -p ${task.cpus} -c > "barcodedFastq/"\$base".R2.fastq.gz"
     done
   fi
   
