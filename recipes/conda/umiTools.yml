@@ -2,7 +2,7 @@ name: umi-tools-1.1.1
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   - bioconda::umi_tools=1.1.1=py37hf01694f_1
   - bioconda::seqkit=0.15.0=0

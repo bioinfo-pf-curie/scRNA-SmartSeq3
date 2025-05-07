@@ -2,7 +2,7 @@ name: R-4.0.3
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   - conda-forge::zip=3.0=h7f98852_1
   - conda-forge::r-base=4.0.3=hd23ff56_6

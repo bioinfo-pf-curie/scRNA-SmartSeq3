@@ -1,8 +1,8 @@
 name: multiqc-1.9
 channels:
-  - defaults
   - conda-forge
   - bioconda
+  - nodefaults
 dependencies:
   - conda-forge::lzstring=1.0.4=py_1001
   - conda-forge::matplotlib-base=3.3.4=py37h0c9df89_0
