@@ -94,6 +94,13 @@ chSampleDescitpion = params.sampleDescription  ? Channel.fromPath(params.sampleD
 ===========================
 */
 
+def branch = null
+def commit = null
+try {
+    branch = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
+    commit = "git rev-parse HEAD".execute().text.trim()
+} catch (ignored) {}
+
 summary = [
   'Pipeline' : workflow.manifest.name ?: null,
   'Version': workflow.manifest.version ?: null,
@@ -106,9 +113,13 @@ summary = [
   'Max Resources': "${params.maxMemory} memory, ${params.maxCpus} cpus, ${params.maxTime} time per job",
   'Container': workflow.containerEngine && workflow.container ? "${workflow.containerEngine} - ${workflow.container}" : null,
   'Profile' : workflow.profile,
+  'Date Started': workflow.start,
   'OutDir' : params.outDir,
   'WorkDir': workflow.workDir,
   'CommandLine': workflow.commandLine
+  'Pipeline Git URL': workflow.repository ?: null,
+  'Pipeline Git Commit': commit ?: '@git_commit@',
+  'Pipeline Git branch': branch ?: null,
 ].findAll{ it.value != null }
 
 workflowSummaryCh = NFTools.summarize(summary, workflow, params)
