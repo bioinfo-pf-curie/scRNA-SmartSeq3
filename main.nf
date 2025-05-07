@@ -116,7 +116,8 @@ summary = [
   'Date Started': workflow.start,
   'OutDir' : params.outDir,
   'WorkDir': workflow.workDir,
-  'CommandLine': workflow.commandLine
+  'CommandLine': workflow.commandLine,
+  'Pipeline Git URL': workflow.repository ?: null,
   'Pipeline Git Commit': commit ?: '@git_commit@',
   'Pipeline Git branch': branch ?: null,
 ].findAll{ it.value != null }
