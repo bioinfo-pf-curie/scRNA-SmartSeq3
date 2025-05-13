@@ -436,25 +436,13 @@ workflow {
   chNoUmiFilt.view()
   chUmiFilt.view()
   
-  chNoUmiFilt2 = chNoUmiFilt
-    .map{meta, bam -> 
+  chFiltBams = chNoUmiFilt.concat(chUmiFilt)
+    .map{meta, bams -> 
           def cleanedMeta = meta.findAll { k,v -> k != 'umi' }
-          [ cleanedMeta, bam ]
-        }
-  
-  chNoUmiFilt2.view()
+          [ cleanedMeta, bams ]
+        }.groupTuple()
 
-  chUmiFilt2 = chUmiFilt
-    .map{meta, bam ->
-          def cleanedMeta = meta.findAll { k,v -> k != 'umi' }
-          [ cleanedMeta, bam ]
-        }
-  
-  chUmiFilt2.view()
-  
-  
-  chFiltBams=chUmiFilt2.join(chNoUmiFilt2)
-
+    
   chFiltBams.view()
 
   // merge UMI + nonUMI mais pas batches
