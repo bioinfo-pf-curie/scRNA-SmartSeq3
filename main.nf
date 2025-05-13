@@ -436,11 +436,24 @@ workflow {
   chNoUmiFilt.view()
   chUmiFilt.view()
 
-  chFiltBams = chNoUmiFilt.concat(chUmiFilt)
-    .map{meta, bam1, bam2 ->
-          def cleanedMeta = meta.findAll { k, v, w -> k != 'umi' }
-          [ cleanedMeta, bam1, bam2 ]
-        }.groupTuple()
+  chNoUmiFilt2 = chNoUmiFilt
+    .map{meta, bam ->
+          def cleanedMeta = meta.findAll { k, v -> k != 'umi' }
+          [ cleanedMeta, bam ]
+        }
+  
+  chNoUmiFilt2.view()
+
+  chUmiFilt2 = chUmiFilt
+    .map{meta, bam ->
+          def cleanedMeta = meta.findAll { k, v -> k != 'umi' }
+          [ cleanedMeta, bam ]
+        }
+  
+  chUmiFilt2.view()
+  
+  
+  chFiltBams=chUmiFilt2.concat(chNoUmiFilt2)
 
   chFiltBams.view()
 
