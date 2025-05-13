@@ -438,7 +438,7 @@ workflow {
   
   chNoUmiFilt2 = chNoUmiFilt
     .map{meta, bam ->
-          def cleanedMeta = meta.findAll{ k -> k != 'umi' }
+          def cleanedMeta = meta.findAll{ k,v -> k != 'umi' }
           [ cleanedMeta, bam ]
         }
   
@@ -446,14 +446,14 @@ workflow {
 
   chUmiFilt2 = chUmiFilt
     .map{meta, bam ->
-          def cleanedMeta = meta.findAll { k -> k != 'umi' }
+          def cleanedMeta = meta.findAll { k,v -> k != 'umi' }
           [ cleanedMeta, bam ]
         }
   
   chUmiFilt2.view()
   
   
-  chFiltBams=chUmiFilt2.concat(chNoUmiFilt2)
+  chFiltBams=chUmiFilt2.join(chNoUmiFilt2)
 
   chFiltBams.view()
 
