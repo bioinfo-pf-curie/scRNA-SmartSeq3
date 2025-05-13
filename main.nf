@@ -433,6 +433,10 @@ workflow {
 
   //********************************************************
   // final BAM
+  chNoUmiFilt.view()
+  chUmiFilt.view()
+  chNoUmiFilt.concat(chUmiFilt).view()
+
   chFiltBams = chNoUmiFilt.concat(chUmiFilt)
     .map{meta, bam ->
           def cleanedMeta = meta.findAll { k, v -> k != 'umi' }
