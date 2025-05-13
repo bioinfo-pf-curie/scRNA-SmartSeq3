@@ -492,7 +492,7 @@ workflow {
     chVersions = chVersions.mix( samtoolsSortUmis.out.versions)
 
     rseqcGeneBodyCoverage(
-      samtoolsSortNoUmis.out.bam.concat(chUmiFilt), 
+      samtoolsSortNoUmis.out.bam, //samtoolsSortNoUmis.out.bam.concat(chUmiFilt), 
       chBed12 
     )
     chRseqcGeneCov=rseqcGeneBodyCoverage.out.results
