@@ -438,7 +438,7 @@ workflow {
   
   chNoUmiFilt2 = chNoUmiFilt
     .map{meta, bam -> 
-          def cleanedMeta = meta - 'umi' }
+          def cleanedMeta = meta.findAll { k,v -> k != 'umi' }
           [ cleanedMeta, bam ]
         }
   
