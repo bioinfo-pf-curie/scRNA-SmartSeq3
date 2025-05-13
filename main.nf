@@ -329,7 +329,7 @@ workflow {
     chTaggedBams = barcode2tag.out.bam
       .map{meta, bam ->
         def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, umi:meta.umi ]
-        [ groupKey(newMeta, meta.totchunk), bam ]
+        [ newMeta, bam ]
       }.groupTuple()
       .branch {
         single: it[0].totchunk <= 1 
