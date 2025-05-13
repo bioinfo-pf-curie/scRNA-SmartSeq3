@@ -318,7 +318,7 @@ workflow {
     // if several chunks within a batch 
     chTaggedBams = barcode2tag.out.bam
       .map{meta, bam ->
-        def newMeta = [ id: "${meta.id}_${meta.umi}_${meta.batch}", name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, batch:meta.batch, umi:meta.umi ]
+        def newMeta = [ id: "${meta.id}_${meta.batch}", name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, batch:meta.batch, umi:meta.umi ]
         [ newMeta, bam ]
       }.groupTuple()
       .branch {
@@ -328,7 +328,7 @@ workflow {
   }else{
     chTaggedBams = barcode2tag.out.bam
       .map{meta, bam ->
-        def newMeta = [ id: "${meta.id}_${meta.umi}", name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, umi:meta.umi ]
+        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, umi:meta.umi ]
         [ groupKey(newMeta, meta.totchunk), bam ]
       }.groupTuple()
       .branch {
