@@ -325,7 +325,7 @@ workflow {
 
   // umi_tools group to move umi from id to in tag 
   umitoolsGroup(
-    chBams
+    filterUnaligned.out.bam
   )
 
 
