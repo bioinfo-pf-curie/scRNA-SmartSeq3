@@ -149,7 +149,7 @@ include { markdupFlow } from './nf-modules/common/subworkflow/markdupFlow'
 // Process
 include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/utils/outputDocumentation'
-include { umitoolsExtract as umiExtractR1 } from './nf-modules/common/process/umitools/umitoolsExtract'
+include { umitoolsExtract } from './nf-modules/common/process/umitools/umitoolsExtract'
 //include { seqkitSeq } from './nf-modules/common/process/seqkit/seqkitSeq'
 include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
