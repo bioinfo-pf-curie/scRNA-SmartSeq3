@@ -239,8 +239,8 @@ workflow {
   ChVersionsCh = chVersions.mix(umitoolsExtract.out.versions)
 
   // Reconcatenate umi and no umis fastqs (R1umi + R1noumis et R2umi + R2noumis)
-  chUmiAndNoUmi = chUmi.out.fastq
-    .join(chNoUmi.out.fastq)
+  chUmiAndNoUmi = chUmi
+    .join(chNoUmi)
     .map{meta,umi,noumi -> [meta, [umi[0], umi[1], noumi[0], noumi[1]]]}
 
   // concatenate R1 together and R2 together 
