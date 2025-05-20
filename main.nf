@@ -329,6 +329,10 @@ workflow {
   )
 
 
+  samtoolsIndexAligned(
+    filterUnaligned.out.bam
+  )
+  
   // pour appeler séparément ces channels
   filterUnaligned.out.bam.join(samtoolsIndexAligned.out.bai)
   .branch {
@@ -341,9 +345,6 @@ workflow {
   // UMI reads
 
 
-  samtoolsIndexAligned(
-    filterUnaligned.out.bam
-  )
 
   featureCountsUmis( 
     chAlignedBams.umi.combine(chGtf)
