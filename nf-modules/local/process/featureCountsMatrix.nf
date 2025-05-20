@@ -9,7 +9,7 @@ process featureCountsMatrix {
   tuple val(meta), path(bam)
 
   output:
-  tuple val(meta), path("*_matrix.csv"), emit: reads
+  tuple val(meta), path("*_matrix.csv"), emit: matrix
 
   script:
   """

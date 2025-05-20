@@ -150,7 +150,6 @@ include { markdupFlow } from './nf-modules/common/subworkflow/markdupFlow'
 include { getSoftwareVersions } from './nf-modules/common/process/utils/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/utils/outputDocumentation'
 include { umitoolsExtract as umiExtractR1 } from './nf-modules/common/process/umitools/umitoolsExtract'
-include { umitoolsExtract as umiExtractR2 } from './nf-modules/common/process/umitools/umitoolsExtract'
 //include { seqkitSeq } from './nf-modules/common/process/seqkit/seqkitSeq'
 include { concatFastq } from './nf-modules/common/process/concatFastq/concatFastq'
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
@@ -180,6 +179,7 @@ include { samtoolsSort as samtoolsSortFinalBam} from './nf-modules/common/proces
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
+include { umitoolsGroup } from './nf-modules/common/process/umitools/umitoolsGroup'
 
 include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { samtoolsFilter as filterNoUmisUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
@@ -230,55 +230,26 @@ workflow {
   // Extract UMIs info 
 
   // extract UMIs in forward reads (R1)
-  umiExtractR1(
-    chTaggedReads,
-    Channel.value('R1')
+  umitoolsExtract(
+    chTaggedReads
   )
+  chUmi=umitoolsExtract.out.fastq
+  chNoUmi = umitoolsExtract.out.noumi
+  chUmiExtractLogs=umitoolsExtract.out.log
   ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
 
-  // extract UMIs in reverse reads (R2)
-  umiExtractR2(
-    umiExtractR1.out.noumi, // reads without umi in R1 (but maybe in R2)
-    Channel.value('R2')
-  )
-  chNoUmi = umiExtractR2.out.noumi
-  chVersions = chVersions.mix(umiExtractR2.out.versions)
-
-  chUmiExtractLogs=umiExtractR1.out.log.join(umiExtractR2.out.log)
-  
-  /*umiReadsLog(
-    umiExtractR1.out.log.join(umiExtractR2.out.log).collect()
-  )
-  chTotFrag=
-  chPercentUmis=*/
-
-  // Reconcatenate umi fastqs (R1umi + R2umis)
-  chUmi = umiExtractR1.out.fastq
-    .join(umiExtractR2.out.fastq)
-    .map{meta,umi1,umi2 -> [meta, [umi1[0], umi1[1], umi2[0], umi2[1]]]}
+  // Reconcatenate umi and no umis fastqs (R1umi + R1noumis et R2umi + R2noumis)
+  chUmiAndNoUmi = chUmi.out.fastq
+    .join(chNoUmi.out.fastq)
+    .map{meta,umi,noumi -> [meta, [umi[0], umi[1], noumi[0], noumi[1]]]}
 
   // concatenate R1 together and R2 together 
   concatFastq(
-    chUmi, 
+    chUmiAndNoUmi, 
     Channel.value(2)
   )
-  chUmiReadsConcat = concatFastq.out.reads 
+  chConcat = concatFastq.out.reads 
   chVersions = chVersions.mix(concatFastq.out.versions)
-
-  // add umi info into meta
-  chUmiReads=chUmiReadsConcat
-              .map{meta, fastqs ->
-                    def newMeta = meta.clone()
-                    newMeta.umi = 'umi'
-                    [newMeta, fastqs]
-                  }
-  chNoUmiReads=chNoUmi
-                .map{meta, fastqs ->
-                      def newMeta = meta.clone()
-                      newMeta.umi = 'noUmi'
-                      [newMeta, fastqs]
-                    }
-  chReads = chUmiReads.concat(chNoUmiReads)
 
   // Get name of reads without UMIs
   /*seqkitSeq(
@@ -289,7 +260,7 @@ workflow {
   //********************************************************
   // trim polyA/T linker 
   cutadapt(
-    chReads
+    chConcat
   )
   chCutadaptLogs=cutadapt.out.logs
   chVersions = chVersions.mix(cutadapt.out.versions)
@@ -318,7 +289,7 @@ workflow {
     // if several chunks within a batch 
     chTaggedBams = barcode2tag.out.bam
       .map{meta, bam ->
-        def newMeta = [ id: "${meta.id}_${meta.batch}", name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, batch:meta.batch, umi:meta.umi ]
+        def newMeta = [ id: "${meta.id}_${meta.batch}", name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, batch:meta.batch]
         [ newMeta, bam ]
       }.groupTuple()
       .branch {
@@ -328,7 +299,7 @@ workflow {
   }else{
     chTaggedBams = barcode2tag.out.bam
       .map{meta, bam ->
-        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, umi:meta.umi ]
+        def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk]
         [ newMeta, bam ]
       }.groupTuple()
       .branch {
@@ -343,7 +314,7 @@ workflow {
   chBams = samtoolsMergeChunk.out.bam.mix(chTaggedBams.single)
 
   samtoolsStats(
-    chBams, // umi et nonUmi separated
+    chBams, 
     Channel.value([])
   )
 
@@ -351,21 +322,28 @@ workflow {
     chBams
   )
   chVersions = chVersions.mix(filterUnaligned.out.versions)
-                                                                                                                                                                                                       
-  samtoolsIndexAligned(
-    filterUnaligned.out.bam
+
+  // umi_tools group to move umi from id to in tag 
+  umitoolsGroup(
+    chBams.out.bam
   )
+
 
   // pour appeler séparément ces channels
   filterUnaligned.out.bam.join(samtoolsIndexAligned.out.bai)
   .branch {
-        umi: it[0].umi == "umi"
+        umi: it[0].umi == "umi" // it[0]==meta
         noUmi: it[0].umi == "noUmi"
     }
     .set { chAlignedBams }
 
   //********************************************************
   // UMI reads
+
+
+  samtoolsIndexAligned(
+    filterUnaligned.out.bam
+  )
 
   featureCountsUmis( 
     chAlignedBams.umi.combine(chGtf)
@@ -387,6 +365,7 @@ workflow {
   umitoolsCountUmis(
     samtoolsSortUmis.out.bam.join(samtoolsIndexUmis.out.bai)
   )
+  matrixUmis=umitoolsCountUmis.out.matrix
   chVersions = chVersions.mix(umitoolsCountUmis.out.versions)
 
   // generate dedup bam
@@ -397,7 +376,7 @@ workflow {
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
 
   //********************************************************
-  // Non Umi reads
+  // All reads
 
   // Mark duplicated reads
   markdupFlow(
@@ -425,13 +404,19 @@ workflow {
   chNoUmiFilt=filterNoUmisUnassigned.out.bam
   chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
 
-  // Matrix 
+  // Matrix non UMIs
   featureCountsMatrix(
     featureCountsNoUmis.out.counts,
     filterMarkdup.out.bam
   )
+  matrixNoUmis=featureCountsMatrix.out.matrix
 
   //********************************************************
+  // final Matrix 
+
+  matrixUmis
+  matrixNoUmis
+
   // final BAM
   chNoUmiFilt.view()
   chUmiFilt.view()
