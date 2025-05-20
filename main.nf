@@ -179,7 +179,7 @@ include { samtoolsSort as samtoolsSortFinalBam} from './nf-modules/common/proces
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
-include { umitoolsGroup } from './nf-modules/common/process/umitools/umitoolsGroup'
+include { extractUmiReads } from './nf-modules/local/process/extractUmiReads'
 
 include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { samtoolsFilter as filterNoUmisUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
@@ -251,12 +251,6 @@ workflow {
   chConcat = concatFastq.out.reads 
   chVersions = chVersions.mix(concatFastq.out.versions)
 
-  // Get name of reads without UMIs
-  /*seqkitSeq(
-    chNoUmi // reads without umi in R1 and R2
-  )
-  chVersions = chVersions.mix(seqkitSeq.out.versions)*/
-
   //********************************************************
   // trim polyA/T linker 
   cutadapt(
@@ -323,31 +317,20 @@ workflow {
   )
   chVersions = chVersions.mix(filterUnaligned.out.versions)
 
-  // umi_tools group to move umi from id to in tag 
-  umitoolsGroup(
-    filterUnaligned.out.bam
-  )
-
-
-  samtoolsIndexAligned(
-    filterUnaligned.out.bam
-  )
   
-  // pour appeler séparément ces channels
-  filterUnaligned.out.bam.join(samtoolsIndexAligned.out.bai)
-  .branch {
-        umi: it[0].umi == "umi" // it[0]==meta
-        noUmi: it[0].umi == "noUmi"
-    }
-    .set { chAlignedBams }
-
   //********************************************************
   // UMI reads
 
+  extractUmiReads(
+    filterUnaligned.out.bam
+  )
 
+  samtoolsIndexAligned(
+    extractUmiReads
+  )
 
   featureCountsUmis( 
-    chAlignedBams.umi.combine(chGtf)
+    extractUmiReads.join(samtoolsIndexAligned.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
@@ -381,7 +364,7 @@ workflow {
 
   // Mark duplicated reads
   markdupFlow(
-    chAlignedBams.noUmi
+    filterUnaligned.out.bam
   )
 
   // Filter out pcr duplicates
