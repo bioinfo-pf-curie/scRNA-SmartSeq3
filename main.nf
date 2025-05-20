@@ -236,7 +236,7 @@ workflow {
   chUmi=umitoolsExtract.out.fastq
   chNoUmi = umitoolsExtract.out.noumi
   chUmiExtractLogs=umitoolsExtract.out.log
-  ChVersionsCh = chVersions.mix(umiExtractR1.out.versions)
+  ChVersionsCh = chVersions.mix(umitoolsExtract.out.versions)
 
   // Reconcatenate umi and no umis fastqs (R1umi + R1noumis et R2umi + R2noumis)
   chUmiAndNoUmi = chUmi.out.fastq
