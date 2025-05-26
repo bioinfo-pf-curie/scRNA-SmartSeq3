@@ -19,7 +19,7 @@ process extractUmiReads {
   def args = task.ext.args ?: ''
   def prefix = task.ext.prefix ?: "${bam.baseName}"
   """
-  samtools view -h ${bam} | awk 'BEGIN{OFS="\t"} /^@/ {print; next} $1 ~ /_/ {print}' | samtools view -b -o ${prefix}_umi.bam
+  samtools view -h ${bam} | awk 'BEGIN{OFS="\t"} /^@/ {print; next} \$1 ~ /_/ {print}' | samtools view -b -o ${prefix}_umi.bam
   """
 }
 
