@@ -174,6 +174,7 @@ include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/proc
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexFinalBam} from './nf-modules/common/process/samtools/samtoolsIndex'
 
+include { samtoolsSort as samtoolsSortAll} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortNoUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortFinalBam} from './nf-modules/common/process/samtools/samtoolsSort'
@@ -404,8 +405,8 @@ workflow {
   //********************************************************
   // final Matrix 
 
-  matrixUmis
-  matrixNoUmis
+  //matrixUmis
+  //matrixNoUmis
 
   // final BAM
   chNoUmiFilt.view()
@@ -452,8 +453,12 @@ workflow {
   //umiExtractionSummary
 
   //-----------preseq------------------------------
-  preseq(
+  samtoolsSortAll(
     chBams
+  )
+
+  preseq(
+    samtoolsSortAll.out.bam
   )
   chPreseq = preseq.out.curves
   chVersions = chVersions.mix(preseq.out.versions)

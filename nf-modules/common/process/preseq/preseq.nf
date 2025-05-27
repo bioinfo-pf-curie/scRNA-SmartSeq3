@@ -30,6 +30,6 @@ process preseq {
   """
   echo \$(preseq 2>&1 | awk '\$0~"Version"{print "Preseq",\$2}') > versions.txt
   samtools index ${bam}
-  preseq lc_extrap -seed 1 -v -B ${bam} ${peOpts} -o ${prefix}_extrap_ccurve.txt ${args}
+  preseq lc_extrap -B ${bam} -o ${prefix}_extrap_ccurve.txt ${args} ${peOpts}
   """
 }
