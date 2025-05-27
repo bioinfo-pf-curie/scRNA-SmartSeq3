@@ -1,19 +1,16 @@
-
-
-
+/* Extract reads having an underscore in id */
 
 process extractUmiReads {
   tag "${meta.id}"
   label 'umiTools'
   label 'lowCpu'
+  label 'medMem'
 
   input: 
   tuple val(meta), path(bam)
 
   output:
   tuple val(meta), path("*_umi.bam"), emit: bam
-  tuple val(meta), path("*.log"), emit: log
-  path("versions.txt"), emit: versions
 
   script:
   def args = task.ext.args ?: ''
