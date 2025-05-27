@@ -326,11 +326,11 @@ workflow {
   )
 
   samtoolsIndexAligned(
-    extractUmiReads
+    extractUmiReads.out.bam
   )
 
   featureCountsUmis( 
-    extractUmiReads.join(samtoolsIndexAligned.out.bai).combine(chGtf)
+    extractUmiReads.out.bam.join(samtoolsIndexAligned.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
