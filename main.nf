@@ -167,7 +167,9 @@ include { samtoolsMerge as samtoolsMergeFinal } from './nf-modules/common/proces
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
-include { samtoolsIndex as samtoolsIndexAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsIndex as samtoolsIndexUmiAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsIndex as samtoolsIndexAllAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
+
 include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexFinalBam} from './nf-modules/common/process/samtools/samtoolsIndex'
@@ -325,12 +327,12 @@ workflow {
     filterUnaligned.out.bam
   )
 
-  samtoolsIndexAligned(
+  samtoolsIndexUmiAligned(
     extractUmiReads.out.bam
   )
 
   featureCountsUmis( 
-    extractUmiReads.out.bam.join(samtoolsIndexAligned.out.bai).combine(chGtf)
+    extractUmiReads.out.bam.join(samtoolsIndexUmiAligned.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
@@ -362,9 +364,13 @@ workflow {
   //********************************************************
   // All reads
 
+  samtoolsIndexAllAligned(
+    filterUnaligned.out.bam
+  )
+
   // Mark duplicated reads
   markdupFlow(
-    filterUnaligned.out.bam
+    filterUnaligned.out.bam.join(samtoolsIndexAllAligned.out.bai)
   )
 
   // Filter out pcr duplicates
