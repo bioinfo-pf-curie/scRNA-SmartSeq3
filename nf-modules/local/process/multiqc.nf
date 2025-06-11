@@ -21,17 +21,18 @@ process multiqc {
   path cutadapt
   path preseq
   path rseqc_genecov
-  path rseqc_bamstat
+  //path rseqc_bamstat
   path rseqc_innerdist
   path rseqc_junctannot
   path rseqc_junctsat
   path ('qualimap/*')
   //path rseqc_readquality not a module
-  path rseqc_readdistrib //not working
+  //path rseqc_readdistrib //not working
   // stat2mqc
   path umiextract
   path nbCells
   path starLogs
+  path fastqc
 
   output:
   path splan, emit: splan

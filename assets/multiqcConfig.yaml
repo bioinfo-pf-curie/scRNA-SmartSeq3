@@ -3,7 +3,7 @@
 #
 #################################################################
 
-skip_generalstats: true
+skip_generalstats: false
 read_count_multiplier: 0.000001
 read_count_prefix: 'M'
 read_count_desc: 'millions'
@@ -108,125 +108,46 @@ custom_data:
               format: '{:,.1f}'
               placement: 14000
 
-    gene_type:
-       file_format: 'csv'
-       section_name: 'Expressed Genes'
-       description: 'with a TPM value > 1 are considered. The number of expressed genes per sample was splitted into the 5 most abundant classes following the known gene annotations.'
-       plot_type: 'bargraph'
-       pconfig:
-            namespace: 'genetype'
-            id: 'genetype'
-            title: 'Expressed Genes'
-            ylab: 'Number of expressed genes (TPM>1)'
-            scale: 'Pastel1'
-    
-    # gene_biotype:
-    #    file_format: 'csv'
-    #    section_name: 'Gene Biotypes'
-    #    description: ''
-    #    plot_type: 'bargraph'
-    #    pconfig:
-    #         namespace: '_biotype_counts_mqc'
-    #         id: '_biotype_counts_mqc'
-    
-    gene_saturation:
-       file_format: 'tsv'
-       section_name: 'Gene-based saturation'
-       description: 'plot showing the number of detected genes for a given set of subsampling values.'
-       plot_type: 'linegraph'
-       pconfig:
-            namespace: 'gene saturation'
-            id: 'genesaturation'
-            title: 'Gene-based Saturation'
-            ylab: 'Number of detected genes'
-            xlab: 'Number of reads (M)'
-
 sp:
    my_stats:
       fn: '*.stats'
-   gene_type:
-      fn: '*genetype.txt'
-   gene_saturation:
-      fn: '*gcurve.txt'
-  #  gene_biotype:
-  #     fn: '*_biotype_counts_mqc.txt'
-
-
-table_cond_formatting_rules:
-    Percent_of_rRNA:
-        pass:
-            - lt: 10
-        warn:
-            - gt: 10
-        fail:
-            - gt: 20
-    Percent_of_aligned_reads:
-        pass:
-            - gt: 80
-        warn:
-            - lt: 80
-        fail:
-            - lt: 50
-    Percent_duplicates:
-        pass:
-            - lt: 35
-        warn:
-            - gt: 35
-        fail:
-            - gt: 50
-
-
-################################
-## Clean sample names
-
-extra_fn_clean_exts:
-    - 'gcurve.txt'
 
 ###############################
 ## Modules 
 
 module_order:
+  - fastqc
+  - cutadapt
   - star
-  - rseqc
   - featureCounts
+  - rseqc
+  - qualimap
   - preseq:
      name: 'Sequencing Complexity'
      info: 'estimates the complexity of a library, showing how many additional unique reads are sequenced for increasing total read count. A shallow curve indicates complexity saturation. The dashed line shows a perfectly complex library where total reads = unique reads. The presented graph shows extrapolated curves up to 200M sequencing reads.'
 
-
-custom_plot_config:
-   bowtie1_alignment:
-     reads_aligned:
-       color: '#e41a1c'
-     multimapped:
-       color: '#ffffb3'
-     not_aligned:
-       color: '#1f78b4'
-
-   rseqc_read_distribution_plot:
-     cds_exons_tag_count:
-        color: '#8dd3c7'
-     5_utr_exons_tag_count:
-        color: '#ffffb3'
-     3_utr_exons_tag_count:
-        color: '#bebada'
-     introns_tag_count:
-        color: '#fb8072'
-     tss_up_1kb_tag_count:
-        color: '#80b1d3'
-     tss_up_5kb_tag_count:
-        color: '#fdb462'
-     tss_up_10kb_tag_count:
-        color: '#b3dde69'
-     tes_down_1kb_tag_count:
-        color: '#fccde5'
-     tes_down_5kb_tag_count:
-        color: '#d9d9d9'
-     tes_down_10kb_tag_count:
-        color: '#bc80bd'
-     other_intergenic_tag_count:
-        color: '#ccebc5'
-
+module_fastqc:
+  sections:
+    per_base_sequence_quality:
+      show: true
+    duplication_levels:
+      show: true
+    overrepresented_sequences:
+      show: true
+    per_base_n_content:
+      show: true
+    adapter_content:
+      show: false
+    per_sequence_quality_scores:
+      show: false
+    per_base_sequence_content:
+      show: false
+    per_sequence_gc_content:
+      show: false
+    sequence_length_distribution:
+      show: false
+    kmer_content:
+      show: false
 
 #############################
 ## Display
@@ -248,12 +169,5 @@ report_section_order:
     order: -1000
   summary:
     order: -1100
-
-table_columns_visible:
-    FastQC:
-        percent_duplicates: False
-
-preseq:
-   notrim: true
 
 plots_force_interactive: True

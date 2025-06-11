@@ -192,14 +192,14 @@ include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMat
 // multiqc modules
 include { preseq } from './nf-modules/common/process/preseq/preseq'
 include { rseqcGeneBodyCoverage } from './nf-modules/common/process/rseqc/rseqcGeneBodyCoverage'
-include { rseqcReadQuality } from './nf-modules/common/process/rseqc/rseqcReadQuality'
+//include { rseqcReadQuality } from './nf-modules/common/process/rseqc/rseqcReadQuality'
 include { rseqcBamStat } from './nf-modules/common/process/rseqc/rseqcBamStat'
 include { rseqcInnerDistance } from './nf-modules/common/process/rseqc/rseqcInnerDistance'
-include { rseqcReadDistribution } from './nf-modules/common/process/rseqc/rseqcReadDistribution'
+//include { rseqcReadDistribution } from './nf-modules/common/process/rseqc/rseqcReadDistribution'
 include { rseqcJunctionAnnotation } from './nf-modules/common/process/rseqc/rseqcJunctionAnnotation'
 include { rseqcJunctionSaturation } from './nf-modules/common/process/rseqc/rseqcJunctionSaturation'
 include { qualimapRNAseq } from './nf-modules/common/process/qualimap/qualimapRNAseq'
-
+include { fastqc } from './nf-modules/common/process/fastqc/fastqc'
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 
@@ -420,6 +420,13 @@ workflow {
   //-----------umitools------------------------------
   //umiExtractionSummary
 
+  //-----------FastQC------------------------------
+  fastqc(
+    chRawReads
+  )
+  chFastqc=fastqc.out.results
+  chVersions = chVersions.mix(fastqc.out.versions)
+
   //-----------preseq------------------------------
 
   if (!params.skipSatCurvePlot){
@@ -453,11 +460,6 @@ workflow {
     chRseqcGeneCov=Channel.empty()
   }
 
-  rseqcReadQuality(
-    chBams
-  )
-  chRseqcReadQuality=rseqcReadQuality.out.results
-
   rseqcBamStat(
     chBams
   )
@@ -468,12 +470,6 @@ workflow {
     chBed12
   )
   chRseqcInnerDistance=rseqcInnerDistance.out.results
-
-  rseqcReadDistribution(
-    chFinalBamAll,
-    chBed12
-  )
-  chRseqcReadDist=rseqcReadDistribution.out.results
 
   rseqcJunctionAnnotation(
     chFinalBamAll,
@@ -503,12 +499,14 @@ workflow {
 
   //-----------MultiQC------------------------------
   if (!params.skipMultiQC){
-    chGetSoftwareVersions = Channel.empty()
+
     if (!params.skipSoftVersions){
       getSoftwareVersions(
         chVersions.unique().collectFile()
       )
       chGetSoftwareVersions=getSoftwareVersions.out.versionsYaml
+    }else{
+      chGetSoftwareVersions = Channel.empty()
     }
 
     warnCh = Channel.empty()
@@ -525,17 +523,18 @@ workflow {
       chCutadaptLogs.collect().ifEmpty([]),
       chPreseq.collect().ifEmpty([]),
       chRseqcGeneCov.collect().ifEmpty([]),
-      chRseqcBamStat.collect().ifEmpty([]),
+      //chRseqcBamStat.collect().ifEmpty([]),
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
       chRseqcJunctionSat.collect().ifEmpty([]),
       chQualimapMqc.ifEmpty([]),
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
-      chRseqcReadDist.collect().ifEmpty([]), // fait buguer
+      //chRseqcReadDist.collect().ifEmpty([]), // fait buguer
       //stat2mqc
       chUmiExtractLogs.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
-      starAlign.out.logs
+      starAlign.out.logs,
+      chFastqc
     )
 
     mqcReport = multiqc.out.report.toList()
