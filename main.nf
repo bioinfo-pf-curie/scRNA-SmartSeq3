@@ -464,6 +464,8 @@ workflow {
     )
     chPreseq = preseq.out.curves
     chVersions = chVersions.mix(preseq.out.versions)
+  }else {
+    chPreseq=Channel.empty()
   }
 
   //-----------RSeqC------------------------------
