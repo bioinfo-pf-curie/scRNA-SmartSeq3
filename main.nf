@@ -384,7 +384,7 @@ workflow {
   filterMarkdup(
     markdupFlow.out.bam
   )
-                                                                                                                                                                                                       
+                                                                                                                                                                                
   samtoolsIndexMarkdup(
     filterMarkdup.out.bam
   )
@@ -463,32 +463,32 @@ workflow {
   chRseqcBamStat=rseqcBamStat.out.results
 
   rseqcInnerDistance(
-    chFinalBamSorted,
+    chFinalBamAll,
     chBed12
   )
   chRseqcInnerDistance=rseqcInnerDistance.out.results
 
   rseqcReadDistribution(
-    chFinalBamSorted,
+    chFinalBamAll,
     chBed12
   )
   chRseqcReadDist=rseqcReadDistribution.out.results
 
   rseqcJunctionAnnotation(
-    chFinalBamSorted,
+    chFinalBamAll,
     chBed12
   )
   chRseqcJunctionAnnot=rseqcJunctionAnnotation.out.results
 
   rseqcJunctionSaturation(
-    chFinalBamSorted,
+    chFinalBamAll,
     chBed12
   )
   chRseqcJunctionSat=rseqcJunctionSaturation.out.results
 
   //-----------Qualimap------------------------------
   qualimapRNAseq(
-          chFinalBamSorted.join(chFinalBai),
+          chFinalBamAll.join(chFinalBai),
           chGtf.collect()
         )
 	chQualimapMqc = qualimapRNAseq.out.results.collect()
