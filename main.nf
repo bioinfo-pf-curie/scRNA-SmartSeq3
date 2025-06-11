@@ -353,14 +353,14 @@ workflow {
 
   // generate matrix
   umitoolsCount(
-    umiInTags.out.bam.join(umitoolsGroup.out.bai)
+    umiInTags.join(umitoolsGroup.out.bai)
   )
   matrixUmis=umitoolsCount.out.matrix
   chVersions = chVersions.mix(umitoolsCount.out.versions)
 
   // generate dedup bam
   umitoolsDedup(
-    umiInTags.out.bam.join(umitoolsGroup.out.bai)
+    umiInTags.join(umitoolsGroup.out.bai)
   )
   chFinalBamUmi=umitoolsDedup.out.bam
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
@@ -395,17 +395,17 @@ workflow {
   )
   chVersions = chVersions.mix(featureCountsAll.out.versions)
 
-  filterAllUnassigned(
-    featureCountsAll.out.bam
-  )
-  chFinalBamAll=filterAllUnassigned.out.bam
-
   // Matrix all umis
   featureCountsMatrix(
     featureCountsAll.out.counts,
     filterMarkdup.out.bam
   )
   matrixAll=featureCountsMatrix.out.matrix
+
+  filterAllUnassigned(
+    featureCountsAll.out.bam
+  )
+  chFinalBamAll=filterAllUnassigned.out.bam
 
   //*******************************************
   // MULTIQC
