@@ -453,18 +453,21 @@ workflow {
   //umiExtractionSummary
 
   //-----------preseq------------------------------
-  samtoolsSortAll(
-    chBams
-  )
 
-  preseq(
-    samtoolsSortAll.out.bam
-  )
-  chPreseq = preseq.out.curves
-  chVersions = chVersions.mix(preseq.out.versions)
+  if (!params.skipSatCurvePlot){
+    samtoolsSortAll(
+      chBams
+    )
+
+    preseq(
+      samtoolsSortAll.out.bam
+    )
+    chPreseq = preseq.out.curves
+    chVersions = chVersions.mix(preseq.out.versions)
+  }
 
   //-----------RSeqC------------------------------
-  if (!params.skipSatCurvePlot){
+  if (!params.skipGeneBodyCovPlot){
 
     samtoolsSortNoUmis(
       chNoUmiFilt
