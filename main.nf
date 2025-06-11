@@ -178,12 +178,15 @@ include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/sa
 include { samtoolsSort as samtoolsSortAll} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortFinalBam} from './nf-modules/common/process/samtools/samtoolsSort'
 
-include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
-include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/umitools/umitoolsCount'
-include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
 include { extractUmiReads } from './nf-modules/local/process/extractUmiReads'
 
+include { umitoolsGroup} from './nf-modules/common/process/umitools/umitoolsGroup'
+include { umitoolsCount} from './nf-modules/common/process/umitools/umitoolsCount'
+include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
+
+include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
 include { featureCounts as featureCountsAll} from './nf-modules/common/process/featureCounts/featureCounts'
+
 include { samtoolsFilter as filterAllUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
 
@@ -351,11 +354,11 @@ workflow {
   umitoolsGroupLogs=umitoolsGroup.out.log
 
   // generate matrix
-  umitoolsCountUmis(
+  umitoolsCount(
     umiInTags.out.bam.join(umitoolsGroup.out.bai)
   )
-  matrixUmis=umitoolsCountUmis.out.matrix
-  chVersions = chVersions.mix(umitoolsCountUmis.out.versions)
+  matrixUmis=umitoolsCount.out.matrix
+  chVersions = chVersions.mix(umitoolsCount.out.versions)
 
   // generate dedup bam
   umitoolsDedup(
