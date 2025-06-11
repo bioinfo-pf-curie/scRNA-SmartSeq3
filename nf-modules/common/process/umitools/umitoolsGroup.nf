@@ -1,5 +1,5 @@
 /*
- * Umitools remove PCR duplicates
+ * Add tag in bam with the umis in read ids 
  */
 
 process umitoolsGroup {
@@ -12,6 +12,7 @@ process umitoolsGroup {
 
   output:
   tuple val(meta), path("*_umitoolsgroup.bam"), emit: bam
+  tuple val(meta), path("*_umitoolsgroup.bam"), emit: bai
   tuple val(meta), path("*.log"), emit: log
   path("versions.txt"), emit: versions
 
@@ -24,6 +25,8 @@ process umitoolsGroup {
   --output-bam ${prefix}_umitoolsgroup.bam \
   --log=${prefix}_umitoolsgroup.log \
   ${args}
+
+  samtools index ${prefix}_umitoolsgroup.bam 
 
   umi_tools --version | cut -f1,3 -d" " &> versions.txt
   """

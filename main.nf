@@ -161,7 +161,6 @@ include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBa
 include { seqkitFx2tab} from './nf-modules/local/process/seqkitFx2tab'
 
 include { samtoolsMerge as samtoolsMergeChunk } from './nf-modules/common/process/samtools/samtoolsMerge'
-include { samtoolsMerge as samtoolsMergeStar } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsMerge as samtoolsMergeFinal } from './nf-modules/common/process/samtools/samtoolsMerge'
 
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
@@ -174,9 +173,9 @@ include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/proc
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexFinalBam} from './nf-modules/common/process/samtools/samtoolsIndex'
 
-include { samtoolsSort as samtoolsSortAll} from './nf-modules/common/process/samtools/samtoolsSort'
+include { samtoolsSort as samtoolsSortAllStar} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
-include { samtoolsSort as samtoolsSortNoUmis} from './nf-modules/common/process/samtools/samtoolsSort'
+include { samtoolsSort as samtoolsSortAll} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortFinalBam} from './nf-modules/common/process/samtools/samtoolsSort'
 
 include { featureCounts as featureCountsUmis} from './nf-modules/common/process/featureCounts/featureCounts'
@@ -184,8 +183,8 @@ include { umitoolsCount as umitoolsCountUmis} from './nf-modules/common/process/
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
 include { extractUmiReads } from './nf-modules/local/process/extractUmiReads'
 
-include { featureCounts as featureCountsNoUmis} from './nf-modules/common/process/featureCounts/featureCounts'
-include { samtoolsFilter as filterNoUmisUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
+include { featureCounts as featureCountsAll} from './nf-modules/common/process/featureCounts/featureCounts'
+include { samtoolsFilter as filterAllUnassigned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
 
 // multiqc modules
@@ -263,7 +262,7 @@ workflow {
   chVersions = chVersions.mix(cutadapt.out.versions)
 
   //********************************************************
-  // Sequence alignement
+  // Sequence alignement of all reads
 
   starAlign(
     cutadapt.out.fastq,
@@ -294,6 +293,7 @@ workflow {
         multiple: it[0].totchunk != null
       }
   }else{
+    // 1 batch==1 id per row in the SP
     chTaggedBams = barcode2tag.out.bam
       .map{meta, bam ->
         def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk]
@@ -320,7 +320,6 @@ workflow {
   )
   chVersions = chVersions.mix(filterUnaligned.out.versions)
 
-  
   //********************************************************
   // UMI reads
 
@@ -345,22 +344,28 @@ workflow {
     samtoolsSortUmis.out.bam
   )
 
-  // umitools counts = umi + gene unique 
-  // umitools dedup = umi + start + end SAUF si option --per-gene
-  
+  umitoolsGroup(
+    samtoolsSortUmis.out.bam.join(samtoolsIndexUmis.out.bai)
+  )
+  umiInTags=umitoolsGroup.out.bam
+  umitoolsGroupLogs=umitoolsGroup.out.log
+
   // generate matrix
   umitoolsCountUmis(
-    samtoolsSortUmis.out.bam.join(samtoolsIndexUmis.out.bai)
+    umiInTags.out.bam.join(umitoolsGroup.out.bai)
   )
   matrixUmis=umitoolsCountUmis.out.matrix
   chVersions = chVersions.mix(umitoolsCountUmis.out.versions)
 
   // generate dedup bam
   umitoolsDedup(
-    samtoolsSortUmis.out.bam.join(samtoolsIndexUmis.out.bai)
+    umiInTags.out.bam.join(umitoolsGroup.out.bai)
   )
   chUmiFilt=umitoolsDedup.out.bam
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
+
+  // umitools counts = umi + gene unique 
+  // umitools dedup = umi + start + end SAUF si option --per-gene
 
   //********************************************************
   // All reads
@@ -384,43 +389,34 @@ workflow {
   )
 
   // Assign 
-  featureCountsNoUmis( // IF gene_name exists in gtf !!!! add if not -> gene_id
+  featureCountsAll( // IF gene_name exists in gtf !!!! add if not -> gene_id
     filterMarkdup.out.bam.join(samtoolsIndexMarkdup.out.bai).combine(chGtf)
   )
-  chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
+  chVersions = chVersions.mix(featureCountsAll.out.versions)
 
-  filterNoUmisUnassigned(
-    featureCountsNoUmis.out.bam
+  filterAllUnassigned(
+    featureCountsAll.out.bam
   )
-  chNoUmiFilt=filterNoUmisUnassigned.out.bam
-  chVersions = chVersions.mix(featureCountsNoUmis.out.versions)
+  chAllFilt=filterAllUnassigned.out.bam
+  chVersions = chVersions.mix(featureCountsAll.out.versions)
 
   // Matrix non UMIs
   featureCountsMatrix(
-    featureCountsNoUmis.out.counts,
+    featureCountsAll.out.counts,
     filterMarkdup.out.bam
   )
-  matrixNoUmis=featureCountsMatrix.out.matrix
+  matrixAll=featureCountsMatrix.out.matrix
 
   //********************************************************
   // final Matrix 
 
-  //matrixUmis
-  //matrixNoUmis
-
-  // final BAM
-  chNoUmiFilt.view()
-  chUmiFilt.view()
-  
-  chFiltBams = chNoUmiFilt.concat(chUmiFilt)
+  chFiltBams = chAllFilt.concat(chUmiFilt)
     .map{meta, bams -> 
           def cleanedMeta = meta.findAll { k,v -> k != 'umi' }
           [ cleanedMeta, bams ]
         }.groupTuple()
 
     
-  chFiltBams.view()
-
   // merge UMI + nonUMI mais pas batches
   samtoolsMergeFinal(
     chFiltBams
@@ -455,12 +451,12 @@ workflow {
   //-----------preseq------------------------------
 
   if (!params.skipSatCurvePlot){
-    samtoolsSortAll(
+    samtoolsSortAllStar(
       chBams
     )
 
     preseq(
-      samtoolsSortAll.out.bam
+      samtoolsSortAllStar.out.bam
     )
     chPreseq = preseq.out.curves
     chVersions = chVersions.mix(preseq.out.versions)
@@ -471,13 +467,13 @@ workflow {
   //-----------RSeqC------------------------------
   if (!params.skipGeneBodyCovPlot){
 
-    samtoolsSortNoUmis(
-      chNoUmiFilt
+    samtoolsSortAll(
+      chAllFilt
     )
     chVersions = chVersions.mix( samtoolsSortUmis.out.versions)
 
     rseqcGeneBodyCoverage(
-      samtoolsSortNoUmis.out.bam, //samtoolsSortNoUmis.out.bam.concat(chUmiFilt), 
+      samtoolsSortAll.out.bam, 
       chBed12 
     )
     chRseqcGeneCov=rseqcGeneBodyCoverage.out.results
