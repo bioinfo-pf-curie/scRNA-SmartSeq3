@@ -13,7 +13,7 @@ process preseq {
   input:
   tuple val(meta), path(bam)
 
-  //errorStrategy 'ignore'
+  errorStrategy 'ignore'
 
   output:
   path("*ccurve.txt"), emit: curves
