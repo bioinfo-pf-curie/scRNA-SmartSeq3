@@ -128,25 +128,29 @@ module_order:
 
 module_fastqc:
   sections:
-    per_base_sequence_quality:
+    fastqc_per_base_sequence_quality:
       show: true
-    duplication_levels:
+    fastqc_sequence_duplication_levels:
       show: true
-    overrepresented_sequences:
+    fastqc_per_base_sequence_content:
       show: true
-    per_base_n_content:
+    fastqc_overrepresented_sequences:
       show: true
-    adapter_content:
+    fastqc_overrepresented_sequences:
       show: false
-    per_sequence_quality_scores:
+    fastqc_per_base_n_content:
       show: false
-    per_base_sequence_content:
+    fastqc_adapter_content:
       show: false
-    per_sequence_gc_content:
+    fastqc_per_sequence_quality_scores:
       show: false
-    sequence_length_distribution:
+    fastqc_per_sequence_gc_content:
       show: false
-    kmer_content:
+    fastqc_sequence_length_distribution:
+      show: false
+    fastqc_sequence_counts:
+      show: false
+    fastqc_status_checks:
       show: false
 
 #############################
