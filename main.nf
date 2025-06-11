@@ -531,7 +531,7 @@ workflow {
       chRseqcJunctionSat.collect().ifEmpty([]),
       chQualimapMqc.ifEmpty([]),
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
-      chRseqcReadDist.collect().ifEmpty([]) // fait buguer
+      chRseqcReadDist.collect().ifEmpty([]), // fait buguer
       //stat2mqc
       chUmiExtractLogs.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
