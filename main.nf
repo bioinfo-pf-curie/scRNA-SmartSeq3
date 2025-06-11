@@ -166,11 +166,12 @@ include { samtoolsMerge as samtoolsMergeFinal } from './nf-modules/common/proces
 include { samtoolsStats } from './nf-modules/common/process/samtools/samtoolsStats'
 include { samtoolsFilter as filterUnaligned } from './nf-modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './nf-modules/common/process/samtools/samtoolsFilter'
+
 include { samtoolsIndex as samtoolsIndexUmiAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexAllAligned } from './nf-modules/common/process/samtools/samtoolsIndex'
-
 include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
+include { samtoolsIndex as samtoolsIndexAllFinal} from './nf-modules/common/process/samtools/samtoolsIndex'
 
 include { samtoolsSort as samtoolsSortAllStar} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
@@ -487,8 +488,13 @@ workflow {
   chRseqcJunctionSat=rseqcJunctionSaturation.out.results
 
   //-----------Qualimap------------------------------
+
+  samtoolsIndexAllFinal(
+    chFinalBamAll
+  )
+  
   qualimapRNAseq(
-          chFinalBamAll.join(chFinalBai),
+          chFinalBamAll.join(samtoolsIndexAllFinal.out.bai),
           chGtf.collect()
         )
 	chQualimapMqc = qualimapRNAseq.out.results.collect()
