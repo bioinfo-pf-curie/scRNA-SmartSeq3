@@ -399,7 +399,6 @@ workflow {
     featureCountsAll.out.bam
   )
   chFinalBamAll=filterAllUnassigned.out.bam
-  chVersions = chVersions.mix(featureCountsAll.out.versions)
 
   // Matrix all umis
   featureCountsMatrix(
