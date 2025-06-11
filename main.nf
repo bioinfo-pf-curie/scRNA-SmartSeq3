@@ -171,12 +171,10 @@ include { samtoolsIndex as samtoolsIndexAllAligned } from './nf-modules/common/p
 
 include { samtoolsIndex as samtoolsIndexMarkdup } from './nf-modules/common/process/samtools/samtoolsIndex'
 include { samtoolsIndex as samtoolsIndexUmis} from './nf-modules/common/process/samtools/samtoolsIndex'
-include { samtoolsIndex as samtoolsIndexFinalBam} from './nf-modules/common/process/samtools/samtoolsIndex'
 
 include { samtoolsSort as samtoolsSortAllStar} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortUmis} from './nf-modules/common/process/samtools/samtoolsSort'
 include { samtoolsSort as samtoolsSortAll} from './nf-modules/common/process/samtools/samtoolsSort'
-include { samtoolsSort as samtoolsSortFinalBam} from './nf-modules/common/process/samtools/samtoolsSort'
 
 include { extractUmiReads } from './nf-modules/local/process/extractUmiReads'
 
@@ -364,7 +362,7 @@ workflow {
   umitoolsDedup(
     umiInTags.out.bam.join(umitoolsGroup.out.bai)
   )
-  chUmiFilt=umitoolsDedup.out.bam
+  chFinalBamUmi=umitoolsDedup.out.bam
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
 
   // umitools counts = umi + gene unique 
@@ -400,44 +398,15 @@ workflow {
   filterAllUnassigned(
     featureCountsAll.out.bam
   )
-  chAllFilt=filterAllUnassigned.out.bam
+  chFinalBamAll=filterAllUnassigned.out.bam
   chVersions = chVersions.mix(featureCountsAll.out.versions)
 
-  // Matrix non UMIs
+  // Matrix all umis
   featureCountsMatrix(
     featureCountsAll.out.counts,
     filterMarkdup.out.bam
   )
   matrixAll=featureCountsMatrix.out.matrix
-
-  //********************************************************
-  // final Matrix 
-
-  chFiltBams = chAllFilt.concat(chUmiFilt)
-    .map{meta, bams -> 
-          def cleanedMeta = meta.findAll { k,v -> k != 'umi' }
-          [ cleanedMeta, bams ]
-        }.groupTuple()
-
-    
-  // merge UMI + nonUMI mais pas batches
-  samtoolsMergeFinal(
-    chFiltBams
-  )
-  chFinalBam = samtoolsMergeFinal.out.bam
-  chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
-
-  samtoolsSortFinalBam(
-    chFinalBam
-  )
-  chFinalBamSorted = samtoolsSortFinalBam.out.bam
-  chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
-
-  samtoolsIndexFinalBam(
-    chFinalBamSorted
-  )
-  chFinalBai = samtoolsIndexFinalBam.out.bai
-  chVersions = chVersions.mix(samtoolsMergeFinal.out.versions)
 
   //*******************************************
   // MULTIQC
