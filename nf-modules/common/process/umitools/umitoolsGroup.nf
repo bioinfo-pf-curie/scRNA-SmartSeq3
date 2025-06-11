@@ -8,7 +8,7 @@ process umitoolsGroup {
   label 'lowCpu'
 
   input: 
-  tuple val(meta), path(bam)
+  tuple val(meta), path(bam), path(bai)
 
   output:
   tuple val(meta), path("*_umitoolsgroup.bam"), emit: bam
