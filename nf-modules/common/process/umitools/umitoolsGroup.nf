@@ -22,7 +22,7 @@ process umitoolsGroup {
   """
   umi_tools group \
   -I ${bam} \
-  --output-bam ${prefix}_umitoolsgroup.bam \
+  --output-bam --stdout ${prefix}_umitoolsgroup.bam \
   --log=${prefix}_umitoolsgroup.log \
   ${args}
 
