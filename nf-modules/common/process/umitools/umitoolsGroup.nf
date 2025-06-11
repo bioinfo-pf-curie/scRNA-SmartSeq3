@@ -12,7 +12,7 @@ process umitoolsGroup {
 
   output:
   tuple val(meta), path("*_umitoolsgroup.bam"), emit: bam
-  tuple val(meta), path("*_umitoolsgroup.bam"), emit: bai
+  tuple val(meta), path("*.bai"), emit: bai
   tuple val(meta), path("*.log"), emit: log
   path("versions.txt"), emit: versions
 
