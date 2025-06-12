@@ -134,7 +134,7 @@ module_fastqc:
       show: true
     fastqc_per_base_sequence_content:
       show: true
-    fastqc_overrepresented_sequences:
+    fastqc_top_overrepresented_sequences:
       show: true
     fastqc_overrepresented_sequences:
       show: false
