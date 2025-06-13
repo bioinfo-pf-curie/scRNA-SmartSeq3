@@ -13,7 +13,7 @@ process fastqcForMqc {
   script:
   """
   unzip $zip
-  dir=$(basename $zip .zip)
+  dir=\$(basename $zip .zip)
   python $projectDir/bin/filter_fastqc_sections.py \$dir
   """
 }
