@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+Description : erase from txt output file from fastqc some sub-sections 
+Auteur : Hadj Abed Louisa
+Date : 2025-06-13
+"""
+
 from pathlib import Path
 import sys
 
