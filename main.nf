@@ -427,6 +427,11 @@ workflow {
   chFastqc=fastqc.out.results
   chVersions = chVersions.mix(fastqc.out.versions)
 
+  fastqcForMqc(
+    chFastqc
+  )
+  chFastqcSelected=fastqcForMqc.out.results
+
   //-----------preseq------------------------------
 
   if (!params.skipSatCurvePlot){
@@ -534,7 +539,7 @@ workflow {
       chUmiExtractLogs.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs,
-      chFastqc
+      chFastqcSelected
     )
 
     mqcReport = multiqc.out.report.toList()

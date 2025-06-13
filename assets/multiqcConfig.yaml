@@ -126,32 +126,6 @@ module_order:
      name: 'Sequencing Complexity'
      info: 'estimates the complexity of a library, showing how many additional unique reads are sequenced for increasing total read count. A shallow curve indicates complexity saturation. The dashed line shows a perfectly complex library where total reads = unique reads. The presented graph shows extrapolated curves up to 200M sequencing reads.'
 
-module_fastqc:
-  sections:
-    fastqc_per_base_sequence_quality:
-      show: true
-    fastqc_sequence_duplication_levels:
-      show: true
-    fastqc_per_base_sequence_content:
-      show: true
-    fastqc_top_overrepresented_sequences:
-      show: true
-    fastqc_overrepresented_sequences:
-      show: false
-    fastqc_per_base_n_content:
-      show: false
-    fastqc_adapter_content:
-      show: false
-    fastqc_per_sequence_quality_scores:
-      show: false
-    fastqc_per_sequence_gc_content:
-      show: false
-    fastqc_sequence_length_distribution:
-      show: false
-    fastqc_sequence_counts:
-      show: false
-    fastqc_status_checks:
-      show: false
 
 #############################
 ## Display

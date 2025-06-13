@@ -12,8 +12,8 @@ process fastqc {
   tuple val(meta), path(reads)
 
   output:
-  path("*_fastqc.{zip,html}"), emit: results
-  path("versions.txt")       , emit: versions
+  tuple val(meta), path("*_fastqc.zip"), emit: results
+  path("versions.txt"), emit: versions
 
   when:
   task.ext.when == null || task.ext.when
