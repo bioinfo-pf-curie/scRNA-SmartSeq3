@@ -428,10 +428,10 @@ workflow {
   chFastqc=fastqc.out.results
   chVersions = chVersions.mix(fastqc.out.versions)
 
-  fastqcForMqc(
+  /*fastqcForMqc(
     chFastqc
   )
-  chFastqcSelected=fastqcForMqc.out.results
+  chFastqcSelected=fastqcForMqc.out.results*/
 
   //-----------preseq------------------------------
 
@@ -540,7 +540,7 @@ workflow {
       chUmiExtractLogs.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs,
-      chFastqcSelected.collect().ifEmpty([])
+      chFastqc.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
