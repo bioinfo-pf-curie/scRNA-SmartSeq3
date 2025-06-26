@@ -540,7 +540,7 @@ workflow {
       chUmiExtractLogs.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs,
-      chFastqc.collect().ifEmpty([])
+      chFastqc.map{it->[it[1]]}.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
