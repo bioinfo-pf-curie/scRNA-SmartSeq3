@@ -428,11 +428,6 @@ workflow {
   chFastqc=fastqc.out.results
   chVersions = chVersions.mix(fastqc.out.versions)
 
-  /*fastqcForMqc(
-    chFastqc
-  )
-  chFastqcSelected=fastqcForMqc.out.results*/
-
   //-----------preseq------------------------------
 
   if (!params.skipSatCurvePlot){
@@ -541,7 +536,6 @@ workflow {
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs,
       chFastqc
-      //chFastqc.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
