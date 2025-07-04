@@ -448,7 +448,7 @@ workflow {
   if (!params.skipGeneBodyCovPlot){
 
     samtoolsSortAll(
-      chAllFilt
+      chFinalBamAll
     )
     chVersions = chVersions.mix( samtoolsSortUmis.out.versions)
 
