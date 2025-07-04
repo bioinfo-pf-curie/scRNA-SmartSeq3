@@ -409,6 +409,11 @@ workflow {
   )
   chFinalBamAll=filterAllUnassigned.out.bam
 
+  samtoolsSortAll(
+      chFinalBamAll
+  )
+  chFinalSortedBamAll=samtoolsSortAll.out.bam
+
   //*******************************************
   // MULTIQC
 
@@ -447,11 +452,6 @@ workflow {
   //-----------RSeqC------------------------------
   if (!params.skipGeneBodyCovPlot){
 
-    samtoolsSortAll(
-      chFinalBamAll
-    )
-    chVersions = chVersions.mix( samtoolsSortUmis.out.versions)
-
     rseqcGeneBodyCoverage(
       samtoolsSortAll.out.bam, 
       chBed12 
@@ -467,19 +467,19 @@ workflow {
   chRseqcBamStat=rseqcBamStat.out.results
 
   rseqcInnerDistance(
-    chFinalBamAll,
+    chFinalSortedBamAll,
     chBed12
   )
   chRseqcInnerDistance=rseqcInnerDistance.out.results
 
   rseqcJunctionAnnotation(
-    chFinalBamAll,
+    chFinalSortedBamAll,
     chBed12
   )
   chRseqcJunctionAnnot=rseqcJunctionAnnotation.out.results
 
   rseqcJunctionSaturation(
-    chFinalBamAll,
+    chFinalSortedBamAll,
     chBed12
   )
   chRseqcJunctionSat=rseqcJunctionSaturation.out.results
@@ -487,11 +487,11 @@ workflow {
   //-----------Qualimap------------------------------
 
   samtoolsIndexAllFinal(
-    chFinalBamAll
+    chFinalSortedBamAll
   )
   
   qualimapRNAseq(
-          chFinalBamAll.join(samtoolsIndexAllFinal.out.bai),
+          chFinalSortedBamAll.join(samtoolsIndexAllFinal.out.bai),
           chGtf.collect()
         )
 	chQualimapMqc = qualimapRNAseq.out.results.collect()
