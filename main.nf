@@ -423,6 +423,8 @@ workflow {
     outputDocsCh,
     outputDocsImagesCh
   )
+
+  matrixAll.collect().view()
   
   //-----------umitools------------------------------
   //umiExtractionSummary
@@ -431,7 +433,7 @@ workflow {
 
   if (params.genome in ["hg38", "hg19", "mm10", "mm9"]){
     calculMT(
-      matrixAll.collect()
+      matrixAll.map{it->[it[1]]}.collect()
     )
     chMt=calculMT.out.results
   } else {
