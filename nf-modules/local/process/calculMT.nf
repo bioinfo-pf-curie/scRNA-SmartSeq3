@@ -2,7 +2,6 @@ process calculMT {
   label 'unix'
   label 'lowCpu'
   label 'medMem'
-  tag "${meta.id}"
 
   input:
   path(matrix)
