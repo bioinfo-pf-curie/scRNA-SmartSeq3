@@ -23,21 +23,11 @@ process cutadapt {
   def prefix = task.ext.prefix ?: "${meta.id}"
   def args = task.ext.args ?: ''
   """
-  if [ "${params.protocol}" == "flashseq" ]; then
-    seq=${params.fs_primerT}
-  elif [ "${params.protocol}" == "smartseq3" ]; then
-      seq=${params.ss3_primerT}
-  elif [ "${params.protocol}" == "liveseq" ]; then
-      seq=${params.live_primerT}
-  else
-    echo "protocole inconnu"
-  fi
-
-  revcomp_seq=\$(echo "\$seq" | tr 'ATCG' 'TAGC' | rev)
+  revcomp_seq=\$(echo "${params.primerT}" | tr 'ATCG' 'TAGC' | rev)
 
   cutadapt \
-    -b \$seq -b \$revcomp_seq \
-    -B \$seq -B \$revcomp_seq \
+    -b "${params.primerT}" -b \$revcomp_seq \
+    -B "${params.primerT}" -B \$revcomp_seq \
     -b T{10} -b T{15} -b T{20} \
     -B T{10} -B T{15} -B T{20} \
     ${args} \
