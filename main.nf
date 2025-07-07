@@ -423,8 +423,6 @@ workflow {
     outputDocsCh,
     outputDocsImagesCh
   )
-
-  matrixAll.collect().view()
   
   //-----------umitools------------------------------
   //umiExtractionSummary

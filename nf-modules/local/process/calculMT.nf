@@ -37,7 +37,7 @@ process calculMT {
         # Get pourcentage
         percent=\$(paste <(echo "\$mt") <(echo "\$total") | awk '{ 
         if (\$2 > 0) 
-            printf "%.1f\n", (\$1 / \$2) * 100; 
+            print (\$1 / \$2) * 100; 
         else 
             print "0.00" 
         }')
