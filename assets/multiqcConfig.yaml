@@ -6,9 +6,9 @@
 skip_generalstats: true
 skip_versions_section: true
 disable_version_detection: true
-read_count_multiplier: 0.001
-read_count_prefix: 'K'
-read_count_desc: 'thousands'
+#read_count_multiplier: 0.001
+#read_count_prefix: 'K'
+#read_count_desc: 'thousands'
 
 ###################################
 ## Custom content
@@ -139,9 +139,6 @@ module_order:
   - featureCounts
   - rseqc
   - qualimap
-  - preseq:
-     name: 'Sequencing Complexity'
-     info: 'estimates the complexity of a library, showing how many additional unique reads are sequenced for increasing total read count. A shallow curve indicates complexity saturation. The dashed line shows a perfectly complex library where total reads = unique reads. The presented graph shows extrapolated curves up to 200M sequencing reads.'
 
 #############################
 ## Removed plots
@@ -161,15 +158,7 @@ remove_sections :
 report_section_order:
   stats:
     order: 1
-  gene_saturation:
-    order: -400
-  gene_type:
-    order: -500
-  DupRadar:
-    order: -600 
-  sample-pca:
-    order: -800
-  sample-correlation:
+  mt_percent:
     order: -900
   software_versions:
     order: -1000
