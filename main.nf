@@ -440,7 +440,6 @@ workflow {
     chMt=Channel.empty()
   }
 
-
   //-----------FastQC------------------------------
   fastqc(
     chTaggedReads

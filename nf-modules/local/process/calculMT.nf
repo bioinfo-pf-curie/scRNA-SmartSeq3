@@ -7,7 +7,7 @@ process calculMT {
   path(matrix)
 
   output:
-  path("*_percent_mt.txt"), emit: results
+  path("percent_mt.txt"), emit: results
 
   script:
   """
@@ -24,23 +24,26 @@ process calculMT {
         ;;
     esac
 
-    # Get total des reads par colonne
-    total=\$(awk 'NR>1 {for (i=2;i<=NF;i++) sum[i]+=\$i} END {for (i=2;i<=NF;i++) print sum[i]}' $matrix)
+    for mat in *.csv
+    do
+        # Get total des reads par colonne
+        total=\$(awk 'NR>1 {for (i=2;i<=NF;i++) sum[i]+=\$i} END {for (i=2;i<=NF;i++) print sum[i]}' \$mat)
 
-    samples=\$(awk 'NR==1 {for (i=2; i<=NF; i++) print \$i}' $matrix)
+        samples=\$(awk 'NR==1 {for (i=2; i<=NF; i++) print \$i}' \$mat)
 
-    # Get des reads mitochondriaux
-    mt=\$(awk -v prefix="\$gene_prefix" 'NR>1 && \$1 ~ prefix {for (i=2;i<=NF;i++) sum[i]+=\$i} END {for (i=2;i<=NF;i++) print sum[i]}' $matrix)
+        # Get des reads mitochondriaux
+        mt=\$(awk -v prefix="\$gene_prefix" 'NR>1 && \$1 ~ prefix {for (i=2;i<=NF;i++) sum[i]+=\$i} END {for (i=2;i<=NF;i++) print sum[i]}' \$mat)
 
-    # Get pourcentage
-    percent=\$(paste <(echo "\$mt") <(echo "\$total") | awk '{ 
-    if (\$2 > 0) 
-        printf "%.1f\n", (\$1 / \$2) * 100; 
-    else 
-        print "0.00" 
-    }')
+        # Get pourcentage
+        percent=\$(paste <(echo "\$mt") <(echo "\$total") | awk '{ 
+        if (\$2 > 0) 
+            printf "%.1f\n", (\$1 / \$2) * 100; 
+        else 
+            print "0.00" 
+        }')
 
-    paste <(echo "\$samples") <(echo "\$total") <(echo "\$percent") -d, > percent_mt.txt
+        paste <(echo "\$samples") <(echo "\$total") <(echo "\$percent") -d, >> percent_mt.txt
+    done
   """
 }
 
