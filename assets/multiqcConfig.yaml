@@ -109,10 +109,25 @@ custom_data:
               suffix: '%'
               format: '{:,.1f}'
               placement: 14000
+              
+    mt_percent: 
+      file_format: 'csv'
+      section_name: 'Cell viability'
+      title: '% Mitochondrial RNAs per cell'
+      description: 'Percentage of mitochondrial RNAs is a cell viability marker. It varies according to your cell type (e.g cell line, primary cells, etc.). Here, only UMI reads are take into account.'
+      plot_type: 'scatter'
+      pconfig:
+        id: 'mt'
+        title: 'Percentage of mitochondrial RNAs per cell'
+        xlab: 'Number of genes'
+        ylab: '% mitochondrial RNAs'
+
 
 sp:
    my_stats:
       fn: '*.stats'
+   mt_percent:
+      fn: 'percent_mt.txt'
 
 ###############################
 ## Modules 
