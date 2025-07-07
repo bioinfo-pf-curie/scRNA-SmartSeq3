@@ -514,14 +514,10 @@ workflow {
   //-----------MultiQC------------------------------
   if (!params.skipMultiQC){
 
-    if (!params.skipSoftVersions){
-      getSoftwareVersions(
-        chVersions.unique().collectFile()
-      )
-      chGetSoftwareVersions=getSoftwareVersions.out.versionsYaml
-    }else{
-      chGetSoftwareVersions = Channel.empty()
-    }
+    getSoftwareVersions(
+      chVersions.unique().collectFile()
+    )
+    chGetSoftwareVersions=getSoftwareVersions.out.versionsYaml
 
     warnCh = Channel.empty()
 
