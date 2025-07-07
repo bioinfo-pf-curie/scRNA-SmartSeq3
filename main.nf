@@ -159,6 +159,7 @@ include { barcode2tag} from './nf-modules/local/process/barcode2tag'
 include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
 //include { nbCells} from './nf-modules/local/process/nbCells'
 include { seqkitFx2tab} from './nf-modules/local/process/seqkitFx2tab'
+include {calculMT}  from './nf-modules/local/process/calculMT'
 
 include { samtoolsMerge as samtoolsMergeChunk } from './nf-modules/common/process/samtools/samtoolsMerge'
 include { samtoolsMerge as samtoolsMergeFinal } from './nf-modules/common/process/samtools/samtoolsMerge'
@@ -426,6 +427,18 @@ workflow {
   //-----------umitools------------------------------
   //umiExtractionSummary
 
+  //-----------%MT genes---------------------------
+
+  if (params.genome in ["hg38", "hg19", "mm10", "mm9"]){
+    calculMT(
+      matrixAll
+    )
+    chMt=calculMT.out.results
+  } else {
+    chMt=Channel.empty()
+  }
+
+
   //-----------FastQC------------------------------
   fastqc(
     chTaggedReads
@@ -535,7 +548,8 @@ workflow {
       chUmiExtractLogs.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs,
-      chFastqc
+      chFastqc,
+      chMt
     )
 
     mqcReport = multiqc.out.report.toList()

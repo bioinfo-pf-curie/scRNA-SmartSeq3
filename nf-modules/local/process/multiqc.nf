@@ -33,6 +33,7 @@ process multiqc {
   path nbCells
   path starLogs
   path fastqc
+  path mt
 
   output:
   path splan, emit: splan
