@@ -5,8 +5,7 @@ process featureCountsMatrix {
   tag "$meta.id"
 
   input:
-  tuple val(meta), path(counts)
-  tuple val(meta), path(bam) // only to get the name
+  tuple val(meta), path(counts), path(bam) // only to get the name
 
   output:
   tuple val(meta), path("*_matrix.csv"), emit: matrix

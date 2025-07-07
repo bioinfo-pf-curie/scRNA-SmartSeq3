@@ -400,8 +400,7 @@ workflow {
 
   // Matrix all umis
   featureCountsMatrix(
-    featureCountsAll.out.counts,
-    filterMarkdup.out.bam
+    featureCountsAll.out.counts.join(filterMarkdup.out.bam)
   )
   matrixAll=featureCountsMatrix.out.matrix
 
