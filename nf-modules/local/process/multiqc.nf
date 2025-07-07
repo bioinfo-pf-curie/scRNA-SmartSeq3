@@ -19,7 +19,7 @@ process multiqc {
   path warnings
   // MODULES
   path cutadapt
-  path preseq
+  //path preseq ne marche plus
   path rseqc_genecov
   //path rseqc_bamstat
   path rseqc_innerdist

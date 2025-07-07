@@ -190,7 +190,7 @@ include { samtoolsFilter as filterAllUnassigned } from './nf-modules/common/proc
 include { featureCountsMatrix} from './nf-modules/local/process/featureCountsMatrix'
 
 // multiqc modules
-include { preseq } from './nf-modules/common/process/preseq/preseq'
+//include { preseq } from './nf-modules/common/process/preseq/preseq'
 include { rseqcGeneBodyCoverage } from './nf-modules/common/process/rseqc/rseqcGeneBodyCoverage'
 //include { rseqcReadQuality } from './nf-modules/common/process/rseqc/rseqcReadQuality'
 include { rseqcBamStat } from './nf-modules/common/process/rseqc/rseqcBamStat'
@@ -434,8 +434,8 @@ workflow {
   chVersions = chVersions.mix(fastqc.out.versions)
 
   //-----------preseq------------------------------
-
-  if (!params.skipSatCurvePlot){
+  //  ne marche plus
+  /*if (!params.skipSatCurvePlot){
     samtoolsSortAllStar(
       chBams
     )
@@ -447,7 +447,7 @@ workflow {
     chVersions = chVersions.mix(preseq.out.versions)
   }else {
     chPreseq=Channel.empty()
-  }
+  }*/
 
   //-----------RSeqC------------------------------
   if (!params.skipGeneBodyCovPlot){
@@ -522,7 +522,7 @@ workflow {
       warnCh.collect().ifEmpty([]),
       //modules
       chCutadaptLogs.collect().ifEmpty([]),
-      chPreseq.collect().ifEmpty([]),
+      //chPreseq.collect().ifEmpty([]),
       chRseqcGeneCov.collect().ifEmpty([]),
       //chRseqcBamStat.collect().ifEmpty([]),
       chRseqcInnerDistance.collect().ifEmpty([]),
