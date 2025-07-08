@@ -446,7 +446,7 @@ workflow {
 
   //-----------FastQC------------------------------
   fastqc(
-    chTaggedReads
+    cutadapt.out.fastq
   )
   chFastqc=fastqc.out.results
   chVersions = chVersions.mix(fastqc.out.versions)
