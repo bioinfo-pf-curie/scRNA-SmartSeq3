@@ -202,7 +202,7 @@ include { qualimapRNAseq } from './nf-modules/common/process/qualimap/qualimapRN
 include { fastqc } from './nf-modules/common/process/fastqc/fastqc'
 
 include { multiqc } from './nf-modules/local/process/multiqc'
-include {checkStarLog} from '../../../lib/functions'
+include {checkStarLog} from './lib/functions'
 
 /*
 =====================================
