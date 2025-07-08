@@ -32,7 +32,6 @@ customRunName = NFTools.checkRunName(workflow.runName, params.name)
 
 // Custom functions/variables
 mqcReport = []
-include {checkAlignmentPercent} from './lib/functions'
 
 // Initialize variable from the genome.conf file
 params.starIndex = NFTools.getGenomeAttribute(params, 'starIndex')
