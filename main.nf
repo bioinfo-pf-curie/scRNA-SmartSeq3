@@ -274,15 +274,11 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
-  starAlign.out.logs.join(starAlign.out.bam).view{}
-
   // Filter removes all 'aligned' channels that fail the check
   starAlign.out.finallog.join(starAlign.out.bam)
     .filter { meta, logs, bam -> checkStarLog(meta, logs, params.minStarReads) }
     .map { meta, logs, bam -> [ meta, bam ] }
     .set { chBams }
-
-  chBams.view{}
 
   //-------- Add barcodes as read tag
   barcodeListPerBatch(
