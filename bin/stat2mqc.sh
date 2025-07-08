@@ -19,7 +19,7 @@ function help {
     exit;
 }
 
-while getopts "s:p:t:h" OPT
+while getopts "s:d:t:h" OPT
 do
     case $OPT in
         s) splan=$OPTARG;;

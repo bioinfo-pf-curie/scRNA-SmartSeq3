@@ -1,22 +1,26 @@
 // RNA-seq Analysis Pipeline : custom functions 
 
-def checkAlignmentPercent(prefix, logs) {
+// From nf-core
+// Function that checks the alignment rate of the STAR output
+// and returns true if the alignment passed and otherwise false
+skippedPoorAlignment = []
+def checkStarLog(prefix, logs, minreads) {
   def percentAligned = 0;
   logs.eachLine { line ->
-    if ((matcher = line =~ /([\d\.]+) \+ ([\d\.]+) mapped \s*/)) {
-      nbAligned = matcher[0][1]
-
-    } else if ((matcher = line =~ /([\d\.]+) \+ ([\d\.]+) in total \s*/)) {
-      nbTotal = matcher[0][1]
+    if ((matcher = line =~ /Uniquely mapped reads %\s*\|\s*([\d\.]+)%/)) {
+      percentAligned = matcher[0][1]
+    }else if ((matcher = line =~ /Uniquely mapped reads number\s*\|\s*([\d\.]+)/)) {
+      numAligned = matcher[0][1]
     }
   }
-  percentAligned = nbAligned.toFloat() / nbTotal.toFloat() * 100
-  if(percentAligned.toFloat() <= '2'.toFloat() ){
-      log.info "#################### VERY POOR ALIGNMENT RATE! IGNORING FOR FURTHER DOWNSTREAM ANALYSIS! ($prefix)    >> ${percentAligned}% <<"
-      //skippedPoorAlignment << $prefix
+  logname = logs.getBaseName() - 'Log.final'
+  if(numAligned.toInteger() <= minreads.toInteger() ){
+      log.info "#################### LESS THAN 100 READS! IGNORING FOR FURTHER DOWNSTREAM ANALYSIS! ($logname)  >> ${percentAligned}% <<"
+      skippedPoorAlignment << logname
       return false
   } else {
-      log.info "          Passed alignment > ${prefix} >> ${percentAligned}% <<"
+      log.info "          Passed alignment > star ($logname)   >> ${percentAligned}% <<"
       return true
   }
 }
+

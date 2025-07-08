@@ -203,6 +203,7 @@ include { qualimapRNAseq } from './nf-modules/common/process/qualimap/qualimapRN
 include { fastqc } from './nf-modules/common/process/fastqc/fastqc'
 
 include { multiqc } from './nf-modules/local/process/multiqc'
+include {checkStarLog} from '../../../lib/functions'
 
 /*
 =====================================
@@ -274,12 +275,19 @@ workflow {
   )
   chVersions = chVersions.mix(starAlign.out.versions)
 
+  // Filter removes all 'aligned' channels that fail the check
+  starAlign.out.logs.join(starAlign.out.bam)
+    .filter { meta, logs, bam -> checkStarLog(meta, logs, params.minStarReads) }
+    .map { meta, logs, bam -> [ meta, bam ] }
+    .set { chBams }
+
   // Add barcodes as read tag
   barcodeListPerBatch(
-    starAlign.out.bam
+    chBams
   )
+  
   barcode2tag(
-    starAlign.out.bam.join(barcodeListPerBatch.out.barcodes)
+    chBams.join(barcodeListPerBatch.out.barcodes)
   )
   chVersions = chVersions.mix(barcode2tag.out.versions)
 
