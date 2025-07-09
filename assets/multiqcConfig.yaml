@@ -79,7 +79,7 @@ custom_data:
 
 sp:
    my_stats:
-      fn: '*.stats'
+      fn: 'general_stats.mqc'
    mt_percent:
       fn: 'percent_mt.txt'
 
