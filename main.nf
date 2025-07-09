@@ -550,7 +550,9 @@ workflow {
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
-      chMt
+      chMt,
+      featureCountsAll.out.logs.collect().ifEmpty([]),
+      featureCountsUmis.out.logs.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
