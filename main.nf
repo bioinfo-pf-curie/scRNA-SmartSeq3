@@ -552,7 +552,7 @@ workflow {
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
-      featureCountsAll.out.logs.collect().ifEmpty([]).mix(featureCountsUmis.out.logs.collect().ifEmpty([])),
+      featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()),
       samtoolsStats.out.stats.collect().ifEmpty([])
     )
 
