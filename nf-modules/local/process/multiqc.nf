@@ -34,7 +34,8 @@ process multiqc {
   path starLogs
   path fastqc
   path mt
-  path fc
+  path fcAll 
+  path fcUMIs
 
   output:
   path splan, emit: splan
