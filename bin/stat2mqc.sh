@@ -19,12 +19,14 @@ function help {
     exit;
 }
 
-while getopts "s:d:t:h" OPT
+while getopts "s:p:m:S:b:h" OPT
 do
     case $OPT in
         s) splan=$OPTARG;;
-        d) protocol=$OPTARG;;
-        t) minReads=$OPTARG;;
+        p) protocol=$OPTARG;;
+        m) minReads=$OPTARG;;
+        S) sampleDes=$OPTARG;;
+        b) generatebatch=$OPTARG;;
         h) help ;;
         \?)
             echo "Invalid option: -$OPTARG" >&2
@@ -44,57 +46,51 @@ if  [[ -z $splan ]]; then
     exit
 fi
 
-all_samples=$(awk -F, '{print $1}' $splan)
+if [[ "$generatebatch" == true && "$sampleDes" != "null" ]]; then
+    all_samples=$(find  nbCells/*initial_nb_barcodes.txt | cut -f2 -d"/" | sed 's/_initial_nb_barcodes.txt//')
+else
+    all_samples=$(awk -F, '{print $1}' $splan | uniq )
+fi
+
 n_header=0
 
 for sample in $all_samples
 do                                                                                                                                                                                  
     ## sample name
-    sname=$(awk -F, -v sname=$sample '$1==sname{print $2}' $splan | uniq)
+    if [[ "$generatebatch" == true && "$sampleDes" != "null" ]]; then
+        sname=$sample
+    else
+        sname=$(awk -F, -v sname=$sample '$1==sname{print $2}' $splan | uniq)
+    fi
     header="Sample_id,Sample_name"
     output="${sample},${sname}"
 
-    nb_frag=0
-    if [[ -e barcodes/${sample}*_addbarcodes.log ]]; then
-        for batches in $(ls barcodes/${sample}*_addbarcodes.log)
-        do
-            #grep "Input Reads:" results/preprocessing/umitoolsExtract/fastq_chunk*R1* | awk '{print $6}' >> totFragChunk
-            #grep "Reads output: " results/preprocessing/umitoolsExtract/fastq_chunk* | awk '{print $6}' >> nbumireads
-            nb_frag_batch=$(awk  '$0~"Total"{print $NF}' $batches)
-            nb_frag=$(( $nb_frag + $nb_frag_batch ))
-        done
-        nb_reads=$(( $nb_frag * 2 ))
-        header+=",Number_of_frag,Number_of_reads"
-        output+=",${nb_frag},${nb_reads}"
-    else
-        nb_reads=$(grep "raw total sequences" stats/${sample}.stats | awk '{print $5}')
-        nb_frag=$(( $nb_reads / 2 ))
-        nb_reads_barcoded=$nb_reads
-        perc_barcoded=$(echo "${nb_reads_barcoded} ${nb_reads}" | awk ' { printf "%.*f",2,$1*100/$2 } ')
-        header+=",Number_of_frag,Number_of_reads,Number_barcoded_reads,Percent_barcoded"
-        output+=",${nb_frag},${nb_reads},${nb_reads_barcoded},${perc_barcoded}"
-    fi
+    nb_cells=0
+    for chunk in nbCells/${sample}_*initial_nb_barcodes.txt
+    do
+        nb_cell_part=$(cat $chunk)
+        nb_cells=$(( $nb_cells + $nb_cell_part ))
+    done
+    header+=",Number_of_cells"
+    output+=",${nb_cells}"
 
-    # Median reads per cell with more than 1000 reads
-    countsfiles=$(ls barcodes/${sample}_final_barcodes_counts.txt)
-    if [[ -e "${countsfiles[0]}" ]]
-    then
-	nbCell=$(wc -l ${countsfiles[0]} | awk '{print $1}')
-	nbCellminReads=$( awk -v limit=$minReads '$1>=limit{c++} END{print c}' ${countsfiles[0]})
-	header+=",Cell_number,Cell_number_minReads"
-	output+=",${nbCell},${nbCellminReads}"
-	if (( $nbCellminReads>1 ))
-	then
-	    median=$(sort -k1,1n ${countsfiles[0]} | awk '{ a[i++]=$1; } END { print a[int(i/2)]; }')
-	    header+=",Median_reads_per_cell"
-	    output+=",${median}"
-	fi
-    fi
+    nb_frag=0
+    for chunk in star/${sample}*Log.final.out
+    do
+        echo $chunk
+        nb_frag_part=$(grep "Number of input reads" $chunk| awk '{print $NF}')
+        nb_frag=$(( $nb_frag + $nb_frag_part ))
+    done
+    nb_reads=$(echo "${nb_frag}" | awk ' { printf "%.0f",$1*2 } ')
+    header+=",Number_of_frag,Number_of_reads"
+    output+=",${nb_frag},${nb_reads}"
+
 
     if [ $n_header == 0 ]; then
         echo -e $header
         n_header=1
     fi
-    echo -e $output
+    
+    echo -e $output >> general_stats.mqc
 done
 

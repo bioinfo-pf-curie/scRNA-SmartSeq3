@@ -29,86 +29,40 @@ custom_data:
             Sample_name:
               title: 'Sample Name'
               scale: false
-              format: '{:.0f}'
+              placement: 1000
+            Number_of_frag:
+              title: 'Total Fragments'
+              scale: 'YlGn'
+              format: '{:,.0f}'
               placement: 2000
+              hidden: true
             Number_of_reads:
               title: 'Total Reads'
-              scale: 'YlGnBu'
+              scale: 'YlGn'
               format: '{:,.0f}'
-              placement: 4000
-            Number_of_rRNA:
-              title: 'rRNA'
-              scale: 'RdYlGn-rev'
+              placement: 2500
+              hidden: false
+            Number_barcoded_reads:
+              title: 'Barcoded Reads'
+              scale: 'YlGn'
               format: '{:,.0f}'
-              hidden: true
-              placement: 5000
-            Percent_of_rRNA:
-              title: 'rRNA (%)'
-              min: 0
-              max: 100
-              scale: 'RdYlGn-rev'
-              suffix: '%'
-              format: '{:,.1f}'
-              placement: 6000
-            Strandness:
-              scale: false
               placement: 3000
-            Number_of_aligned_reads:
-              title: 'Aligned Reads'
-              scale: 'RdYlGn'
-              format: '{:,0f}'
               hidden: true
-              placement: 7000
-            Percent_of_aligned_reads:
-              title: 'Aligned Reads (%)'
-              min: 0
-              max: 100
-              scale: 'RdYlGn'
-              suffix: '%'
-              format: '{:,.1f}'
-              placement: 8000
-            Number_of_uniquely_aligned_reads:
-              title: 'Unique Reads'
-              scale: 'RdYlGn'
+            Percent_barcoded:
+              title: 'Barcoded (%)'
               format: '{:,.0f}'
-              hidden: true
-              placement: 9000
-            Percent_uniquely_aligned_reads:
-              title: 'Unique Reads (%)'
               min: 0
               max: 100
-              scale: 'RdYlGn'
               suffix: '%'
-              format: '{:,.1f}'
-              placement: 10000
-            Number_of_multiple_aligned_reads:
-              title: 'Multiple Reads'
-              scale: 'RdYlGn-rev'
-              format: '{:,0f}'
-              hidden: true
-              placement: 11000
-            Percent_multiple_aligned:
-              title: 'Multiple Reads (%)'
-              min: 0
-              max: 100
-              scale: 'RdYlGn-rev'
-              suffix: '%'
-              format: '{:,.1f}'
-              placement: 12000
-            Number_of_duplicates:
-              title: 'Duplicates'
-              scale: 'RdYlGn-rev'
-              format: '{:,0f}'
-              hidden: true
-              placement: 13000
-            Percent_duplicates:
-              title: 'Duplicates (%)'
-              min: 0
-              max: 100
-              scale: 'RdYlGn-rev'
-              suffix: '%'
-              format: '{:,.1f}'
-              placement: 14000
+              scale: 'YlGnBu'
+              placement: 3500
+            Number_of_cells:
+              title: 'Cells'
+              scale: 'YlGn'
+              format: '{:,.0f}'
+              placement: 3800
+              hidden: false
+
               
     mt_percent: 
       file_format: 'csv'
@@ -137,6 +91,7 @@ module_order:
   - cutadapt
   - star
   - featureCounts
+  - umitools
   - rseqc
   - qualimap
 
