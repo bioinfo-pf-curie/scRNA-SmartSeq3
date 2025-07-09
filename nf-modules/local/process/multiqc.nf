@@ -35,7 +35,7 @@ process multiqc {
   path fastqc
   path mt
   path fcAll 
-  path fcUMIs
+  //path fcUMIs
 
   output:
   path splan, emit: splan

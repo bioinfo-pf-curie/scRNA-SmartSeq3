@@ -551,8 +551,9 @@ workflow {
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
-      featureCountsAll.out.logs.collect().ifEmpty([]),
-      featureCountsUmis.out.logs.collect().ifEmpty([])
+      featureCountsAll.out.logs.collect().ifEmpty([])
+      //,
+      //featureCountsUmis.out.logs.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
