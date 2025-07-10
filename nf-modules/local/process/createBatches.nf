@@ -23,7 +23,7 @@ process createBatches {
       prename=\$(echo \$prefix | sed -E "s/(.*).R[12].*/\\1/")
       base=\$(echo \$prename | sed -E 's/_S[0-9]+_L001*//')
       # extract batch info from ID
-      batch=\$(grep -w \$base ${sampleDes} | cut -d"|" -f2 | sed 's/^[^_]*_//') 
+      batch=\$(grep -w \$base ${sampleDes} | cut -d"|" -f1 | sed 's/^[^_]*_//') 
       if [[ \$file =~ "R1.fastq.gz" ]]; then
         cat \$file >> "${prefix}_batch\$batch.R1.fastq.gz"
       else
