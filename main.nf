@@ -332,7 +332,6 @@ workflow {
 
   //********************************************************
   // UMI reads
-
   extractUmiReads(
     filterUnaligned.out.bam
   )
@@ -525,7 +524,9 @@ workflow {
 
     warnCh = Channel.empty()
 
-    chUmiExtractLogs.view()
+    featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()).view()
+    featureCountsAll.out.logs.collect().merge(featureCountsUmis.out.logs.collect()).view()
+
 
     multiqc(
       customRunName,
@@ -553,7 +554,7 @@ workflow {
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
-      featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect())
+      featureCountsAll.out.logs.collect().merge(featureCountsUmis.out.logs.collect())
       //,
       //samtoolsStats.out.stats.map{it->[it[1]]}.collect().ifEmpty([])
     )
