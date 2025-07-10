@@ -81,7 +81,7 @@ do
     do
         nb_frag_part=$(grep "Input Reads:" $chunk| awk '{print $NF}')
         nb_frag=$(( $nb_frag + $nb_frag_part ))
-        nb_umi_part==$(grep "Reads output:" $chunk| awk '{print $NF}')
+        nb_umi_part=$(grep "Reads output:" $chunk| awk '{print $NF}')
         nb_umi=$(( $nb_umi + $nb_umi_part ))
     done
     nb_reads=$(echo "$nb_frag" | awk ' { printf "%.0f",$1*2 } ')
