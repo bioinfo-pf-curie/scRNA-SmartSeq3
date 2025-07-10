@@ -88,16 +88,20 @@ sp:
 
 module_order:
   - fastqc
+  - umitools_extract_overall
+  - umitools_extract_regex
   - cutadapt
   - star
   - featureCounts
-  - umitools
+  - umitools-dedup-plot
   - rseqc
   - qualimap
 
 #############################
 ## Removed plots
 remove_sections :
+  - samtools
+  - umitools-umi-stats
   - fastqc_overrepresented_sequences
   - fastqc_per_base_n_content
   - fastqc_adapter_content
