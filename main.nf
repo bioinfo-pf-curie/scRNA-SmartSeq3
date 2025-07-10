@@ -546,14 +546,14 @@ workflow {
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]), // fait buguer
       //stat2mqc
-      chUmiExtractLogs.collect().ifEmpty([]),
-      umitoolsDedup.out.log.collect().ifEmpty([]),
+      chUmiExtractLogs.map{it->[it[1]]}.collect().ifEmpty([]),
+      umitoolsDedup.out.log.map{it->[it[1]]}.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
       featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()),
-      samtoolsStats.out.stats.collect().ifEmpty([])
+      samtoolsStats.out.stats.map{it->[it[1]]}.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
