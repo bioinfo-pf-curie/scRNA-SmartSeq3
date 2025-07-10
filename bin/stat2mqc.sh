@@ -77,7 +77,7 @@ do
     # umitools extract
     nb_frag=0
     nb_umi=0
-    for chunk in umitools/${sample}_*_umiExtract.log
+    for chunk in umitools/${sample}_*umiExtract.log
     do
         nb_frag_part=$(grep "Input Reads:" $chunk| awk '{print $NF}')
         nb_frag=$(( $nb_frag + $nb_frag_part ))
