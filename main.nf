@@ -525,7 +525,6 @@ workflow {
     warnCh = Channel.empty()
 
     featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()).view()
-    featureCountsAll.out.logs.collect().combine(featureCountsUmis.out.logs.collect()).view()
 
     multiqc(
       customRunName,
@@ -553,10 +552,7 @@ workflow {
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
-      featureCountsAll.out.logs,
-      featureCountsUmis.out.logs
-      //,
-      //samtoolsStats.out.stats.map{it->[it[1]]}.collect().ifEmpty([])
+      featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()) 
     )
 
     mqcReport = multiqc.out.report.toList()

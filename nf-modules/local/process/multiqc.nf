@@ -36,7 +36,6 @@ process multiqc {
   path fastqc
   path mt
   path ('feauturecounts/*')
-  path ('feauturecounts/*')
   //path ('stats/*')
 
   output:
