@@ -35,8 +35,8 @@ process multiqc {
   path ('star/*')
   path fastqc
   path mt
-  path ('feauturecounts/*')
-  //path ('stats/*')
+  path ('feauturecountsAll/*')
+  path ('feauturecountsUmis/*')
 
   output:
   path splan, emit: splan
