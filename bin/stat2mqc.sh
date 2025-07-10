@@ -101,6 +101,12 @@ do
     header+=",Number_aligned,Percent_aligned"
     output+=",${nb_aligned},${percent_aligned}"
 
+    nb_assigned_reads=$(grep "Assigned" feauturecountsAll/${sample}_reads.csv.summary | awk '{print $NF}')
+    #nb_assigned_umis=$(grep "Assigned" feauturecountsUmis/${sample}_umi.csv.summary | awk '{print $NF}')
+    percent_assigned=$(echo "$nb_frag" "$nb_assigned_reads" | awk ' { printf "%.0f",$2/$1*100 } ')
+    header+=",Number_assigned,Percent_assigned"
+    output+=",${nb_assigned_reads},${percent_assigned}"
+
     if [ $n_header == 0 ]; then
         echo -e $header > general_stats.mqc
         n_header=1

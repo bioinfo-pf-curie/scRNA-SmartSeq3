@@ -525,8 +525,6 @@ workflow {
 
     warnCh = Channel.empty()
 
-    featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()).view()
-
     multiqc(
       customRunName,
       sPlanCh.collect(),

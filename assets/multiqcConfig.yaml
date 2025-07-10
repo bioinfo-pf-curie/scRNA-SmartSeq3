@@ -78,6 +78,21 @@ custom_data:
               format: '{:,.0f}'
               placement: 8000
               hidden: false
+            Number_assigned:
+              title: 'Assigned'
+              scale: 'OrRd'
+              format: '{:,.0f}'
+              placement: 9000
+              hidden: false
+            Percent_assigned:
+              title: '%Assigned'
+              scale: 'OrRd'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 10000
+              hidden: false
               
     mt_percent: 
       file_format: 'csv'
