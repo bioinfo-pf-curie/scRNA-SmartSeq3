@@ -546,8 +546,8 @@ workflow {
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]), // fait buguer
       //stat2mqc
-      chUmiExtractLogs.map{it->[it[1]]}.collect().ifEmpty([]),
-      umitoolsDedup.out.log.map{it->[it[1]]}.collect().ifEmpty([]),
+      chUmiExtractLogs,
+      umitoolsDedup.out.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
