@@ -525,7 +525,7 @@ workflow {
     warnCh = Channel.empty()
 
     featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()).view()
-    featureCountsAll.out.logs.collect().merge(featureCountsUmis.out.logs.collect()).view()
+    featureCountsAll.out.logs.collect().combine(featureCountsUmis.out.logs.collect()).view()
 
 
     multiqc(
@@ -554,7 +554,7 @@ workflow {
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
-      featureCountsAll.out.logs.collect().merge(featureCountsUmis.out.logs.collect())
+      featureCountsAll.out.logs.collect().combine(featureCountsUmis.out.logs.collect())
       //,
       //samtoolsStats.out.stats.map{it->[it[1]]}.collect().ifEmpty([])
     )
