@@ -266,7 +266,6 @@ workflow {
 
   //********************************************************
   // Sequence alignement of all reads
-
   starAlign(
     cutadapt.out.fastq,
     chStarIndex,
@@ -321,10 +320,10 @@ workflow {
   )
   chBams = samtoolsMergeChunk.out.bam.mix(chTaggedBams.single)
 
-  samtoolsStats(
+  /*samtoolsStats(
     chBams, 
     Channel.value([])
-  )
+  )*/
 
   filterUnaligned(
     chBams
@@ -548,14 +547,15 @@ workflow {
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]), // fait buguer
       //stat2mqc
-      chUmiExtractLogs.map{it->[it[1]]}.collect().ifEmpty([]),
+      chUmiExtractLogs.collect().ifEmpty([]),
       umitoolsDedup.out.log.map{it->[it[1]]}.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
-      featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()),
-      samtoolsStats.out.stats.map{it->[it[1]]}.collect().ifEmpty([])
+      featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect())
+      //,
+      //samtoolsStats.out.stats.map{it->[it[1]]}.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()

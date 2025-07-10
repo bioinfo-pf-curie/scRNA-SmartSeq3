@@ -78,7 +78,6 @@ custom_data:
               format: '{:,.0f}'
               placement: 8000
               hidden: false
-
               
     mt_percent: 
       file_format: 'csv'

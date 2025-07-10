@@ -36,7 +36,7 @@ process multiqc {
   path fastqc
   path mt
   path fcAll 
-  path ('stats/*')
+  //path ('stats/*')
 
   output:
   path splan, emit: splan
