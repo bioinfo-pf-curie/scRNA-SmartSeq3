@@ -53,7 +53,7 @@ process multiqc {
   modulesList = "-m custom_content -m star -m featurecounts -m deeptools -m preseq -m rseqc -m cutadapt -m qualimap -m fastqc -m umitools"
   warn = warnings.name == 'warnings.txt' ? "--warn warnings.txt" : ""
   """
-  stat2mqc.sh -s ${splan} -p ${params.protocol} -m ${minReads} -S ${params.sampleDescription} -b ${params.generateBatch}
+  stat2mqc.sh -s ${splan} -p ${params.protocol} -m ${params.minReads} -S ${params.sampleDescription} -b ${params.generateBatch}
   mqc_header.py --name "scRNA-seq" --version ${workflow.manifest.version} ${metadataOpts} ${splanOpts} ${warn} > multiqc-config-header.yaml
   multiqc . -f $rtitle $rfilename -c $multiqcConfig -c multiqc-config-header.yaml $modulesList
   """    
