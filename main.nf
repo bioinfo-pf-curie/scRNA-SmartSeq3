@@ -527,7 +527,6 @@ workflow {
     featureCountsAll.out.logs.collect().mix(featureCountsUmis.out.logs.collect()).view()
     featureCountsAll.out.logs.collect().combine(featureCountsUmis.out.logs.collect()).view()
 
-
     multiqc(
       customRunName,
       sPlanCh.collect(),
@@ -554,8 +553,8 @@ workflow {
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
-      featureCountsAll.out.logs.collect().ifEmpty([]),
-      featureCountsUmis.out.logs.collect().ifEmpty([])
+      featureCountsAll.out.logs,
+      featureCountsUmis.out.logs
       //,
       //samtoolsStats.out.stats.map{it->[it[1]]}.collect().ifEmpty([])
     )
