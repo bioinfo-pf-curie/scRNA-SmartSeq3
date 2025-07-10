@@ -40,27 +40,13 @@ custom_data:
               title: 'Total Reads'
               scale: 'YlGn'
               format: '{:,.0f}'
-              placement: 2500
-              hidden: false
-            Number_barcoded_reads:
-              title: 'Barcoded Reads'
-              scale: 'YlGn'
-              format: '{:,.0f}'
               placement: 3000
-              hidden: true
-            Percent_barcoded:
-              title: 'Barcoded (%)'
-              format: '{:,.0f}'
-              min: 0
-              max: 100
-              suffix: '%'
-              scale: 'YlGnBu'
-              placement: 3500
+              hidden: false
             Number_of_cells:
               title: 'Cells'
               scale: 'YlGn'
               format: '{:,.0f}'
-              placement: 3800
+              placement: 4000
               hidden: false
 
               
