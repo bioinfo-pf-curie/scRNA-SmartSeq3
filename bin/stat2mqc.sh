@@ -74,17 +74,32 @@ do
     header+=",Number_of_cells"
     output+=",${nb_cells}"
 
+    # umitools extract
     nb_frag=0
+    nb_umi=0
+    for chunk in umitools/${sample}_*umiExtract.log
+    do
+        nb_frag_part=$(grep "Input Reads:" $chunk| awk '{print $NF}')
+        nb_frag=$(( $nb_frag + $nb_frag_part ))
+        nb_umi_part==$(grep "Reads output:" $chunk| awk '{print $NF}')
+        nb_umi=$(( $nb_umi + $nb_umi_part ))
+    done
+    nb_reads=$(echo "$nb_frag" | awk ' { printf "%.0f",$1*2 } ')
+    percent_umi=$(echo "$nb_frag" "$nb_umi" | awk ' { printf "%.0f",$2/$1*100 } ')
+    header+=",Number_of_frag,Number_of_reads,Number_umis,Percent_umis"
+    output+=",${nb_frag},${nb_reads},${nb_umi},${percent_umi}"
+    
+    # star
+    nb_aligned=0
     for chunk in star/${sample}*Log.final.out
     do
         echo $chunk
-        nb_frag_part=$(grep "Number of input reads" $chunk| awk '{print $NF}')
-        nb_frag=$(( $nb_frag + $nb_frag_part ))
+        nb_aligned_part=$(grep "Uniquely mapped reads number" $chunk| awk '{print $NF}')
+        nb_aligned=$(( $nb_aligned + $nb_aligned_part ))
     done
-    nb_reads=$(echo "${nb_frag}" | awk ' { printf "%.0f",$1*2 } ')
-    header+=",Number_of_frag,Number_of_reads"
-    output+=",${nb_frag},${nb_reads}"
-
+    percent_aligned=$(echo "$nb_frag" "$nb_aligned" | awk ' { printf "%.0f",$2/$1*100 } ')
+    header+=",Number_aligned,Percent_aligned"
+    output+=",${nb_aligned},${percent_aligned}"
 
     if [ $n_header == 0 ]; then
         echo -e $header > general_stats.mqc

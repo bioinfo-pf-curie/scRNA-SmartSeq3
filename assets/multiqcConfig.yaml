@@ -35,7 +35,7 @@ custom_data:
               scale: 'YlGn'
               format: '{:,.0f}'
               placement: 2000
-              hidden: true
+              hidden: false
             Number_of_reads:
               title: 'Total Reads'
               scale: 'YlGn'
@@ -44,9 +44,39 @@ custom_data:
               hidden: false
             Number_of_cells:
               title: 'Cells'
-              scale: 'YlGn'
+              scale: 'GnBu'
               format: '{:,.0f}'
               placement: 4000
+              hidden: false
+            Number_umis:
+              title: 'UMIs'
+              scale: 'PuBu'
+              format: '{:,.0f}'
+              placement: 5000
+              hidden: false
+            Percent_umis:
+              title: '%UMIs'
+              scale: 'PuBu'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 6000
+              hidden: false
+            Number_aligned:
+              title: 'Aligned'
+              scale: 'YlOrBr'
+              format: '{:,.0f}'
+              placement: 7000
+              hidden: false
+            Percent_aligned:
+              title: '%Aligned'
+              scale: 'YlOrBr'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 8000
               hidden: false
 
               
@@ -61,7 +91,6 @@ custom_data:
         title: 'Percentage of mitochondrial RNAs per cell'
         xlab: 'Number of genes'
         ylab: '% mitochondrial RNAs'
-
 
 sp:
    my_stats:
