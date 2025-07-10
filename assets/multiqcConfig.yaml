@@ -76,7 +76,7 @@ module_order:
   - fastqc
   - cutadapt
   - star
-  - featureCounts
+  - featurecounts
   - umitools
   - rseqc
   - qualimap

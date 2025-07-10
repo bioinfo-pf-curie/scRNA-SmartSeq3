@@ -87,7 +87,7 @@ do
 
 
     if [ $n_header == 0 ]; then
-        echo -e $header
+        echo -e $header > general_stats.mqc
         n_header=1
     fi
     
