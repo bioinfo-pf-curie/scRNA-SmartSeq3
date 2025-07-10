@@ -3,7 +3,7 @@
 #
 #################################################################
 
-skip_generalstats: true
+skip_generalstats: false
 skip_versions_section: true
 disable_version_detection: true
 #read_count_multiplier: 0.001
