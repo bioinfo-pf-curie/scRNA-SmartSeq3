@@ -14,7 +14,7 @@ process umitoolsExtract {
   output:
   tuple val(meta), path("*_UMIsExtracted*"), emit: fastq
   tuple val(meta), path("*_noUMI*"), emit: noumi
-  path("*.log"), emit: log
+  tuple val(meta), path("*.log"), emit: log
   path("versions.txt"), emit: versions
 
   script:

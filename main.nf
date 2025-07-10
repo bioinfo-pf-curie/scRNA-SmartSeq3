@@ -526,6 +526,8 @@ workflow {
 
     warnCh = Channel.empty()
 
+    chUmiExtractLogs.view()
+
     multiqc(
       customRunName,
       sPlanCh.collect(),
@@ -546,8 +548,8 @@ workflow {
       //chRseqcReadQuality.collect().ifEmpty([]), // not a module
       //chRseqcReadDist.collect().ifEmpty([]), // fait buguer
       //stat2mqc
-      chUmiExtractLogs,
-      umitoolsDedup.out.log.collect().ifEmpty([]),
+      chUmiExtractLogs.map{it->[it[1]]}.collect().ifEmpty([]),
+      umitoolsDedup.out.log.map{it->[it[1]]}.collect().ifEmpty([]),
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
