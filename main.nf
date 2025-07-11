@@ -558,6 +558,7 @@ workflow {
       chFastqc.collect().ifEmpty([]),
       chMt,
       featureCountsAll.out.summary.collect(),
+      featureCountsAll.out.log.collect(),
       featureCountsUmis.out.summary.collect(),
       featureCountsUmis.out.log.collect()
     )

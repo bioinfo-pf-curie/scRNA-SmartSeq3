@@ -93,6 +93,42 @@ custom_data:
               format: '{:,.0f}'
               placement: 10000
               hidden: false
+            Number_dedup:
+              title: 'Deduplicated'
+              scale: 'BuPu'
+              format: '{:,.0f}'
+              placement: 11000
+              hidden: false
+            Percent_dedup:
+              title: '%Deduplicated'
+              scale: 'BuPu'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 12000
+              hidden: false
+            Number_assigned:
+              title: 'Assigned'
+              scale: 'PuRd'
+              format: '{:,.0f}'
+              placement: 13000
+              hidden: false
+            Percent_assigned:
+              title: '%Assigned'
+              scale: 'BuPuRdPu'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 14000
+              hidden: false
+            Final_umi:
+              title: 'Final UMIs'
+              scale: 'Greens'
+              format: '{:,.0f}'
+              placement: 15000
+              hidden: false
               
     mt_percent: 
       file_format: 'csv'

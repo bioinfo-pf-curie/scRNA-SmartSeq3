@@ -47,7 +47,7 @@ if  [[ -z $splan ]]; then
 fi
 
 if [[ "$generatebatch" == true && "$sampleDes" != "null" ]]; then
-    all_samples=$(find  nbCells/*initial_nb_barcodes.txt | cut -f2 -d"/" | sed 's/_initial_nb_barcodes.txt//')
+    all_samples=$(find  nbCells/*initial_barcodes.txt | cut -f2 -d"/" | sed 's/_initial_barcodes.txt//')
 else
     all_samples=$(awk -F, '{print $1}' $splan | uniq )
 fi
@@ -65,51 +65,55 @@ do
     header="Sample_id,Sample_name"
     output="${sample},${sname}"
 
-    nb_cells=0
-    for chunk in nbCells/${sample}_*initial_nb_barcodes.txt
+    cells=0
+    for chunk in nbCells/${sample}_*initial_barcodes.txt
     do
-        nb_cell_part=$(cat $chunk)
-        nb_cells=$(( $nb_cells + $nb_cell_part ))
+        cell_part=$(cat $chunk)
+        cells=$(( $cells + $cell_part ))
     done
     header+=",Number_of_cells"
-    output+=",${nb_cells}"
+    output+=",${cells}"
 
     # umitools extract
-    nb_frag=0
-    nb_umi=0
+    frag=0
+    umi=0
     for chunk in umitools/${sample}_*umiExtract.log
     do
-        nb_frag_part=$(grep "Input Reads:" $chunk| awk '{print $NF}')
-        nb_frag=$(( $nb_frag + $nb_frag_part ))
-        nb_umi_part=$(grep "Reads output:" $chunk| awk '{print $NF}')
-        nb_umi=$(( $nb_umi + $nb_umi_part ))
+        frag_part=$(grep "Input Reads:" $chunk| awk '{print $NF}')
+        frag=$(( $frag + $frag_part ))
+        umi_part=$(grep "Reads output:" $chunk| awk '{print $NF}')
+        umi=$(( $umi + $umi_part ))
     done
-    nb_reads=$(echo "$nb_frag" | awk ' { printf "%.0f",$1*2 } ')
-    percent_umi=$(echo "$nb_frag" "$nb_umi" | awk ' { printf "%.0f",$2/$1*100 } ')
+    reads=$(echo "$frag" | awk ' { printf "%.0f",$1*2 } ')
+    percent_umi=$(echo "$frag" "$umi" | awk ' { printf "%.0f",$2/$1*100 } ')
     header+=",Number_of_frag,Number_of_reads,Number_umis,Percent_umis"
-    output+=",${nb_frag},${nb_reads},${nb_umi},${percent_umi}"
+    output+=",${frag},${reads},${umi},${percent_umi}"
     
     # star
-    nb_aligned=0
+    aligned=0
     for chunk in star/${sample}*Log.final.out
     do
         echo $chunk
-        nb_aligned_part=$(grep "Uniquely mapped reads number" $chunk| awk '{print $NF}')
-        nb_aligned=$(( $nb_aligned + $nb_aligned_part ))
+        aligned_part=$(grep "Uniquely mapped reads number" $chunk| awk '{print $NF}')
+        aligned=$(( $aligned + $aligned_part ))
     done
-    percent_aligned=$(echo "$nb_frag" "$nb_aligned" | awk ' { printf "%.0f",$2/$1*100 } ')
+    percent_aligned=$(echo "$frag" "$aligned" | awk ' { printf "%.0f",$2/$1*100 } ')
     header+=",Number_aligned,Percent_aligned"
-    output+=",${nb_aligned},${percent_aligned}"
+    output+=",${aligned},${percent_aligned}"
 
-    nb_assigned_reads=$(grep "Assigned" feauturecountsAll/${sample}_reads.csv.summary | awk '{print $NF}')
-    percent_assigned=$(echo "$nb_frag" "$nb_assigned_reads" | awk ' { printf "%.0f",$2/$1*100 } ')
-    header+=",Number_assigned,Percent_assigned"
-    output+=",${nb_assigned_reads},${percent_assigned}"
+    reads_dedup=$(grep "Total alignments :" featurecountsAll/${sample}_reads_featureCounts.log | awk '{print $NF}')
+    percent_reads_dedup=$(echo "$frag" "$reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
+    reads_dedup_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | awk '{print $NF}')
+    percent_reads_dedup_assigned=$(echo "$frag" "$reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
+    header+=",Number_dedup,Percent_dedup,Number_assigned,Percent_assigned"
+    output+=",${reads_dedup},${percent_reads_dedup},${reads_dedup_assigned},${percent_reads_dedup_assigned}"
 
-    umi_aligned=$(grep "Total alignments :" feauturecountsUmi/${sample}_umi_featureCounts.log | awk '{print $NF}')
-    umi_assigned=$(grep "Assigned" feauturecountsUmi/${sample}_umi.csv.summary| awk '{print $NF}')
+    umi_aligned=$(grep "Total alignments :" featurecountsUmis/${sample}_umi_featureCounts.log | awk '{print $NF}')
+    umi_assigned=$(grep "Assigned" featurecountsUmis/${sample}_umi.csv.summary| awk '{print $NF}')
     umi_dedup_assigned=$(grep "Number of reads out:" umitools/${sample}_umitoolsDedup.log | awk '{print $NF}')
-    umi_dedup_unassigned=$(grep "Read skipped, no tag:" umitools/${sample}_umitoolsDedup.log| cut -f4 -d, | awk '{print $NF}')
+    #umi_dedup_unassigned=$(grep "Read skipped, no tag:" umitools/${sample}_umitoolsDedup.log| cut -f4 -d, | awk '{print $NF}')
+    header+=",Final_umi"
+    output+=",${umi_dedup_assigned}"
 
     if [ $n_header == 0 ]; then
         echo -e $header > general_stats.mqc

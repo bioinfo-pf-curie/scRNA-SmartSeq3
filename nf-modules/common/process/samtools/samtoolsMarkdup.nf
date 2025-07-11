@@ -13,7 +13,6 @@ process samtoolsMarkdup {
 
   output:
   tuple val(meta), path ("*_markdup.bam"), emit: bam
-  path ("*_markdup.log"), emit: logs
   path ("versions.txt"), emit: versions
 
   when:
@@ -28,7 +27,7 @@ process samtoolsMarkdup {
     --threads ${task.cpus} \\
     ${args} \\
     ${bam} \\
-    ${prefix}_markdup.bam &> ${prefix}_markdup.log
+    ${prefix}_markdup.bam 
 
   echo \$(samtools --version | head -1) > versions.txt
   """
