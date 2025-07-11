@@ -66,7 +66,7 @@ do
     output="${sample},${sname}"
 
     cells=0
-    for chunk in nbCells/${sample}_*initial_barcodes.txt
+    for chunk in nbCells/${sample}_*
     do
         cell_part=$(cat $chunk)
         cells=$(( $cells + $cell_part ))
