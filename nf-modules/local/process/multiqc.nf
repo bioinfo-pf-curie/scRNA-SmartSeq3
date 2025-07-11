@@ -37,6 +37,7 @@ process multiqc {
   path mt
   path ('feauturecountsAll/*')
   path ('feauturecountsUmis/*')
+  path ('feauturecountsUmis/*')
 
   output:
   path splan, emit: splan

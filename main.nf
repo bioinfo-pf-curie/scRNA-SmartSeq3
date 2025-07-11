@@ -352,7 +352,7 @@ workflow {
   )
 
   umi2tag(
-    samtoolsSortUmis.out.bam.join(Channel.value([]))
+    samtoolsSortUmis.out.bam
   )
   umiInTags=umi2tag.out.bam
 
@@ -409,7 +409,6 @@ workflow {
     filterMarkdup.out.bam.join(samtoolsIndexMarkdup.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsAll.out.versions)
-  featureCountsAllLogs=featureCountsAll.out.logs.collect()
 
   // Matrix all umis
   featureCountsMatrix(
@@ -558,8 +557,9 @@ workflow {
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
-      featureCountsAllLogs,
-      featureCountsUmis.out.logs.collect()
+      featureCountsAll.out.summary.collect(),
+      featureCountsUmis.out.summary.collect(),
+      featureCountsUmis.out.log.collect()
     )
 
     mqcReport = multiqc.out.report.toList()

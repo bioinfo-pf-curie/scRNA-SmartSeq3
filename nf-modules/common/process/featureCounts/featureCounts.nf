@@ -14,7 +14,8 @@ process featureCounts{
   output:
   tuple val(meta), path("*bam"), emit: bam
   tuple val(meta), path("*csv"), emit: counts
-  path("*summary"), emit: logs
+  path("*summary"), emit: summary
+  path("*log"), emit: log
   path("versions.txt"), emit: versions 
 
   when:
@@ -39,6 +40,6 @@ process featureCounts{
                 -s ${featureCountsDirection} \\
                 ${peOpts} \\
                 ${args} \\
-                ${bams} 2> featureCounts_${prefix}.log
+                ${bams} 2> ${prefix}_featureCounts.log
   """
 }

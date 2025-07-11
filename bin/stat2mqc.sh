@@ -102,13 +102,12 @@ do
     output+=",${nb_aligned},${percent_aligned}"
 
     nb_assigned_reads=$(grep "Assigned" feauturecountsAll/${sample}_reads.csv.summary | awk '{print $NF}')
-    #nb_assigned_umis=$(grep "Assigned" feauturecountsUmis/${sample}_umi.csv.summary | awk '{print $NF}')
     percent_assigned=$(echo "$nb_frag" "$nb_assigned_reads" | awk ' { printf "%.0f",$2/$1*100 } ')
     header+=",Number_assigned,Percent_assigned"
     output+=",${nb_assigned_reads},${percent_assigned}"
 
-    umi_dedup=$(grep "Input Reads:" umitools/${sample}_umitoolsDedup.log | cut -f2 -d, | awk '{print $NF}')
-    umi_dedup_chimeric=$(grep "Chimeric read pair:" umitools/${sample}_umitoolsDedup.log | cut -f5 -d, | awk '{print $NF}')
+    umi_aligned=$(grep "Total alignments :" feauturecountsUmi/${sample}_umi_featureCounts.log | awk '{print $NF}')
+    umi_assigned=$(grep "Assigned" feauturecountsUmi/${sample}_umi.csv.summary| awk '{print $NF}')
     umi_dedup_assigned=$(grep "Number of reads out:" umitools/${sample}_umitoolsDedup.log | awk '{print $NF}')
     umi_dedup_unassigned=$(grep "Read skipped, no tag:" umitools/${sample}_umitoolsDedup.log| cut -f4 -d, | awk '{print $NF}')
 
