@@ -107,6 +107,11 @@ do
     header+=",Number_assigned,Percent_assigned"
     output+=",${nb_assigned_reads},${percent_assigned}"
 
+    umi_dedup=$(grep "Input Reads:" umitools/${sample}_umitoolsDedup.log | cut -f2 -d, | awk '{print $NF}')
+    umi_dedup_chimeric=$(grep "Chimeric read pair:" umitools/${sample}_umitoolsDedup.log | cut -f5 -d, | awk '{print $NF}')
+    umi_dedup_assigned=$(grep "Number of reads out:" umitools/${sample}_umitoolsDedup.log | awk '{print $NF}')
+    umi_dedup_unassigned=$(grep "Read skipped, no tag:" umitools/${sample}_umitoolsDedup.log| cut -f4 -d, | awk '{print $NF}')
+
     if [ $n_header == 0 ]; then
         echo -e $header > general_stats.mqc
         n_header=1

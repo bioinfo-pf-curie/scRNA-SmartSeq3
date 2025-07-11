@@ -154,7 +154,9 @@ include { concatFastq } from './nf-modules/common/process/concatFastq/concatFast
 include { cutadapt } from './nf-modules/common/process/cutadapt/cutadapt'
 include { starAlign } from './nf-modules/common/process/star/starAlign'
 
-include { barcode2tag} from './nf-modules/local/process/barcode2tag'
+include { barcode2tag as bc2tag} from './nf-modules/local/process/barcode2tag'
+include { barcode2tag as umi2tag} from './nf-modules/local/process/barcode2tag'
+
 include { barcodeListPerBatch} from './nf-modules/local/process/barcodeListPerBatch'
 //include { nbCells} from './nf-modules/local/process/nbCells'
 include { seqkitFx2tab} from './nf-modules/local/process/seqkitFx2tab'
@@ -179,7 +181,7 @@ include { samtoolsSort as samtoolsSortAll} from './nf-modules/common/process/sam
 
 include { extractUmiReads } from './nf-modules/local/process/extractUmiReads'
 
-include { umitoolsGroup} from './nf-modules/common/process/umitools/umitoolsGroup'
+//include { umitoolsGroup} from './nf-modules/common/process/umitools/umitoolsGroup'
 include { umitoolsCount} from './nf-modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './nf-modules/common/process/umitools/umitoolsDedup'
 
@@ -284,16 +286,16 @@ workflow {
     chBams
   )
   
-  barcode2tag(
+  bc2tag(
     chBams.join(barcodeListPerBatch.out.barcodes)
   )
-  chVersions = chVersions.mix(barcode2tag.out.versions)
+  chVersions = chVersions.mix(bc2tag.out.versions)
   //-----
 
   // info meta.chunk is deleted to merge all chunks
   if (params.generateBatch == true && params.sampleDescription!=null){
     // if several chunks within a batch 
-    chTaggedBams = barcode2tag.out.bam
+    chTaggedBams = bc2tag.out.bam
       .map{meta, bam ->
         def newMeta = [ id: "${meta.id}_${meta.batch}", name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk, batch:meta.batch]
         [ newMeta, bam ]
@@ -304,7 +306,7 @@ workflow {
       }
   }else{
     // 1 batch==1 id per row in the SP
-    chTaggedBams = barcode2tag.out.bam
+    chTaggedBams = bc2tag.out.bam
       .map{meta, bam ->
         def newMeta = [ id: meta.id, name: meta.name, protocol: meta.protocol, totchunk:meta.totchunk]
         [ newMeta, bam ]
@@ -349,26 +351,31 @@ workflow {
     featureCountsUmis.out.bam
   )
 
+  umi2tag(
+    samtoolsSortUmis.out.bam.join(Channel.value([]))
+  )
+  umiInTags=umi2tag.out.bam
+
   samtoolsIndexUmis(
-    samtoolsSortUmis.out.bam
+    umiInTags
   )
 
-  umitoolsGroup(
+  /*umitoolsGroup(
     samtoolsSortUmis.out.bam.join(samtoolsIndexUmis.out.bai)
   )
   umiInTags=umitoolsGroup.out.bam
-  umitoolsGroupLogs=umitoolsGroup.out.log
+  umitoolsGroupLogs=umitoolsGroup.out.log*/
 
   // generate matrix
   umitoolsCount(
-    umiInTags.join(umitoolsGroup.out.bai)
+    umiInTags.join(samtoolsIndexUmis.out.bai)
   )
   matrixUmis=umitoolsCount.out.matrix
   chVersions = chVersions.mix(umitoolsCount.out.versions)
 
   // generate dedup bam
   umitoolsDedup(
-    umiInTags.join(umitoolsGroup.out.bai)
+    umiInTags.join(samtoolsIndexUmis.out.bai)
   )
   chFinalBamUmi=umitoolsDedup.out.bam
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
