@@ -352,7 +352,7 @@ workflow {
   )
 
   umi2tag(
-    samtoolsSortUmis.out.bam
+    samtoolsSortUmis.out.bam.map{meta, bam -> [meta, bam, []]}
   )
   umiInTags=umi2tag.out.bam
 
