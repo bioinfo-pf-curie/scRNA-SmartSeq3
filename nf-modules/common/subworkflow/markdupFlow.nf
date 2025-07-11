@@ -41,7 +41,6 @@ workflow markdupFlow {
   emit:
   versions = chVersions 
   bam = samtoolsMarkdup.out.bam
-  logs = samtoolsMarkdup.out.logs
   stats = samtoolsFlagstat.out.stats
 
 }
