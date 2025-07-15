@@ -322,11 +322,6 @@ workflow {
   )
   chBams = samtoolsMergeChunk.out.bam.mix(chTaggedBams.single)
 
-  /*samtoolsStats(
-    chBams, 
-    Channel.value([])
-  )*/
-
   filterUnaligned(
     chBams
   )
@@ -560,7 +555,8 @@ workflow {
       featureCountsAll.out.summary.collect(),
       featureCountsAll.out.log.collect(),
       featureCountsUmis.out.summary.collect(),
-      featureCountsUmis.out.log.collect()
+      featureCountsUmis.out.log.collect(),
+      barcodeListPerBatch.out.barcodes.collect()
     )
 
     mqcReport = multiqc.out.report.toList()

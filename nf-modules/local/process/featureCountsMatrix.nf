@@ -8,7 +8,7 @@ process featureCountsMatrix {
   tuple val(meta), path(counts), path(bam) // only to get the name
 
   output:
-  tuple val(meta), path("*_matrix.csv.gz"), emit: matrix
+  tuple val(meta), path("*_matrix.tsv.gz"), emit: matrix
 
   script:
   """
@@ -20,7 +20,7 @@ process featureCountsMatrix {
     if (sum != 0) print
   }' tmp > nonzero_rows
 
-  sed "s/$bam://g" nonzero_rows > ${counts.baseName}_matrix.csv
+  sed "s/$bam://g" nonzero_rows > ${counts.baseName}_matrix.tsv
   gzip ${counts.baseName}_matrix.csv 
   """
 }

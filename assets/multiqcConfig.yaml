@@ -17,7 +17,7 @@ custom_data:
     my_stats:
         file_format: 'csv'
         section_name: 'General Metrics'
-        description: ' of sequenced data'
+        description: ' of single cell transcriptomics data. If a sample contains more than one cell, means across cells are reported.'
         plot_type: 'table'
         pconfig:
             namespace: 'stats'
@@ -48,6 +48,12 @@ custom_data:
               format: '{:,.0f}'
               placement: 4000
               hidden: false
+            Number_umis:
+              title: 'Total UMIs'
+              scale: 'PuBu'
+              format: '{:,.0f}'
+              placement: 5000
+              hidden: false
             Percent_umis:
               title: '%UMIs'
               scale: 'PuBu'
@@ -62,7 +68,7 @@ custom_data:
               scale: 'YlOrBr'
               format: '{:,.0f}'
               placement: 7000
-              hidden: false
+              hidden: true
             Percent_aligned:
               title: '%Aligned'
               scale: 'YlOrBr'
@@ -71,27 +77,6 @@ custom_data:
               suffix: '%'
               format: '{:,.0f}'
               placement: 8000
-              hidden: false
-            Number_assigned:
-              title: 'Assigned'
-              scale: 'OrRd'
-              format: '{:,.0f}'
-              placement: 9000
-              hidden: false
-            Percent_assigned:
-              title: '%Assigned'
-              scale: 'OrRd'
-              min: 0
-              max: 100
-              suffix: '%'
-              format: '{:,.0f}'
-              placement: 10000
-              hidden: false
-            Number_dedup:
-              title: 'Deduplicated'
-              scale: 'BuPu'
-              format: '{:,.0f}'
-              placement: 11000
               hidden: false
             Percent_dedup:
               title: '%Deduplicated'
@@ -102,33 +87,45 @@ custom_data:
               format: '{:,.0f}'
               placement: 12000
               hidden: false
-            Number_assigned:
-              title: 'Assigned'
-              scale: 'PuRd'
-              format: '{:,.0f}'
-              placement: 13000
-              hidden: false
             Percent_assigned:
               title: '%Assigned'
-              scale: 'BuPuRdPu'
+              scale: 'OrRd'
               min: 0
               max: 100
               suffix: '%'
               format: '{:,.0f}'
+              placement: 11000
+              hidden: false
+            Final_reads:
+              title: 'Reads'
+              scale: 'PuRd'
+              format: '{:,.0f}'
+              placement: 13000
+              hidden: false
+            Mean_genes_reads:
+              title: 'Genes (reads)'
+              scale: 'PuRd'
+              format: '{:,.0f}'
               placement: 14000
               hidden: false
-            Final_umi:
+            Final_umis:
               title: 'UMIs'
               scale: 'Greens'
               format: '{:,.0f}'
               placement: 15000
+              hidden: false
+            Mean_genes_umis:
+              title: 'Genes (UMIs)'
+              scale: 'Greens'
+              format: '{:,.0f}'
+              placement: 16000
               hidden: false
               
     mt_percent: 
       file_format: 'csv'
       section_name: 'Cell viability'
       title: '% Mitochondrial RNAs per cell'
-      description: 'Percentage of mitochondrial RNAs is a cell viability marker. It varies according to your cell type (e.g cell line, primary cells, etc.). Here, only UMI reads are take into account.'
+      description: 'Percentage of mitochondrial RNAs is a cell viability marker. It varies according to your cell type (e.g cell line, primary cells, etc.).'
       plot_type: 'scatter'
       pconfig:
         id: 'mt'

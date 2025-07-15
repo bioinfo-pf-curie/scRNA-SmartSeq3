@@ -39,6 +39,8 @@ process multiqc {
   path ('featurecountsAll/*')
   path ('featurecountsUmis/*')
   path ('featurecountsUmis/*')
+  path ('matrice_umis/*')
+  path ('bcAfterStar/*')
 
   output:
   path splan, emit: splan
