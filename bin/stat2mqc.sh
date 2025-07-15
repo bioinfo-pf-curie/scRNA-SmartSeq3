@@ -86,8 +86,10 @@ do
     done
     reads=$(echo "$frag" | awk ' { printf "%.0f",$1*2 } ')
     percent_umi=$(echo "$frag" "$umi" | awk ' { printf "%.0f",$2/$1*100 } ')
-    header+=",Number_of_frag,Number_of_reads,Number_umis,Percent_umis"
-    output+=",${frag},${reads},${umi},${percent_umi}"
+    #header+=",Number_of_frag,Number_of_reads,Number_umis,Percent_umis"
+    #output+=",${frag},${reads},${umi},${percent_umi}"
+    header+=",Number_of_frag,Number_of_reads,Percent_umis"
+    output+=",${frag},${reads},${percent_umi}"
     
     # star
     aligned=0
@@ -97,14 +99,14 @@ do
         aligned_part=$(grep "Uniquely mapped reads number" $chunk| awk '{print $NF}')
         aligned=$(( $aligned + $aligned_part ))
     done
-    percent_aligned=$(echo "$frag" "$aligned" | awk ' { printf "%.0f",$2/$1*100 } ')
+    percent_aligned=$(echo "$reads" "$aligned" | awk ' { printf "%.0f",$2/$1*100 } ')
     header+=",Number_aligned,Percent_aligned"
     output+=",${aligned},${percent_aligned}"
 
-    reads_dedup=$(grep "Total alignments :" featurecountsAll/${sample}_reads_featureCounts.log | awk '{print $NF}')
-    percent_reads_dedup=$(echo "$frag" "$reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
+    reads_dedup=$(grep "Total alignments :" featurecountsAll/${sample}_reads_featureCounts.log |  sed 's/.*Total alignments *: *\([0-9]\+\).*/\1/')
+    percent_reads_dedup=$(echo "$reads" "$reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
     reads_dedup_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | awk '{print $NF}')
-    percent_reads_dedup_assigned=$(echo "$frag" "$reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
+    percent_reads_dedup_assigned=$(echo "$reads" "$reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
     header+=",Number_dedup,Percent_dedup,Number_assigned,Percent_assigned"
     output+=",${reads_dedup},${percent_reads_dedup},${reads_dedup_assigned},${percent_reads_dedup_assigned}"
 

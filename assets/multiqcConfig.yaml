@@ -48,12 +48,6 @@ custom_data:
               format: '{:,.0f}'
               placement: 4000
               hidden: false
-            Number_umis:
-              title: 'UMIs'
-              scale: 'PuBu'
-              format: '{:,.0f}'
-              placement: 5000
-              hidden: false
             Percent_umis:
               title: '%UMIs'
               scale: 'PuBu'
@@ -124,7 +118,7 @@ custom_data:
               placement: 14000
               hidden: false
             Final_umi:
-              title: 'Final UMIs'
+              title: 'UMIs'
               scale: 'Greens'
               format: '{:,.0f}'
               placement: 15000
