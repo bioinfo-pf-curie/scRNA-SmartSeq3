@@ -423,15 +423,13 @@ workflow {
 
   //*******************************************
   // MULTIQC
+  //*******************************************
 
   //subroutines
   outputDocumentation(
     outputDocsCh,
     outputDocsImagesCh
   )
-  
-  //-----------umitools------------------------------
-  //umiExtractionSummary
 
   //-----------%MT genes---------------------------
 
@@ -509,9 +507,9 @@ workflow {
   )
   
   qualimapRNAseq(
-          chFinalSortedBamAll.join(samtoolsIndexAllFinal.out.bai),
-          chGtf.collect()
-        )
+    chFinalSortedBamAll.join(samtoolsIndexAllFinal.out.bai),
+    chGtf.collect()
+  )
 	chQualimapMqc = qualimapRNAseq.out.results.collect()
   chVersions = chVersions.mix(qualimapRNAseq.out.versions)
 

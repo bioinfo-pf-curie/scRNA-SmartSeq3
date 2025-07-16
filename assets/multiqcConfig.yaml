@@ -104,7 +104,7 @@ custom_data:
               hidden: false
             Mean_genes_reads:
               title: 'Genes (reads)'
-              scale: 'PuRd'
+              scale: 'Greys'
               format: '{:,.0f}'
               placement: 12000
               hidden: false
@@ -116,7 +116,7 @@ custom_data:
               hidden: false
             Mean_genes_umis:
               title: 'Genes (UMIs)'
-              scale: 'Greens'
+              scale: 'YlGnBu'
               format: '{:,.0f}'
               placement: 14000
               hidden: false
