@@ -85,7 +85,7 @@ custom_data:
               max: 100
               suffix: '%'
               format: '{:,.0f}'
-              placement: 12000
+              placement: 9000
               hidden: false
             Percent_assigned:
               title: '%Assigned'
@@ -94,31 +94,31 @@ custom_data:
               max: 100
               suffix: '%'
               format: '{:,.0f}'
-              placement: 11000
+              placement: 10000
               hidden: false
             Final_reads:
               title: 'Reads'
               scale: 'PuRd'
               format: '{:,.0f}'
-              placement: 13000
+              placement: 11000
               hidden: false
             Mean_genes_reads:
               title: 'Genes (reads)'
               scale: 'PuRd'
               format: '{:,.0f}'
-              placement: 14000
+              placement: 12000
               hidden: false
             Final_umis:
               title: 'UMIs'
               scale: 'Greens'
               format: '{:,.0f}'
-              placement: 15000
+              placement: 13000
               hidden: false
             Mean_genes_umis:
               title: 'Genes (UMIs)'
               scale: 'Greens'
               format: '{:,.0f}'
-              placement: 16000
+              placement: 14000
               hidden: false
               
     mt_percent: 
