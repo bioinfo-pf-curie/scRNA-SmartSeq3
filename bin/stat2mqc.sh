@@ -47,7 +47,7 @@ if  [[ -z $splan ]]; then
 fi
 
 if [[ "$generatebatch" == true && "$sampleDes" != "null" ]]; then
-    all_samples=$(find  nbCells/*initial_barcodes.txt | cut -f2 -d"/" | sed 's/_initial_barcodes.txt//')
+    all_samples=$(find  nbCells/*_initial_nb_barcodes.txt | cut -f2 -d"/" | sed 's/_initial_nb_barcodes.txt//')
 else
     all_samples=$(awk -F, '{print $1}' $splan | uniq )
 fi
