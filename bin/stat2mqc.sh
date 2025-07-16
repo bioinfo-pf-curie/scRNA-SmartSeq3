@@ -142,7 +142,7 @@ do
                 print total / n_col
         }')
     else
-        mean_genes_reads=$(zcat matrice_umis/${sample}_reads_matrix.tsv.gz | tail -n +2 | wc -l)
+        mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | wc -l)
     fi
     header+=",Mean_genes_reads"
     output+=",${mean_genes_reads}"

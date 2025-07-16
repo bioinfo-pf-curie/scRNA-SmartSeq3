@@ -556,6 +556,7 @@ workflow {
       featureCountsAll.out.log.collect(),
       featureCountsUmis.out.summary.collect(),
       featureCountsUmis.out.log.collect(),
+      matrixUmis.collect(),
       barcodeListPerBatch.out.barcodes.collect()
     )
 
