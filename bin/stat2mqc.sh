@@ -127,21 +127,27 @@ do
     # genes | cell1 | cell2 | ....
     nb_col=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | awk 'NR==1 {print NF}')
     if [ $nb_col -gt 2 ]; then
-        mean_genes_reads=$(tail -n +2 "zcat matrice_reads/${sample}_reads_matrix.tsv.gz" | awk '
-        {for (i=2; i<=NF; i++) {
-                if ($i > 0) {
-                    count[i]++
-                }
-            }
-        }
-        END {
-            total = 0
-            n_col = 0
-            for (i in count) {
-                total += count[i]
-                n_col++
-                print total / n_col
-        }')
+        mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | awk '
+                            {
+                                for (i=2; i<=NF; i++) {
+                                    if ($i > 0) {
+                                        count[i]++
+                                    }
+                                }
+                            }
+                            END {
+                                total = 0
+                                n_col = 0
+                                for (i in count) {
+                                    total += count[i]
+                                    n_col++
+                                }
+                                if (n_col > 0) {
+                                    print total / n_col
+                                } else {
+                                    print 0
+                                }
+                            }')
     else
         mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | wc -l)
     fi
@@ -160,7 +166,7 @@ do
     zcat matrice_umis/${sample}_matrix.tsv.gz | tail -n +2 | cut -f2 | uniq -c > genes_per_cell
     ncells=$(wc -l < genes_per_cell)
     totgenes=$(awk '{sum += $1} END {print sum}' genes_per_cell)
-    mean_genes_umis=$( echo $ncells $totgenes | awk ' { printf "%.0f",$2/$1 }' )
+    mean_genes_umis=$( echo $ncells $totgenes | awk '{ printf "%.0f",$2/$1 }' )
     header+=",Mean_genes_umis"
     output+=",${mean_genes_umis}"
 
