@@ -556,8 +556,8 @@ workflow {
       featureCountsAll.out.log.collect(),
       featureCountsUmis.out.summary.collect(),
       featureCountsUmis.out.log.collect(),
-      matrixUmis.collect(),
-      barcodeListPerBatch.out.barcodes.collect()
+      matrixUmis.map{it->[it[1]]}.collect().ifEmpty([]),
+      barcodeListPerBatch.out.barcodes.map{it->[it[1]]}.collect().ifEmpty([])
     )
 
     mqcReport = multiqc.out.report.toList()
