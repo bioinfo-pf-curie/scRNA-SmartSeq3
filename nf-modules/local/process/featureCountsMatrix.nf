@@ -21,6 +21,6 @@ process featureCountsMatrix {
   }' tmp > nonzero_rows
 
   sed "s/$bam://g" nonzero_rows > ${counts.baseName}_matrix.tsv
-  gzip ${counts.baseName}_matrix.csv 
+  gzip ${counts.baseName}_matrix.tsv 
   """
 }
