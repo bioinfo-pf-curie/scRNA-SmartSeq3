@@ -40,6 +40,7 @@ process multiqc {
   path ('featurecountsUmis/*')
   path ('featurecountsUmis/*')
   path ('matrice_umis/*')
+  path ('matrice_reads/*')
   path ('bcAfterStar/*')
 
   output:

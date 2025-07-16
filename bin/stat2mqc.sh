@@ -92,15 +92,15 @@ do
     header+=",Number_of_frag,Number_of_reads,Number_umis,Percent_umis"
     output+=",${mean_frag},${mean_reads},${mean_umi},${mean_percent_umi}"
     
-    # star
+    # star EN FRAG
     aligned=0
     for chunk in star/${sample}*Log.final.out
     do
-        echo $chunk
         aligned_part=$(grep "Uniquely mapped reads number" $chunk| awk '{print $NF}')
         aligned=$(( $aligned + $aligned_part ))
     done
-    mean_aligned=$( echo $cells $aligned | awk ' { printf "%.0f",$2/$1 }' )
+    aligned_reads=$( echo $aligned | awk ' { printf "%.0f", $1*2 }' )
+    mean_aligned=$( echo $cells $aligned_reads | awk ' { printf "%.0f",$2/$1 }' )
     mean_percent_aligned=$(echo "$mean_reads" "$mean_aligned" | awk ' { printf "%.0f",$2/$1*100 } ')
     header+=",Number_aligned,Percent_aligned"
     output+=",${mean_aligned},${mean_percent_aligned}"

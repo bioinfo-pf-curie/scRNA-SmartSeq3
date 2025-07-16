@@ -557,6 +557,7 @@ workflow {
       featureCountsUmis.out.summary.collect(),
       featureCountsUmis.out.log.collect(),
       matrixUmis.map{it->[it[1]]}.collect().ifEmpty([]),
+      matrixAll.map{it->[it[1]]}.collect().ifEmpty([]),
       barcodeListPerBatch.out.barcodes.map{it->[it[1]]}.collect().ifEmpty([])
     )
 
