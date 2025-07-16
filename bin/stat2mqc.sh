@@ -134,19 +134,14 @@ do
                                         count[i]++
                                     }
                                 }
-                            }
-                            END {
+                            } END {
                                 total = 0
                                 n_col = 0
                                 for (i in count) {
                                     total += count[i]
                                     n_col++
                                 }
-                                if (n_col > 0) {
-                                    print total / n_col
-                                } else {
-                                    print 0
-                                }
+                                print total / n_col
                             }')
     else
         mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | wc -l)

@@ -12,7 +12,7 @@ process fastqc {
   tuple val(meta), path(reads)
 
   output:
-  path("*_fastqc.{zip,html}"), emit: results
+  path("*_fastqc.zip"), emit: results
   path("versions.txt"), emit: versions
 
   when:
