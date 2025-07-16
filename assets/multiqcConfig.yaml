@@ -154,6 +154,7 @@ module_order:
 #############################
 ## Removed plots
 remove_sections :
+  - star_summary
   - umitools-umi-stats
   - fastqc_overrepresented_sequences
   - fastqc_per_base_n_content

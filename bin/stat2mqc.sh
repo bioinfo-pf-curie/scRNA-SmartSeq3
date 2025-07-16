@@ -123,8 +123,8 @@ do
     output+=",${mean_reads_dedup},${mean_percent_reads_dedup},${mean_reads_dedup_assigned},${mean_percent_reads_dedup_assigned}"
 
     ##------------Reads
-    # Genes
-    # genes cell1 cell2 ....
+    # Genes (wide format)
+    # genes | cell1 | cell2 | ....
     nb_col=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | awk 'NR==1 {print NF}')
     if [ $nb_col -gt 2 ]; then
         mean_genes_reads=$(tail -n +2 "zcat matrice_reads/${sample}_reads_matrix.tsv.gz" | awk '
@@ -155,16 +155,14 @@ do
     #umi_dedup_unassigned=$(grep "Read skipped, no tag:" umitools/${sample}_umitoolsDedup.log| cut -f4 -d, | awk '{print $NF}')
     header+=",Final_umis"
     output+=",${umi_dedup_assigned}"
-    # Genes
-    # genes cells counts
+    # Genes (long format)
+    # genes | cells | counts
     zcat matrice_umis/${sample}_matrix.tsv.gz | tail -n +2 | cut -f2 | uniq -c > genes_per_cell
     ncells=$(wc -l < genes_per_cell)
     totgenes=$(awk '{sum += $1} END {print sum}' genes_per_cell)
     mean_genes_umis=$( echo $ncells $totgenes | awk ' { printf "%.0f",$2/$1 }' )
     header+=",Mean_genes_umis"
     output+=",${mean_genes_umis}"
-
-    
 
     if [ $n_header == 0 ]; then
         echo -e $header > general_stats.mqc
