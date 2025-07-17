@@ -4,8 +4,8 @@
 
 process outputDocumentation {
   label 'python'
-  label 'minCpu'
-  label 'minMem'
+  label 'lowCpu'
+  label 'lowMem'
 
   input:
   path outputDocs 

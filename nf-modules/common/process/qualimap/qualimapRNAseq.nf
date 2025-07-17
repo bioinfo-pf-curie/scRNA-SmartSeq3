@@ -5,7 +5,7 @@
 process qualimapRNAseq {
   tag "${meta.id}"
   label 'qualimap'
-  label 'minCpu'
+  label 'lowCpu'
   label 'medMem'
 
   input:

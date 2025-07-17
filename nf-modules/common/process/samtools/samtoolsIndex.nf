@@ -5,7 +5,7 @@
 process samtoolsIndex {
   tag "${meta.id}"
   label 'samtools'
-  label 'minCpu'
+  label 'lowCpu'
   label 'lowMem'
  
   input:

@@ -5,7 +5,7 @@
 
 process getSoftwareVersions{
   label 'python'
-  label 'minCpu'
+  label 'lowCpu'
   label 'lowMem'
 
   input:

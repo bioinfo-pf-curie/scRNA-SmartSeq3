@@ -3,10 +3,10 @@
  */
 
 process concatFastq {
-  label 'unix'
+  label 'onlyLinux'
   tag "${meta.id}"
-  label 'minCpu'
-  label 'minMem'
+  label 'lowCpu'
+  label 'lowMem'
 
   input:
   tuple val(meta), path(reads, stageAs: "input*/*")
