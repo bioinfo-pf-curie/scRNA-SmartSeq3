@@ -2,7 +2,7 @@ name: cutadapt
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   # Add required software dependencies here
   - bioconda::cutadapt=3.3=py37hf01694f_0

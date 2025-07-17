@@ -2,7 +2,7 @@ name: featurecounts
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   # Add required software dependencies here
   - bioconda::subread=2.0.1=hed695b0_0

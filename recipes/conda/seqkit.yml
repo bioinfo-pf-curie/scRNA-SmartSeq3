@@ -2,7 +2,7 @@ name: seqkit
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   # Add required software dependencies here
   - bioconda::seqkit=0.15.0=0

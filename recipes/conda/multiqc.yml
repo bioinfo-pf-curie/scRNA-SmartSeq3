@@ -1,6 +1,6 @@
 name: multiqc
 channels:
-  - defaults
+  - nodefaults
   - conda-forge
   - bioconda
 dependencies:

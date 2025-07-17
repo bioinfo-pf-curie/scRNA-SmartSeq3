@@ -2,7 +2,7 @@ name: fastqc
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   # Add required software dependencies here
   - bioconda::fastqc=0.12.1=hdfd78af_0

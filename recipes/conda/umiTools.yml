@@ -2,7 +2,7 @@ name: umiTools
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   # Add required software dependencies here
   - bioconda::umi_tools=1.1.1=py37hf01694f_1
