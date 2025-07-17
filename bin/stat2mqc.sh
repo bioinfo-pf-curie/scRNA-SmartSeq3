@@ -71,7 +71,7 @@ do
         cell_part=$(cat $chunk)
         cells=$(( $cells + $cell_part ))
     done
-    header+=",Number_of_cells"
+    header+=",Total_cells"
     output+=",${cells}"
 
     # umitools extract
@@ -162,8 +162,8 @@ do
     ncells=$(wc -l < genes_per_cell)
     totgenes=$(awk '{sum += $1} END {print sum}' genes_per_cell)
     mean_genes_umis=$( echo $ncells $totgenes | awk '{ printf "%.0f",$2/$1 }' )
-    header+=",Mean_genes_umis"
-    output+=",${mean_genes_umis}"
+    header+=",Mean_genes_umis,Cells"
+    output+=",${mean_genes_umis},${ncells}"
 
     if [ $n_header == 0 ]; then
         echo -e $header > general_stats.mqc

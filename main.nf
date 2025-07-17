@@ -205,6 +205,7 @@ include { fastqc } from './nf-modules/common/process/fastqc/fastqc'
 
 include { multiqc } from './nf-modules/local/process/multiqc'
 include {checkStarLog} from './lib/functions'
+include { saturationCurve } from './nf-modules/local/process/saturationCurve'
 
 /*
 =====================================
@@ -442,6 +443,12 @@ workflow {
     chMt=Channel.empty()
   }
 
+  saturationCurve(
+      matrixAll.map{it->[it[1]]}.collect(),
+      chConcat.map{it->[it[1]]}.collect()
+  )
+  chSaturationCurve=saturationCurve.out.results
+
   //-----------FastQC------------------------------
   fastqc(
     cutadapt.out.fastq
@@ -550,6 +557,7 @@ workflow {
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
       chMt,
+      chSaturationCurve,
       featureCountsAll.out.summary.collect(),
       featureCountsAll.out.log.collect(),
       featureCountsUmis.out.summary.collect(),

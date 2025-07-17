@@ -35,6 +35,7 @@ process multiqc {
   path ('star/*')
   path fastqc
   path mt
+  path satCurve
   path ('featurecountsAll/*')
   path ('featurecountsAll/*')
   path ('featurecountsUmis/*')

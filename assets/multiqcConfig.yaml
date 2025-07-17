@@ -17,7 +17,11 @@ custom_data:
     my_stats:
         file_format: 'csv'
         section_name: 'General Metrics'
-        description: ' of single cell transcriptomics data. If a sample contains more than one cell, means across cells are reported.'
+        description: |
+            Summary of single cell transcriptomics data.
+            If a sample contains more than one cell, means across cells are reported.
+            Reads are uniquely aligned, deduplicated (PCR duplicates are removed) and assigned to genes.
+            Genes are detected using all reads or using only UMI reads.
         plot_type: 'table'
         pconfig:
             namespace: 'stats'
@@ -30,21 +34,21 @@ custom_data:
               title: 'Sample Name'
               scale: false
               placement: 1000
+            Total_cells:
+              title: 'Total Cells'
+              scale: 'Oranges'
+              format: '{:,.0f}'
+              placement: 2000
+              hidden: false
             Number_of_frag:
               title: 'Total Fragments'
               scale: 'YlGn'
               format: '{:,.0f}'
-              placement: 2000
+              placement: 3000
               hidden: false
             Number_of_reads:
               title: 'Total Reads'
               scale: 'YlGn'
-              format: '{:,.0f}'
-              placement: 3000
-              hidden: false
-            Number_of_cells:
-              title: 'Cells'
-              scale: 'GnBu'
               format: '{:,.0f}'
               placement: 4000
               hidden: false
@@ -63,12 +67,6 @@ custom_data:
               format: '{:,.0f}'
               placement: 6000
               hidden: false
-            Number_aligned:
-              title: 'Aligned'
-              scale: 'YlOrBr'
-              format: '{:,.0f}'
-              placement: 7000
-              hidden: true
             Percent_aligned:
               title: '%Aligned'
               scale: 'YlOrBr'
@@ -76,8 +74,14 @@ custom_data:
               max: 100
               suffix: '%'
               format: '{:,.0f}'
-              placement: 8000
+              placement: 7000
               hidden: false
+            Number_aligned:
+              title: 'Aligned'
+              scale: 'YlOrBr'
+              format: '{:,.0f}'
+              placement: 8000
+              hidden: true
             Percent_dedup:
               title: '%Deduplicated'
               scale: 'BuPu'
@@ -87,6 +91,12 @@ custom_data:
               format: '{:,.0f}'
               placement: 9000
               hidden: false
+            Number_dedup:
+              title: 'Deduplicated'
+              scale: 'BuPu'
+              format: '{:,.0f}'
+              placement: 9500
+              hidden: true
             Percent_assigned:
               title: '%Assigned'
               scale: 'OrRd'
@@ -96,11 +106,17 @@ custom_data:
               format: '{:,.0f}'
               placement: 10000
               hidden: false
+            Cells:
+              title: 'Cells'
+              scale: 'Oranges'
+              format: '{:,.0f}'
+              placement: 11000
+              hidden: false
             Final_reads:
               title: 'Reads'
               scale: 'PuRd'
               format: '{:,.0f}'
-              placement: 11000
+              placement: 11500
               hidden: false
             Mean_genes_reads:
               title: 'Genes (reads)'
@@ -133,11 +149,25 @@ custom_data:
         xlab: 'Number of genes'
         ylab: '% mitochondrial RNAs'
 
+    sat_curve: 
+      file_format: 'csv'
+      section_name: 'Saturation Plot'
+      title: 'Raw reads vs Genes'
+      description: 'Scatter plot helping to assess whether the sequencing depth is sufficient to capture the transcriptome complexity. A curve approaching a plateau suggests saturation.'
+      plot_type: 'scatter'
+      pconfig:
+        id: 'sat'
+        title: 'Scatter plot'
+        xlab: 'Genes'
+        ylab: 'Total reads'
+
 sp:
    my_stats:
       fn: 'general_stats.mqc'
    mt_percent:
       fn: 'percent_mt.txt'
+   sat_curve:
+      fn: 'satCurve.txt'
 
 ###############################
 ## Modules 
