@@ -28,7 +28,8 @@ custom_data:
             save_file: true
             col1_header: 'Sample ID'
         headers:
-            Sample:
+            Sample_id:
+              title: 'Sample ID'
               scale: false
               placement: 900
             Sample_name:

@@ -62,8 +62,8 @@ do
     else
         sname=$(awk -F, -v sname=$sample '$1==sname{print $2}' $splan | uniq)
     fi
-    header="Sample,Sample_name"
-    output="${sample},${sname}"
+    header="Sample,Sample_id,Sample_name"
+    output="${sample},${sample},${sname}"
 
     cells=0
     for chunk in nbCells/${sample}_*
