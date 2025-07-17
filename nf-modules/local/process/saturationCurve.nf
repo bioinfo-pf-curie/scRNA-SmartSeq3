@@ -21,10 +21,10 @@ process saturationCurve {
     gzip -cd \$matrix > mat
     samples=\$(awk 'NR==1 {for (i=2; i<=NF; i++) print \$i}' mat)
     totGenes=\$(awk 'NR > 1 {for (i=2; i<=NF; i++) if (\$i > 0) count[i]++} END {for (i=2; i<=NF; i++) print count[i]}' mat)
-    paste <(echo "\$samples") <(echo "\$totGenes") -d, >> genes_cell
+    paste <(echo "\$samples") <(echo "\$totGenes") >> genes_cell
   done
 
-  join -1 1 -2 2 genes_cell reads_cell > satCurve.txt
+  join -1 2 -2 1 reads_cell genes_cell > satCurve.txt
   """
 }
 

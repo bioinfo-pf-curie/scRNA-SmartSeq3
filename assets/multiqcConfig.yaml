@@ -157,9 +157,8 @@ custom_data:
       plot_type: 'scatter'
       pconfig:
         id: 'sat'
-        title: 'Scatter plot'
-        xlab: 'Genes'
-        ylab: 'Total reads'
+        ylab: 'Genes'
+        xlab: 'Total reads'
 
 sp:
    my_stats:
