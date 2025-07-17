@@ -26,10 +26,9 @@ custom_data:
         pconfig:
             id: 'stats'
             save_file: true
-            col1_header: 'Sample_id'
+            col1_header: 'Sample ID'
         headers:
-            Sample_id:
-              title: 'Sample ID'
+            Sample:
               scale: false
               placement: 900
             Sample_name:

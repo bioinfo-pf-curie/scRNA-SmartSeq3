@@ -62,7 +62,7 @@ do
     else
         sname=$(awk -F, -v sname=$sample '$1==sname{print $2}' $splan | uniq)
     fi
-    header="Sample_id,Sample_name"
+    header="Sample,Sample_name"
     output="${sample},${sname}"
 
     cells=0
