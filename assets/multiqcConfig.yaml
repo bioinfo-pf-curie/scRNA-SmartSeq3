@@ -26,16 +26,12 @@ custom_data:
         pconfig:
             id: 'stats'
             save_file: true
-            col1_header: 'Sample ID'
+            col1_header: 'Sample Name'
         headers:
             Sample_id:
               title: 'Sample ID'
               scale: false
               placement: 900
-            Sample_name:
-              title: 'Sample Name'
-              scale: false
-              placement: 1000
             Total_cells:
               title: 'Total Cells'
               scale: 'Oranges'
