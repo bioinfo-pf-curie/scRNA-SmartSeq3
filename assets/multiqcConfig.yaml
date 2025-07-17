@@ -201,6 +201,8 @@ report_section_order:
   stats:
     order: 1
   mt_percent:
+    order: -800
+  sat_curve:
     order: -900
   software_versions:
     order: -1000
