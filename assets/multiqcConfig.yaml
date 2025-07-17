@@ -24,12 +24,13 @@ custom_data:
             Genes are detected using all reads or using only UMI reads.
         plot_type: 'table'
         pconfig:
-            namespace: 'stats'
             id: 'stats'
-            title: 'General Statistics'
             save_file: true
-            col1_header: 'Sample ID'
         headers:
+            Sample_id:
+              title: 'Sample ID'
+              scale: false
+              placement: 900
             Sample_name:
               title: 'Sample Name'
               scale: false
