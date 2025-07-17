@@ -49,7 +49,7 @@ fi
 if [[ "$generatebatch" == true && "$sampleDes" != "null" ]]; then
     all_samples=$(find  nbCells/*_initial_nb_barcodes.txt | cut -f2 -d"/" | sed 's/_initial_nb_barcodes.txt//')
 else
-    all_samples=$(awk -F, '{print $1}' $splan | uniq )
+    all_samples=$(awk -F, '{print $1}' $splan | sort | uniq )
 fi
 
 n_header=0
@@ -158,7 +158,7 @@ do
     output+=",${umi_dedup_assigned}"
     # Genes (long format)
     # genes | cells | counts
-    zcat matrice_umis/${sample}_matrix.tsv.gz | tail -n +2 | cut -f2 | uniq -c > genes_per_cell
+    zcat matrice_umis/${sample}_matrix.tsv.gz | tail -n +2 | cut -f2 | sort | uniq -c > genes_per_cell
     ncells=$(wc -l < genes_per_cell)
     totgenes=$(awk '{sum += $1} END {print sum}' genes_per_cell)
     mean_genes_umis=$( echo $ncells $totgenes | awk '{ printf "%.0f",$2/$1 }' )
