@@ -445,7 +445,7 @@ workflow {
 
   saturationCurve(
       matrixAll.map{it->[it[1]]}.collect(),
-      chConcat.map{it->[it[1]]}.collect()
+      chConcat.map{it->[it[1][0]]}.collect()
   )
   chSaturationCurve=saturationCurve.out.results
 
