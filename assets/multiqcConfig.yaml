@@ -152,10 +152,10 @@ custom_data:
     sat_curve: 
       file_format: 'csv'
       section_name: 'Saturation Plot'
-      title: 'Raw reads vs Genes'
       description: 'Scatter plot helping to assess whether the sequencing depth is sufficient to capture the transcriptome complexity. A curve approaching a plateau suggests saturation.'
       plot_type: 'scatter'
       pconfig:
+        title: 'Raw reads vs Genes per cell'
         id: 'sat'
         ylab: 'Genes'
         xlab: 'Total reads'
