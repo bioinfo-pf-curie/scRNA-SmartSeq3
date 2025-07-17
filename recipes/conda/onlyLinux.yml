@@ -1,0 +1,8 @@
+name: onlyLinux
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::samtools=1.11=h6270b1f_0
+  - conda-forge::zipp=3.4.1=pyhd8ed1ab_0

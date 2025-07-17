@@ -1,9 +1,0 @@
-name: deeptools
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  # Add required software dependencies here
-  - bioconda::deeptools=3.5.0=py_0
-  

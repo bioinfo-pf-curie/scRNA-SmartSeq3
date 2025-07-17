@@ -1,8 +1,0 @@
-name: preseq
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  # Add required software dependencies here
-  - bioconda::preseq=2.0.3=hc216eb9_5

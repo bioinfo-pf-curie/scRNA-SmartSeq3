@@ -26,7 +26,6 @@ dependencies:
   - bioconda::fastqc=0.12.1=hdfd78af_0
 
   - bioconda::salmon=0.14.2=ha0cc327_0
-  - bioconda::fastqc=0.12.1=hdfd78af_0    
 
   # R
   - conda-forge::zip=3.0=h7f98852_1
