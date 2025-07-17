@@ -24,7 +24,7 @@ process saturationCurve {
     paste <(echo "\$samples") <(echo "\$totGenes") >> genes_cell
   done
 
-  join -1 2 -2 1 reads_cell genes_cell > satCurve.txt
+  join -1 2 -2 1 reads_cell genes_cell | tr ' ' ',' > satCurve.txt
   """
 }
 
