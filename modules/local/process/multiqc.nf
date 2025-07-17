@@ -6,7 +6,7 @@
 
 process multiqc {
   label 'multiqc'
-  label 'minCpu'
+  label 'lowCpu'
   label 'lowMem'
 
   input:
