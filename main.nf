@@ -165,7 +165,7 @@ include {calculMT}  from './modules/local/process/calculMT'
 include { samtoolsMerge as samtoolsMergeChunk } from './modules/common/process/samtools/samtoolsMerge'
 include { samtoolsMerge as samtoolsMergeFinal } from './modules/common/process/samtools/samtoolsMerge'
 
-include { samtoolsStats } from './modules/common/process/samtools/samtoolsStats'
+//include { samtoolsStats } from './modules/common/process/samtools/samtoolsStats'
 include { samtoolsFilter as filterUnaligned } from './modules/common/process/samtools/samtoolsFilter'
 include { samtoolsFilter as filterMarkdup } from './modules/common/process/samtools/samtoolsFilter'
 

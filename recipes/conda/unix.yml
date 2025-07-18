@@ -1,4 +1,4 @@
-name: onlyLinux
+name: unix
 channels:
   - conda-forge
   - bioconda
