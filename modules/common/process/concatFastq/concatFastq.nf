@@ -3,7 +3,7 @@
  */
 
 process concatFastq {
-  label 'onlyLinux'
+  label 'unix'
   tag "${meta.id}"
   label 'lowCpu'
   label 'lowMem'

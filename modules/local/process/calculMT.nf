@@ -1,5 +1,5 @@
 process calculMT {
-  label 'onlyLinux'
+  label 'unix'
   label 'lowCpu'
   label 'medMem'
 

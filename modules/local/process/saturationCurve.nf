@@ -1,5 +1,5 @@
 process saturationCurve {
-  label 'onlyLinux'
+  label 'unix'
   label 'lowCpu'
   label 'medMem'
 

@@ -25,6 +25,7 @@ dependencies:
   - bioconda::preseq=2.0.3=hc216eb9_5
   - bioconda::fastqc=0.12.1=hdfd78af_0
 
+  - conda-forge::pigz=2.8=hadc24fc_1
   - bioconda::salmon=0.14.2=ha0cc327_0
 
   # R

@@ -1,5 +1,5 @@
 process featureCountsMatrix {
-  label 'featurecounts'
+  label 'unix'
   label 'lowCpu'
   label 'medMem'
   tag "$meta.id"
