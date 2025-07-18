@@ -10,13 +10,13 @@
     * [`-profile`](#-profile)
     * [`--reads`](#-reads)
     * [`--samplePlan`](#-sampleplan)
-	* [`--design`](#--design) 
+    * [`--sampleDescription`](#-sampledescription)
 * [Inputs](#inputs)
     * [`--singleEnd`](#--singleend)
+    * [`--protocol`] (#--protocol)
 * [Reference genomes](#reference-genomes)
-    * [`--genome`](#-genome)
-* [Annotations](#annotations)
-    * [`--genomeAnnotationPath`](#-genomeannotationpath)
+    * [`--genome`](#--genome)
+	  * [`--genomeAnnotationPath`](#--genomeAnnotationPath)
 * [Nextflow profiles](#nextflow-profiles)
 * [Job resources](#job-resources)
 * [Other command line parameters](#other-command-line-parameters)
@@ -30,6 +30,10 @@
     * [`--maxTime`](#-maxtime)
     * [`--maxCpus`](#-maxcpus)
     * [`--multiqcConfig`](#-multiqcconfig)
+* [Tools options](#aligment)
+    * [`--starOpts`](#--starOpts)
+	  * [`--starTwoPass`](#--starTwoPass)
+    * [`--featurecountsOpts`](#--featurecountsOpts)
 * [Profile parameters](#profile-parameters)
     * [`--condaCacheDir`](#-condacachedir)
     * [`--globalPath`](#-globalpath)
@@ -50,7 +54,7 @@ NXF_OPTS='-Xms1g -Xmx4g'
 
 The typical command for running the pipeline is as follows:
 ```bash
-nextflow run main.nf --reads '*_R{1,2}.fastq.gz' -profile 'singularity'
+nextflow run main.nf --samplePlan 'path/to/sampleplan.csv' -profile 'singularity'
 ```
 
 This will launch the pipeline with the `singularity` configuration profile. See below for more information about profiles.
@@ -76,22 +80,6 @@ Use this option to set the [Nextflow profiles](profiles.md). For example:
 -profile singularity,cluster
 ```
 
-### `--reads`
-Use this to specify the location of your input FastQ files. For example:
-
-```bash
---reads 'path/to/data/sample_*_{1,2}.fastq'
-```
-
-Please note the following requirements:
-
-1. The path must be enclosed in quotes
-2. The path must have at least one `*` wildcard character
-3. When using the pipeline with paired end data, the path must use `{1,2}` notation to specify read pairs
-
-If left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`
-
-
 ### `--samplePlan`
 
 Use this to specify a `sample plan` file instead of a regular expression to find fastq files. For example :
@@ -103,41 +91,12 @@ Use this to specify a `sample plan` file instead of a regular expression to find
 The `sample plan` is a csv file with the following information (and no header) :
 
 ```
-Sample ID | Sample Name | /path/to/R1/fastq/file | /path/to/R2/fastq/file (for paired-end only)
+Sample ID,Sample Name,/path/to/fastq/directory
 ```
 
-### `--design`
-
-Specify a `design` file for extended analysis.
-
-```bash
---design 'path/to/data/design.csv'
-```
-
-The `design` is a custom csv file that list all experimental samples, their IDs, the associated control as well as any other useful metadata. It can contain any information you need during the analysis.
-The design is expected to be created with the following header :
-
-```bash
-SAMPLE_ID | VARIABLE1 | VARIABLE2
-```
-
-Importantly, defining a custom `design` file implies that you modify the variable `designHeader` in the `bin/apCheckDesign.py` script accordingly. For example: set `designHeader=['SAMPLE_ID', 'VARIABLE1', 'VARIABLE2']`. Modify also the `designCh` channel in the `main.nf` to use the custom information.
-
-
-
-The `--samplePlan` and the `--design` will be checked by the pipeline and have to be rigorously defined in order to make the pipeline work.
-If the `design` file is not specified, the pipeline will run over the first steps but the downstream analysis will be ignored.
+The `--samplePlan` will be checked by the pipeline and have to be rigorously defined in order to make the pipeline work.
 
 ## Inputs
-
-### `--singleEnd`
-
-By default, the pipeline expects paired-end data. If you have single-end data, you need to specify `--singleEnd` on the command line when you launch the pipeline. A normal glob pattern, enclosed 
-in quotation marks, can then be used for `--reads`. For example:
-
-```bash
---singleEnd --reads '*.fastq.gz'
-```
 
 ## Reference Genomes
 
@@ -150,12 +109,16 @@ There are different species supported in the genomes references file. To run the
 You can find the keys to specify the genomes in the [genomes config file](../conf/genomes.config). Common genomes that are supported are:
 
 * Human
+  * `--genome hg19`
   * `--genome hg38`
 * Mouse
-   * `--genome mm10`
+  * `--genome mm9`
+  * `--genome mm10`
+* Fly
+  * `--genome dmelr6.28`
+* Plasmodium falciparum
+  * `--genome Pfalciparum3D7_PlasmoDB-68`
 	
-> There are numerous others - check the config file for more.
-
 ## Annotations
 
 ### `--genomeAnnotationPath`
@@ -177,8 +140,8 @@ For most of the steps in the pipeline, if the job exits with an error code of `1
 
 The pipeline is made with a few *skip* options that allow to skip optional steps in the workflow.
 The following options can be used:
-* `--skipFastqc`
 * `--skipMultiqc`
+* `--skipGeneBodyCovPlot`
 				
 ### `--metadata`
 Specify a two-columns (tab-delimited) metadata file to diplay in the final Multiqc report.

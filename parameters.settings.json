@@ -354,9 +354,35 @@
       "group": "Other options"
     },
     {
-      "name": "tag",
+      "name": "umiTag",
+      "label": "Tag name in bam files to save umi information",
+      "usage": "Tag name in bam files to save umi information",
+      "type": "string",
+      "nargs": "1",
+      "choices": [],
+      "default_value": "BX",
+      "pattern": "",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Other options"
+    },
+    {
+      "name": "tag_umitools",
+      "label": "TSO tag bases",
+      "usage": "Bases of TSO tag to give to umitools to detect umis.",
+      "type": "string",
+      "nargs": "1",
+      "choices": [],
+      "default_value": "",
+      "pattern": "",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Other options"
+    },
+    {
+      "name": "tag_cutadapt",
       "label": "TSO tag sequence",
-      "usage": "TSO tag sequence like ATGC",
+      "usage": "TSO tag sequence to give to cutadapt to be removed.",
       "type": "string",
       "nargs": "1",
       "choices": [],
