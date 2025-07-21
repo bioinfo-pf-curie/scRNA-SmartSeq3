@@ -1,5 +1,5 @@
 // in each read name, add the barcode info at the end
-process 10xlikeMatrix {
+process like10xMatrix {
   label 'R'
   label 'lowCpu'
   label 'medMem'

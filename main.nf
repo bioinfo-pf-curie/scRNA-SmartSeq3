@@ -189,8 +189,8 @@ include { featureCountsMatrix} from './modules/local/process/featureCountsMatrix
 include { featureCounts as featureCountsUmis} from './modules/common/process/featureCounts/featureCounts'
 include { featureCounts as featureCountsAll} from './modules/common/process/featureCounts/featureCounts'
 include { samtoolsFilter as filterAllUnassigned } from './modules/common/process/samtools/samtoolsFilter'
-include { 10xlikeMatrix as 10xlikeMatrixUmis } from './modules/local/process/10xlikeMatrix'
-include { 10xlikeMatrix as 10xlikeMatrixAll } from './modules/local/process/10xlikeMatrix'
+include { like10xMatrix as like10xMatrixUmis } from './modules/local/process/like10xMatrix'
+include { like10xMatrix as 1like10xMatrixAll } from './modules/local/process/like10xMatrix'
 
 // multiqc modules
 //include { preseq } from './modules/common/process/preseq/preseq'
@@ -370,7 +370,7 @@ workflow {
   matrixUmis=umitoolsCount.out.matrix
   chVersions = chVersions.mix(umitoolsCount.out.versions)
 
-  10xlikeMatrixUmis(
+  like10xMatrixUmis(
     matrixUmis.collect(),
     Channel.value("umis")
   )
@@ -419,7 +419,7 @@ workflow {
   )
   matrixAll=featureCountsMatrix.out.matrix
 
-  10xlikeMatrixAll(
+  like10xMatrixAll(
     matrixAll.collect(),
     Channel.value("reads")
   )
