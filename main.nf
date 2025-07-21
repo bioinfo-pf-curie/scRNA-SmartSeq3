@@ -206,6 +206,8 @@ include { fastqc } from './modules/common/process/fastqc/fastqc'
 include { multiqc } from './modules/local/process/multiqc'
 include {checkStarLog} from './lib/functions'
 include { saturationCurve } from './modules/local/process/saturationCurve'
+include { 10xlikeMatrix as 10xlikeMatrixUmis } from './modules/local/process/10xlikeMatrix'
+include { 10xlikeMatrix as 10xlikeMatrixAll } from './modules/local/process/10xlikeMatrix'
 
 /*
 =====================================
@@ -369,6 +371,12 @@ workflow {
   matrixUmis=umitoolsCount.out.matrix
   chVersions = chVersions.mix(umitoolsCount.out.versions)
 
+  10xlikeMatrixUmis(
+    matrixUmis.collect(),
+    Channel.value("umis")
+  )
+  matrixUmis10x=10xlikeMatrixUmis.out.matrix
+
   // generate dedup bam
   umitoolsDedup(
     umiInTags.join(samtoolsIndexUmis.out.bai)
@@ -411,6 +419,12 @@ workflow {
     featureCountsAll.out.counts.join(filterMarkdup.out.bam)
   )
   matrixAll=featureCountsMatrix.out.matrix
+
+  10xlikeMatrixAll(
+    matrixAll.collect(),
+    Channel.value("reads")
+  )
+  matrixAll10x=10xlikeMatrixAll.out.matrix
 
   filterAllUnassigned(
     featureCountsAll.out.bam

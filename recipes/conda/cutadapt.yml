@@ -5,5 +5,5 @@ channels:
   - nodefaults
 dependencies:
   # Add required software dependencies here
-  - bioconda::cutadapt=3.3=py37hf01694f_0
+  - bioconda::cutadapt=5.0=py312h0fa9677_0
   

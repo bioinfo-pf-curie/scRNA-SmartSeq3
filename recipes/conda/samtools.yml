@@ -5,5 +5,5 @@ channels:
   - nodefaults
 dependencies:
   # Add required software dependencies here
-  - bioconda::samtools=1.11=h6270b1f_0
+  - bioconda::samtools=1.21=h96c455f_1
   

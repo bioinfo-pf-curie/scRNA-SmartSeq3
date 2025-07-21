@@ -5,4 +5,4 @@ channels:
   - nodefaults
 dependencies:
   # Add required software dependencies here
-  - bioconda::rseqc=4.0.0=py37hf01694f_0
+  - bioconda::rseqc=5.0.4=pyhdfd78af_0

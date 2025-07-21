@@ -5,10 +5,9 @@ channels:
   - nodefaults
 dependencies:
   # Add required software dependencies here
-  - python=3.7.9=hffdb5ce_100_cpython
-  - conda-forge::pymdown-extensions=8.1.1=pyh44b312d_0
-  - conda-forge::biopython=1.78=py37h5e8e339_2
-  - bioconda::python-sortedcontainers=2.3.0=pyh3252c3a_0
-  - conda-forge::markdown=3.6=pyhd8ed1ab_0    
-  - conda-forge::zipp=3.4.1=pyhd8ed1ab_0
-  
+  - python=3.12.10=h9e4cc4f_0_cpython
+  - conda-forge::pymdown-extensions=10.15=pyhd8ed1ab_0
+  - conda-forge::biopython=1.85=py312h66e93f0_1
+  - conda-forge::markdown=3.8=pyhd8ed1ab_0
+  - conda-forge::pigz=2.8=hadc24fc_1
+  - conda-forge::zipp=3.21.0=pyhd8ed1ab_1 

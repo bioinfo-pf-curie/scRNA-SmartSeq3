@@ -5,4 +5,4 @@ channels:
   - nodefaults
 dependencies:
   # Add required software dependencies here
-  - bioconda::qualimap=2.2.2a=1
+  - bioconda::qualimap=2.3=hdfd78af_0

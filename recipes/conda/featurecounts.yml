@@ -5,4 +5,4 @@ channels:
   - nodefaults
 dependencies:
   # Add required software dependencies here
-  - bioconda::subread=2.0.1=hed695b0_0
+  - bioconda::subread=2.1.1=h577a1d6_0

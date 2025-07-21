@@ -5,4 +5,4 @@ channels:
   - nodefaults
 dependencies:
   # Add required software dependencies here
-  - bioconda::umi_tools=1.1.1=py37hf01694f_1
+  - bioconda::umi_tools=1.1.6=py312h0fa9677_0
