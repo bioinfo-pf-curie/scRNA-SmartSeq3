@@ -371,7 +371,7 @@ workflow {
   chVersions = chVersions.mix(umitoolsCount.out.versions)
 
   like10xMatrixUmis(
-    matrixUmis.collect(),
+    matrixUmis.map{it->[it[1]]}.collect(),
     Channel.value("umis")
   )
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
@@ -420,7 +420,7 @@ workflow {
   matrixAll=featureCountsMatrix.out.matrix
 
   like10xMatrixAll(
-    matrixAll.collect(),
+    matrixAll.map{it->[it[1]]}.collect(),
     Channel.value("reads")
   )
   chVersions = chVersions.mix(umitoolsDedup.out.versions)
