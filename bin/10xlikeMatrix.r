@@ -15,7 +15,7 @@ if ( typeofcount == "reads"){ #if reads = wide format
   i=1
   for (file in listFile ){
     matrix<-read.table(file, header=TRUE, check.names = F)
-    if( nrow(matrix)>0 ){
+    if( nrow(matrix)>1 ){
       if(i==1){
         matrixFinal<-matrix
       }else{
@@ -36,6 +36,27 @@ if ( typeofcount == "reads"){ #if reads = wide format
                             j=as.numeric(longMatx$cells),
                             x=as.numeric(longMatx$reads),
                             dimnames=list(levels(longMatx$Geneid), levels(longMatx$cells))) 
+
+}else{ # long format "gene	| cell	| count"
+  i=1
+  for (file in listFile ){
+    matrix<-read.table(file, header=TRUE, check.names = F)
+    if( nrow(matrix)>1 ){
+      if(i==1){
+        longMatx<-matrix
+      }else{
+        longMatx<-rbind(longMatx, matrix[-1,])
+      }
+      i=2
+    }
+  }
+  longMatx$gene=as.factor(longMatx$gene)
+  longMatx$cell=as.factor(longMatx$cell)
+  longMatx$count=as.factor(longMatx$count)
+  sparseMtx <- sparseMatrix(i=as.numeric(longMatx$gene),
+                            j=as.numeric(longMatx$cell),
+                            x=as.numeric(longMatx$count),
+                            dimnames=list(levels(longMatx$gene), levels(longMatx$cell))) 
 }
 
 
