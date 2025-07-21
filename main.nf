@@ -374,7 +374,7 @@ workflow {
     matrixUmis.map{it->[it[1]]}.collect(),
     Channel.value("umis")
   )
-  chVersions = chVersions.mix(umitoolsDedup.out.versions)
+  chVersions = chVersions.mix(like10xMatrixUmis.out.versions)
 
   // generate dedup bam
   umitoolsDedup(
@@ -423,7 +423,7 @@ workflow {
     matrixAll.map{it->[it[1]]}.collect(),
     Channel.value("reads")
   )
-  chVersions = chVersions.mix(umitoolsDedup.out.versions)
+  chVersions = chVersions.mix(like10xMatrixAll.out.versions)
 
   filterAllUnassigned(
     featureCountsAll.out.bam
