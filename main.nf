@@ -190,7 +190,7 @@ include { featureCounts as featureCountsUmis} from './modules/common/process/fea
 include { featureCounts as featureCountsAll} from './modules/common/process/featureCounts/featureCounts'
 include { samtoolsFilter as filterAllUnassigned } from './modules/common/process/samtools/samtoolsFilter'
 include { like10xMatrix as like10xMatrixUmis } from './modules/local/process/like10xMatrix'
-include { like10xMatrix as 1like10xMatrixAll } from './modules/local/process/like10xMatrix'
+include { like10xMatrix as like10xMatrixAll } from './modules/local/process/like10xMatrix'
 
 // multiqc modules
 //include { preseq } from './modules/common/process/preseq/preseq'
