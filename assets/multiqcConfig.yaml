@@ -138,13 +138,13 @@ custom_data:
     cell_reads: 
       file_format: 'csv'
       section_name: 'Final reads per cell'
-      description: 'Number of reads per cell.'
+      description: 'Number of final reads (after alignment, deduplication and assignment) per cell.'
       plot_type: 'bargraph'
       pconfig:
-        id: 'cell_reads'
+        id: 'totreads'
         title: 'Reads per cell'
         xlab: 'Cells'
-        ylab: 'Reads'
+        ylab: 'Unique reads'
               
     mt_percent: 
       file_format: 'csv'
@@ -164,16 +164,16 @@ custom_data:
       description: 'Scatter plot helping to assess whether the sequencing depth is sufficient to capture the transcriptome complexity. A curve approaching a plateau suggests saturation.'
       plot_type: 'scatter'
       pconfig:
-        title: 'Raw reads vs Genes per cell'
+        title: 'Total reads vs Genes per cell'
         id: 'sat'
         ylab: 'Genes'
-        xlab: 'Total reads'
+        xlab: 'Raw reads'
 
 sp:
    my_stats:
       fn: 'general_stats.mqc'
    cell_reads:
-      fn: cell_finalReads.txt
+      fn: 'cell_finalReads.txt'
    mt_percent:
       fn: 'percent_mt.txt'
    sat_curve:
