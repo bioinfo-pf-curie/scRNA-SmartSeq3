@@ -94,7 +94,7 @@ do
     
     # star EN FRAG
     aligned=0
-    for chunk in star/${sample}*Log.final.out
+    for chunk in star/${sample}_*Log.final.out
     do
         aligned_part=$(grep "Uniquely mapped reads number" $chunk| awk '{print $NF}')
         aligned=$(( $aligned + $aligned_part ))
@@ -173,3 +173,4 @@ do
     echo -e $output >> general_stats.mqc
 done
 
+cut -f1,2 -d, percent_mt.txt > cell_finalReads.txt

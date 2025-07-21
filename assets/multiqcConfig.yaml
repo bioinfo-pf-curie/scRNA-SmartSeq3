@@ -134,6 +134,17 @@ custom_data:
               format: '{:,.0f}'
               placement: 14000
               hidden: false
+
+    cell_reads: 
+      file_format: 'csv'
+      section_name: 'Final reads per cell'
+      description: 'Number of reads per cell.'
+      plot_type: 'bargraph'
+      pconfig:
+        id: 'cell_reads'
+        title: 'Reads per cell'
+        xlab: 'Cells'
+        ylab: 'Reads'
               
     mt_percent: 
       file_format: 'csv'
@@ -161,10 +172,13 @@ custom_data:
 sp:
    my_stats:
       fn: 'general_stats.mqc'
+   cell_reads:
+      fn: cell_finalReads.txt
    mt_percent:
       fn: 'percent_mt.txt'
    sat_curve:
       fn: 'satCurve.txt'
+   
 
 ###############################
 ## Modules 
@@ -198,6 +212,8 @@ remove_sections :
 report_section_order:
   stats:
     order: 1
+  cell_reads:
+    order: -700
   mt_percent:
     order: -800
   sat_curve:
