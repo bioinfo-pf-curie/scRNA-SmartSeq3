@@ -5,12 +5,11 @@
 library(tidyverse)
 library(Matrix)
 
-matrix_dir<-as.character(commandArgs(TRUE)[1])
-typeofcount<-as.character(commandArgs(TRUE)[2])
+typeofcount<-as.character(commandArgs(TRUE)[1])
 
 ##### Merge individual matrices
 ####----------------------------------------
-listFile<-list.files(path = matrix_dir, pattern= "*.tsv.gz", full.names = T)
+listFile<-list.files(path = ".", pattern= "*.tsv.gz", full.names = T)
 
 if ( typeofcount == "reads"){ #if reads = wide format
   i=1

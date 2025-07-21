@@ -15,7 +15,7 @@ process like10xMatrix {
   script:
   """
   mkdir 10XlikeMatrix_${type}
-  10xlikeMatrix.r ${matrices} ${type}
+  10xlikeMatrix.r ${type}
   zip 10XlikeMatrix_${type}.zip 10XlikeMatrix_${type}/*
   R --version &> versions.txt  
   """
