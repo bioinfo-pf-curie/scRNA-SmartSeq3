@@ -41,14 +41,12 @@ if ( typeofcount == "reads"){ #if reads = wide format
   i=1
   for (file in listFile ){
     matrix<-read.table(file, header=TRUE, check.names = F)
-    if( nrow(matrix)>1 ){
-      if(i==1){
-        longMatx<-matrix
-      }else{
-        longMatx<-rbind(longMatx, matrix[-1,])
-      }
-      i=2
+    if(i==1){
+      longMatx<-matrix
+    }else{
+      longMatx<-rbind(longMatx, matrix)
     }
+    i=2
   }
   longMatx$gene=as.factor(longMatx$gene)
   longMatx$cell=as.factor(longMatx$cell)
