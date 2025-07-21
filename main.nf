@@ -184,12 +184,13 @@ include { extractUmiReads } from './modules/local/process/extractUmiReads'
 //include { umitoolsGroup} from './modules/common/process/umitools/umitoolsGroup'
 include { umitoolsCount} from './modules/common/process/umitools/umitoolsCount'
 include { umitoolsDedup } from './modules/common/process/umitools/umitoolsDedup'
+include { featureCountsMatrix} from './modules/local/process/featureCountsMatrix'
 
 include { featureCounts as featureCountsUmis} from './modules/common/process/featureCounts/featureCounts'
 include { featureCounts as featureCountsAll} from './modules/common/process/featureCounts/featureCounts'
-
 include { samtoolsFilter as filterAllUnassigned } from './modules/common/process/samtools/samtoolsFilter'
-include { featureCountsMatrix} from './modules/local/process/featureCountsMatrix'
+include { 10xlikeMatrix as 10xlikeMatrixUmis } from './modules/local/process/10xlikeMatrix'
+include { 10xlikeMatrix as 10xlikeMatrixAll } from './modules/local/process/10xlikeMatrix'
 
 // multiqc modules
 //include { preseq } from './modules/common/process/preseq/preseq'
@@ -206,8 +207,6 @@ include { fastqc } from './modules/common/process/fastqc/fastqc'
 include { multiqc } from './modules/local/process/multiqc'
 include {checkStarLog} from './lib/functions'
 include { saturationCurve } from './modules/local/process/saturationCurve'
-include { 10xlikeMatrix as 10xlikeMatrixUmis } from './modules/local/process/10xlikeMatrix'
-include { 10xlikeMatrix as 10xlikeMatrixAll } from './modules/local/process/10xlikeMatrix'
 
 /*
 =====================================
