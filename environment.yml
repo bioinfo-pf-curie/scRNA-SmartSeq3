@@ -17,7 +17,6 @@ dependencies:
   - bioconda::cutadapt=5.0=py312h0fa9677_0
   - bioconda::seqkit=2.10.0=h9ee0642_0
   - bioconda::rseqc=5.0.4=pyhdfd78af_0
-  - bioconda::deeptools=3.5.6=pyhdfd78af_0
   - bioconda::multiqc=1.28=pyhdfd78af_0
   - bioconda::fastqc=0.12.1=hdfd78af_0
 
