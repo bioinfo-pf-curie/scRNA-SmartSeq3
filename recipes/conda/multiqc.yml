@@ -3,6 +3,5 @@ channels:
   - nodefaults
   - conda-forge
   - bioconda
-  - nodefaults
 dependencies:
   - bioconda::multiqc=1.28=pyhdfd78af_0
