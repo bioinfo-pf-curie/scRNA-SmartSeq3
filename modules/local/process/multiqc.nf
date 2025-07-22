@@ -56,7 +56,7 @@ process multiqc {
   splanOpts = params.samplePlan ? "--splan ${params.samplePlan}" : ""
   isPE = params.singleEnd ? 0 : 1
     
-  modulesList = "-m custom_content -m star -m featurecounts -m deeptools -m preseq -m rseqc -m cutadapt -m qualimap -m fastqc -m umitools"
+  modulesList = "-m custom_content -m star -m featurecounts -m preseq -m rseqc -m cutadapt -m qualimap -m fastqc -m umitools"
   warn = warnings.name == 'warnings.txt' ? "--warn warnings.txt" : ""
   """
   stat2mqc.sh -s ${splan} -p ${params.protocol} -m ${params.minReads} -S ${params.sampleDescription} -b ${params.generateBatch}

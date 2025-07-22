@@ -21,17 +21,15 @@ The aim of the SmartSeq3 is to combine a full-length transcriptome coverage and 
 ![MultiQC](docs/images/samartseq3-sequence.png)
 
 
-1. Get R1 reads having a 5' tag to catch UMI reads ([`seqkit`](https://bioinf.shenwei.me/seqkit/))
-2. Extract UMIs from tagged reads ([`umi-tools`](https://umi-tools.readthedocs.io/en/latest/))
-3. Trim 3' linker and polyA tails on R2 reads ([`cutadapt`](https://cutadapt.readthedocs.io/en/latest/index.html))
-4. Read alignments on R1+R2 ([`STAR`](https://github.com/alexdobin/STAR))
-5. Read assignments on R1+R2 ([`FeatureCounts`](https://bioconductor.org/packages/release/bioc/vignettes/Rsubread/inst/doc/SubreadUsersGuide.pdf))
-6. Generation of UMI count matrices ([`umi-tools`](https://umi-tools.readthedocs.io/en/latest/))
-7. BigWig generations ([`bamCoverage`](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html))
-8. Estimate gene body coverage ([`genebody_coverage`](http://rseqc.sourceforge.net/))
-9. Generate cell QC plots (#UMIS per cell, %MT transcrits per cell, UMI & Gene per cell)
-10. Generate a 10X format matrix with all cells
-11. Results summary ([`MultiQC`](https://multiqc.info/))
+1. Extract UMIs from tagged reads ([`umi-tools`](https://umi-tools.readthedocs.io/en/latest/))
+3. Trim 3' linker and polyA tails ([`cutadapt`](https://cutadapt.readthedocs.io/en/latest/index.html))
+4. Alignments ([`STAR`](https://github.com/alexdobin/STAR))
+5. Remove PCR duplicates ([`samtools`](https://www.htslib.org/doc/samtools.html))
+6. Assignments ([`FeatureCounts`](https://bioconductor.org/packages/release/bioc/vignettes/Rsubread/inst/doc/SubreadUsersGuide.pdf))
+7. Generation of UMI count matrices ([`umi-tools`](https://umi-tools.readthedocs.io/en/latest/))
+8. Generate QC plots 
+9. Generate a 10X like matrix 
+10. Results summary ([`MultiQC`](https://multiqc.info/))
 
 
 ### Quick help
@@ -45,7 +43,6 @@ SmartSeq3 v.1.0
 
 Usage:
 
-nextflow run main.nf --reads '*_R{1,2}.fastq.gz' -profile conda --genomeAnnotationPath '/data/annotations/pipelines' --genome 'hg38'
 nextflow run main.nf --samplePlan 'sample_plan.csv' -profile conda --genomeAnnotationPath '/data/annotations/pipelines' --genome 'hg38'
 
 Mandatory arguments:
