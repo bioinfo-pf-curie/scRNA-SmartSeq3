@@ -17,6 +17,6 @@ process like10xMatrix {
   mkdir 10XlikeMatrix_${type}
   10xlikeMatrix.r ${type}
   zip 10XlikeMatrix_${type}.zip 10XlikeMatrix_${type}/*
-  R --version &> versions.txt  
+  R --version | head -n1 | awk '{print \$1" "\$3}' &> versions.txt  
   """
 }
