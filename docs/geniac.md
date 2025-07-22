@@ -1,53 +1,123 @@
 # Pipeline deployment with `geniac`
 
-The `geniac` module allows the automatic generation of the [Nextflow](https://www.nextflow.io) configuration files (including profiles) and the container recipes and their creation.
+The [geniac](https://geniac.readthedocs.io) module allows the automatic generation of the [Nextflow](https://www.nextflow.io) configuration files (including profiles) and the container recipes and their creation.
 
-## Prerequisite
+
+## Quick start
+
+### Prerequisites
 
 * git (>= 2.0) [required]
 * cmake (>= 3.0) [required]
-* Nextflow (>= 20.01) [required]
-* Singularity (>= 3.2) [optional]
+* Nextflow (>= 21.10.6) [required]
+* Singularity (>= 3.8.5) [optional]
 * Docker (>= 18.0) [optional]
 
-First, the user can defined the following environment variables:
-
-```shell
-#!/usr/bin/env bash
-export WORK_DIR=/data/tmp/$USER/sandbox/nf-CRISPR
-export SRC_DIR=$WORK_DIR/src
-export INSTALL_DIR=$WORK_DIR/install
-export BUILD_DIR=$WORK_DIR/build
+Install [conda](https://docs.conda.io):
+```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
-## Initialization
+### Install the geniac conda environment
 
-Using the default behavior, only the installation folder where the pipeline will be deployed is required through the `CMAKE_INSTALL_PREFIX` option.
-
-```shell
-git clone --recursive https://gitlab.curie.fr/data-analysis/nf-CRISPR $SRC_DIR
-mkdir -p $INSTALL_DIR $BUILD_DIR
-cd $BUILD_DIR
-cmake $SRC_DIR/geniac -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR
+```bash
+# Create the geniac conda environment
+export GENIAC_CONDA="https://raw.githubusercontent.com/bioinfo-pf-curie/geniac/release/environment.yml"
+wget ${GENIAC_CONDA}
+conda env create -f environment.yml
+conda activate geniac
 ```
 
-The `cmake` command can be used with the following options ;
-* `ap_annotation_path`: Path to the annotation folder used by the pipeline. (`""`)
-* `ap_install_docker_images`: Build the `docker` containers (`"OFF"`)
-* `ap_install_docker_recipes`: Generate the `docker` recipes (`"OFF"`)
-* `ap_install_singularity_images`: Build the `singularity` containers (`"OFF"`)
-* `ap_install_singularity_recipes`: Gene the `singularity` recipes (`"OFF"`)
-* `ap_nf_executor`: Cluster scheduler used by Nextflow (`"pbs"`)
-* `ap_singularity_image_path`: Path to the `singularity` containers (`""`)
-* `ap_use_singularity_image_link`: Use path to the `singularity` images (`"OFF"`)
+### Check the code, install and run the pipeline with the multiconda profile
 
-## Example 
+```bash
+export WORK_DIR="${HOME}/tmp/myPipeline"
+export INSTALL_DIR="${WORK_DIR}/install"
+export GIT_URL="https://myPipeline/myPipeline.git"
 
-In the following example, the `singularity` images are available in the `SING_DIR` folder, and will thus be used during the  deployment of the pipeline 
+# Initialization of a working directory
+# with the src and build folders
+geniac init -w ${WORK_DIR} ${GIT_URL}
+cd ${WORK_DIR}
+
+# Check the code
+geniac lint
+
+# Install the pipeline
+geniac install . ${INSTALL_DIR}
+
+# Test the pipeline with the multiconda profile
+geniac test multiconda
+```
+
+### Check the code, install and run the pipeline with the singularity profile
+
+Note that you need `sudo` privilege to build the singularity images.
+
+```bash
+export WORK_DIR="${HOME}/tmp/myPipeline"
+export INSTALL_DIR="${WORK_DIR}/install"
+export GIT_URL="https://myPipeline/myPipeline.git"
+
+# Initialization of a working directory
+# with the src and build folders
+geniac init -w ${WORK_DIR} ${GIT_URL}
+cd ${WORK_DIR}
+
+# Install the pipeline with the singularity images
+geniac install . ${INSTALL_DIR} -m singularity
+sudo chown -R  $(id -gn):$(id -gn) build
+
+# Test the pipeline with the singularity profile
+geniac test singularity
+
+# Test the pipeline with the singularity and cluster profiles
+geniac test singularity --check-cluster
+```
+
+### Advanced users
+
+Note that the geniac command line interface provides a wrapper to `git`, `cmake` and `make` commands. Advanced users familiar with these commands can run the following (see [geniac documentation](https://geniac.readthedocs.io) for more details):
+
+```bash
+export WORK_DIR="${HOME}/tmp/myPipeline"
+export SRC_DIR="${WORK_DIR}/src"
+export INSTALL_DIR="${WORK_DIR}/install"
+export BUILD_DIR="${WORK_DIR}/build"
+export GIT_URL="https://myPipeline/myPipeline.git"
+
+mkdir -p ${INSTALL_DIR} ${BUILD_DIR}
+
+# clone the repository
+# the option --recursive is needed if you use geniac as a submodule
+git clone --recursive ${GIT_URL} ${SRC_DIR}
+
+cd ${BUILD_DIR}
+
+# configure the pipeline
+cmake ${SRC_DIR}/geniac -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
+
+# build the files needed by the pipeline
+make
+
+# install the pipeline
+make install
+
+# run the pipeline
+make test_multiconda
+```
+
+=========================
+
+
+## Examples
+
+In the following example, the `singularity` images are available in the `SING_DIR` folder, and will thus be used during the deployment of the pipeline
 using the options `ap_singularity_image_path` et `ap_use_singularity_image_link`.
 
-```shell
-cmake $SRC_DIR/geniac -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR -Dap_singularity_image_path="${SING_DIR}" -Dap_use_singularity_image_link="ON"  
+```bash
+cmake ${SRC_DIR}/geniac -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -Dap_singularity_image_path="SING_DIR"
 ```
 
 ## Installation
@@ -55,8 +125,8 @@ cmake $SRC_DIR/geniac -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR -Dap_singularity_image
 Note that if the installation of `singularity` or `docker` images has been activated at the previous stage, the `make` command needs to be
 run with the `root` rights.
 
-```shell
-cd $BUILD_DIR
+```bash
+cd ${BUILD_DIR}
 make
 make install
 ```
@@ -66,8 +136,8 @@ make install
 ## Singularity
 
 
-```shell
-cd ${INSTALL_DIR}/pipeline  
+```bash
+cd ${INSTALL_DIR}/pipeline
 
 nextflow run main.nf --singleEnd 'true' --genome 'hg38' --library 'GW-KO-Sabatini-Human-10' --samplePlan 'test/sample_plan.csv' -profile singularity
 ```
@@ -76,8 +146,8 @@ nextflow run main.nf --singleEnd 'true' --genome 'hg38' --library 'GW-KO-Sabatin
 
 The `multiconda` profile generates a `conda` environment for each tool listed in the `conf/geniac.conf` configuration.
 
-```shell
-cd ${INSTALL_DIR}/pipeline  
+```bash
+cd ${INSTALL_DIR}/pipeline
 
 nextflow run main.nf --singleEnd 'true' --genome 'hg38' --library 'GW-KO-Sabatini-Human-10' --samplePlan 'test/sample_plan.csv' -profile multiconda
 ```

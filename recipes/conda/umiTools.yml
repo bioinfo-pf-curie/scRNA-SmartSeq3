@@ -1,10 +1,8 @@
-name: umi-tools-1.1.1
+name: umiTools
 channels:
   - conda-forge
   - bioconda
   - nodefaults
 dependencies:
-  - bioconda::umi_tools=1.1.1=py37hf01694f_1
-  - bioconda::seqkit=0.15.0=0
-
-
+  # Add required software dependencies here
+  - bioconda::umi_tools=1.1.6=py312h0fa9677_0
