@@ -21,12 +21,14 @@ process saturationCurve {
     gzip -cd \$matrix > mat
     samples=\$(awk 'NR==1 {for (i=2; i<=NF; i++) print \$i}' mat)
     totGenes=\$(awk 'NR > 1 {for (i=2; i<=NF; i++) if (\$i > 0) count[i]++} END {for (i=2; i<=NF; i++) print count[i]}' mat)
-    paste <(echo "\$samples") <(echo "\$totGenes") >> genes_cell
+    paste <(echo "\$samples") <(echo "\$totGenes") >> cell_genes
   done
 
-  LC_ALL=C sort -t \$'\t' -k1,1 genes_cell > genes_cell.sorted
-  LC_ALL=C sort -t \$'\t' -k2,2 reads_cell > reads_cell.sorted
-  join -1 2 -2 1 reads_cell.sorted genes_cell.sorted | tr ' ' ',' > satCurve.txt
+  LC_ALL=C sort -t \$'\t' -k1 cell_genes > cell_genes.sorted
+  awk '{print \$2, \$1}' reads_cell >  cell_reads
+  LC_ALL=C sort -t \$'\t' -k1 cell_reads > cell_reads.sorted
+
+  join -1 1 -2 1 cell_reads.sorted genes_cell.sorted | tr ' ' ',' > satCurve.txt
   """
 }
 
