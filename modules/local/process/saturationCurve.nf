@@ -24,8 +24,8 @@ process saturationCurve {
     paste <(echo "\$samples") <(echo "\$totGenes") >> genes_cell
   done
 
-  sort -k2 reads_cell > reads_cell.sorted
-  sort -k1 genes_cell > genes_cell.sorted
+  LC_ALL=C sort -t \$'\t' -k1,1 genes_cell > genes_cell.sorted
+  LC_ALL=C sort -t \$'\t' -k2,2 reads_cell > reads_cell.sorted
   join -1 2 -2 1 reads_cell.sorted genes_cell.sorted | tr ' ' ',' > satCurve.txt
   """
 }
