@@ -9,7 +9,10 @@ args = parser.parse_args()
 versions = {}
 with open(args.input) as f:
     for line in f:
-        (key, val) = line.split()
+        parts = line.split()
+        if len(parts) != 2: # Ignore incorrect lines
+            continue
+        key, val = parts
         if key in versions.keys():
             if val != versions[str(key)]:
                 versions[str(key)] = versions[str(key)] + " - " + val
