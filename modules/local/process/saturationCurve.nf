@@ -1,7 +1,7 @@
 process saturationCurve {
   label 'unix'
   label 'lowCpu'
-  label 'medMem'
+  label 'highMem'
 
   input:
   path(fastq)
