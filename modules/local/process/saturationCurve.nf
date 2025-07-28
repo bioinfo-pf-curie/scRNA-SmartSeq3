@@ -28,7 +28,7 @@ process saturationCurve {
   awk '{print \$2, \$1}' reads_cell >  cell_reads
   LC_ALL=C sort -t \$'\t' -k1 cell_reads > cell_reads.sorted
 
-  join -1 1 -2 1 cell_reads.sorted genes_cell.sorted | tr ' ' ',' > satCurve.txt
+  join -1 1 -2 1 cell_reads.sorted cell_genes.sorted | tr ' ' ',' > satCurve.txt
   """
 }
 
