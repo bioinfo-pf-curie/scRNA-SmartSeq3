@@ -19,6 +19,7 @@ dependencies:
   - bioconda::rseqc=5.0.4=pyhdfd78af_0
   - bioconda::multiqc=1.28=pyhdfd78af_0
   - bioconda::fastqc=0.12.1=hdfd78af_0
+  - bioconda::bioconductor-biocparallel=1.40.0=r44he5774e6_1
 
   - conda-forge::markdown=3.8=pyhd8ed1ab_0
   - conda-forge::pigz=2.8=hadc24fc_1

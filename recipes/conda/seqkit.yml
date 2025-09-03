@@ -7,4 +7,6 @@ dependencies:
   # Add required software dependencies here
   - bioconda::seqkit=2.10.0=h9ee0642_0
   - conda-forge::pigz=2.8=hadc24fc_1
+  - bioconda::bioconductor-biocparallel=1.40.0=r44he5774e6_1
+
 
