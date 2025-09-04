@@ -63,7 +63,9 @@ features <- data.frame(
 ##  Create 10X like outputs
 dirName=paste0("10XlikeMatrix_", typeofcount)
 # counts
-writeMM(sparseMtx, file = gzfile(paste0(dirName, "/matrix.mtx.gz")))
+mat <- gzfile(paste0(dirName, "/matrix.mtx.gz"), "w")
+writeMM(sparseMtx, file = mat)
+close(mat)
 # genes
 write.table(
   features,
