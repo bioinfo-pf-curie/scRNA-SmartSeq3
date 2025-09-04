@@ -4,6 +4,7 @@
 
 library(tidyverse)
 library(Matrix)
+library(data.table)
 
 typeofcount<-as.character(commandArgs(TRUE)[1])
 
@@ -38,16 +39,8 @@ if ( typeofcount == "reads"){ #if reads = wide format
                             dimnames=list(levels(longMatx$Geneid), levels(longMatx$cells))) 
 
 }else{ # long format "gene	| cell	| count"
-  i=1
-  for (file in listFile ){
-    matrix<-read.table(file, header=TRUE, check.names = F)
-    if(i==1){
-      longMatx<-matrix
-    }else{
-      longMatx<-rbind(longMatx, matrix)
-    }
-    i=2
-  }
+  longMatx <- map_dfr(listFile, ~fread(cmd = paste("zcat", .x), header = TRUE))
+
   longMatx$gene_name=as.factor(longMatx$gene_name)
   longMatx$cell=as.factor(longMatx$cell)
   longMatx$count=as.factor(longMatx$count)
