@@ -41,13 +41,13 @@ if ( typeofcount == "reads"){ #if reads = wide format
 }else{ # long format "gene	| cell	| count"
   longMatx <- map_dfr(listFile, ~fread(cmd = paste("zcat", .x), header = TRUE))
 
-  longMatx$gene_name=as.factor(longMatx$gene_name)
+  longMatx$gene=as.factor(longMatx$gene)
   longMatx$cell=as.factor(longMatx$cell)
   longMatx$count=as.factor(longMatx$count)
-  sparseMtx <- sparseMatrix(i=as.numeric(longMatx$gene_name),
+  sparseMtx <- sparseMatrix(i=as.numeric(longMatx$gene),
                             j=as.numeric(longMatx$cell),
                             x=as.numeric(longMatx$count),
-                            dimnames=list(levels(longMatx$gene_name), levels(longMatx$cell))) 
+                            dimnames=list(levels(longMatx$gene), levels(longMatx$cell))) 
 }
 
 # for features.tsv 1st coloumn = IDs and 2nd = gene names
