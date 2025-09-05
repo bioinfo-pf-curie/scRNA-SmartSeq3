@@ -197,6 +197,7 @@ module_order:
 remove_sections :
   - star_summary
   - umitools-umi-stats
+  - umitools-dedup-plot
   - fastqc_overrepresented_sequences
   - fastqc_per_base_n_content
   - fastqc_adapter_content

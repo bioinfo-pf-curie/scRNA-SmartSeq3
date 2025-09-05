@@ -30,7 +30,7 @@ process multiqc {
   //path rseqc_readdistrib //not working
   // stat2mqc
   path('umitools/*')
-  //path('umitools/*')
+  path('umitools/*')
   path ('nbCells/*')
   path ('star/*')
   path fastqc

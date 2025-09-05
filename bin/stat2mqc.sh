@@ -150,14 +150,18 @@ do
     output+=",${mean_genes_reads}"
 
     ##------------UMIs
-    umi_aligned=$(grep "Total alignments :" featurecountsUmis/${sample}_umi_featureCounts.log | awk '{print $NF}')
-    umi_assigned=$(grep "Assigned" featurecountsUmis/${sample}_umi.csv.summary| awk '{print $NF}')
-    umi_dedup_assigned=$(grep "Number of reads out:" umitools/${sample}_umitoolsDedup.log | awk '{print $NF}')
+    #umi_aligned=$(grep "Total alignments :" featurecountsUmis/${sample}_umi_featureCounts.log | awk '{print $NF}')
+    #umi_assigned=$(grep "Assigned" featurecountsUmis/${sample}_umi.csv.summary| awk '{print $NF}')
+    #umi_dedup_assigned=$(grep "Number of reads out:" umitools/${sample}_umitoolsDedup.log | awk '{print $NF}')
     #umi_dedup_unassigned=$(grep "Read skipped, no tag:" umitools/${sample}_umitoolsDedup.log| cut -f4 -d, | awk '{print $NF}')
-    header+=",Final_umis"
-    output+=",${umi_dedup_assigned}"
-    # Genes (long format)
+    
+    # Matrix (long format)
     # genes | cells | counts
+    # UMIs
+    mean_umi_dedup_assigned=$(zcat matrice_umis/${sample}_matrix.tsv.gz | awk 'NR > 1 {counts[$2] += $3} END {for (cell in counts) {total += counts[cell]; n++} print total/n}')
+    header+=",Final_umis"
+    output+=",${mean_umi_dedup_assigned}"
+    # Genes 
     zcat matrice_umis/${sample}_matrix.tsv.gz | tail -n +2 | cut -f2 | sort | uniq -c > genes_per_cell
     ncells=$(wc -l < genes_per_cell)
     totgenes=$(awk '{sum += $1} END {print sum}' genes_per_cell)
