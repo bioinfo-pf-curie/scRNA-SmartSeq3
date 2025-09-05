@@ -62,6 +62,8 @@ features <- data.frame(
 
 ##  Create 10X like outputs
 dirName=paste0("10XlikeMatrix_", typeofcount)
+dir.create(dirName, recursive = TRUE, showWarnings = FALSE)
+
 # counts
 mat <- gzfile(paste0(dirName, "/matrix.mtx.gz"), "w")
 writeMM(sparseMtx, file = mat)
