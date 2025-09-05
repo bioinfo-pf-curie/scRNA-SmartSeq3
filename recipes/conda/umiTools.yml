@@ -6,3 +6,4 @@ channels:
 dependencies:
   # Add required software dependencies here
   - bioconda::umi_tools=1.1.6=py312h0fa9677_0
+  - bioconda::samtools=1.21=h96c455f_1
