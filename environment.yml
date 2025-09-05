@@ -8,6 +8,8 @@ dependencies:
   - python=3.12.10=h9e4cc4f_0_cpython
   - conda-forge::pymdown-extensions=10.15=pyhd8ed1ab_0
   - conda-forge::biopython=1.85=py312h66e93f0_1
+  - bioconda::pysam=0.22.1=py312hcfdcdd7_2
+
   # tools
   - bioconda::qualimap=2.3=hdfd78af_0
   - bioconda::subread=2.1.1=h577a1d6_0
