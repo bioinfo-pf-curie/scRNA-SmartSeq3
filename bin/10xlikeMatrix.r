@@ -68,7 +68,7 @@ writeMM(sparseMtx, file = paste0(dirName, "/matrix.mtx"))
 # genes
 write.table(
   features,
-  file = paste0(dirName, "/features.tsv.gz"),
+  file = paste0(dirName, "/features.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = FALSE,
@@ -77,7 +77,7 @@ write.table(
 # cells
 write.table(
   colnames(sparseMtx),
-  file = paste0(dirName, "/barcodes.tsv.gz"),
+  file = paste0(dirName, "/barcodes.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = FALSE,
