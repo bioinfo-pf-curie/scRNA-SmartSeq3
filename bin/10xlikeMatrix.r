@@ -62,16 +62,13 @@ features <- data.frame(
 
 ##  Create 10X like outputs
 dirName=paste0("10XlikeMatrix_", typeofcount)
-dir.create(dirName, recursive = TRUE, showWarnings = FALSE)
 
 # counts
-mat <- gzfile(paste0(dirName, "/matrix.mtx.gz"), "w")
-writeMM(sparseMtx, file = mat)
-close(mat)
+writeMM(sparseMtx, file = paste0(dirName, "/matrix.mtx"))
 # genes
 write.table(
   features,
-  file = gzfile(paste0(dirName, "/features.tsv.gz")),
+  file = paste0(dirName, "/features.tsv.gz"),
   quote = FALSE,
   sep = "\t",
   row.names = FALSE,
@@ -80,7 +77,7 @@ write.table(
 # cells
 write.table(
   colnames(sparseMtx),
-  file = gzfile(paste0(dirName, "/barcodes.tsv.gz")),
+  file = paste0(dirName, "/barcodes.tsv.gz"),
   quote = FALSE,
   sep = "\t",
   row.names = FALSE,
