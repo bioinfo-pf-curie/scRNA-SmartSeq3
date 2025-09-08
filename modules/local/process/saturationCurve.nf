@@ -1,5 +1,5 @@
 process saturationCurve {
-  label 'unix'
+  label 'seqkit'
   label 'lowCpu'
   label 'highMem'
 
