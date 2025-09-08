@@ -7,4 +7,4 @@ dependencies:
   - conda-forge::r-base=4.4.1=h1dca405_0
   - conda-forge::r-tidyverse=2.0.0=r44h785f33e_2
   - conda-forge::r-matrix=1.7_3=r44h2ae2be5_0
-  - conda-forge::zipp=3.21.0=pyhd8ed1ab_1 
+  - conda-forge::zip=3.0=hd590300_3
