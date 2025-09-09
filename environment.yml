@@ -20,6 +20,7 @@ dependencies:
   - bioconda::seqkit=2.10.0=h9ee0642_0
   - bioconda::rseqc=5.0.4=pyhdfd78af_0
   - bioconda::multiqc=1.28=pyhdfd78af_0
+  - conda-forge::jsonschema=4.23.0=pyhd8ed1ab_1
   - bioconda::fastqc=0.12.1=hdfd78af_0
   - bioconda::bioconductor-biocparallel=1.40.0=r44he5774e6_1
 
