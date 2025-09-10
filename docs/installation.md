@@ -35,18 +35,28 @@ See [nextflow.io](https://www.nextflow.io/) for further instructions on how to i
 
 ## Install the pipeline
 
+### From archive
+
 You just need to download/clone the source code and transfer the pipeline files manually:
 
 ```bash
-wget https://mypipeline/archive/master.zip
-mkdir -p ~/mypipelines
-unzip master.zip -d ~/mypipelines/
-cd ~/mypipelines
+wget https://myPipeline/archive/master.zip
+mkdir -p ~/myPipeline
+unzip master.zip -d ~/myPipeline/
+cd ~/myPipeline
 nextflow run main.nf
 ```
 
-If you would like to make changes to the pipeline, it's better to fork the repository on your github account and then clone the pipeline from your personal repository. 
-Once cloned, you can run the pipeline directly as above.
+### From source
+
+If you would like to make changes to the pipeline, it's better to fork the repository on your github account and then clone the pipeline from your personal repository.
+
+```bash
+git clone --recursive https://myPipeline.git
+### the option --recursive is needed if you use geniac as a submodule
+cd ~/myPipeline
+nextflow run main.nf
+```
 
 ## Geniac
 
@@ -92,7 +102,7 @@ If you're not able to use [singularity](https://sylabs.io/guides/3.6/user-guide/
 This is slower and less reproducible than the above, but is still better than having to install all requirements yourself!
 The pipeline ships with a conda environment file and Nextflow has a built-in support for this.
 
-To use it first ensure that you have [conda](https://docs.conda.io) installed (we recommend to use [miniconda](https://conda.io/miniconda.html)), then follow the same pattern as above and use the flag `-profile conda`
+To use it first ensure that you have [conda](https://docs.conda.io) installed (we recommend to use [miniconda](https://conda.io/miniconda.html)), then follow the same pattern as above and use the flag `-profile conda`.
 Note that in this case, the conda environment will be created in the `$HOME/conda-cache-nextflow` folder by default. This folder can be changed using the `--condaCacheDir` option.
 
 In addition to a general conda environment, this pipeline also comes with a `-profile multiconda` setting. In this case, a conda environment per tool (note that each process is assigned a tool with the label directive) will be created.

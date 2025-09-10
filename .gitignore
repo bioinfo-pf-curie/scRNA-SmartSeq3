@@ -1,0 +1,4 @@
+/build/*
+/work/*
+/results/*
+.DS_Store
