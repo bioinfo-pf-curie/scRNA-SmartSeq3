@@ -194,7 +194,6 @@ include { like10xMatrix as like10xMatrixAll } from './modules/local/process/like
 
 // multiqc modules
 //include { preseq } from './modules/common/process/preseq/preseq'
-include { rseqcGeneBodyCoverage } from './modules/common/process/rseqc/rseqcGeneBodyCoverage'
 //include { rseqcReadQuality } from './modules/common/process/rseqc/rseqcReadQuality'
 include { rseqcBamStat } from './modules/common/process/rseqc/rseqcBamStat'
 include { rseqcInnerDistance } from './modules/common/process/rseqc/rseqcInnerDistance'
@@ -486,16 +485,6 @@ workflow {
   }*/
 
   //-----------RSeqC------------------------------
-  if (!params.skipGeneBodyCovPlot){
-
-    rseqcGeneBodyCoverage(
-      samtoolsSortAll.out.bam, 
-      chBed12 
-    )
-    chRseqcGeneCov=rseqcGeneBodyCoverage.out.results
-  } else {
-    chRseqcGeneCov=Channel.empty()
-  }
 
   rseqcBamStat(
     chBams
@@ -555,7 +544,6 @@ workflow {
       //modules
       chCutadaptLogs.collect().ifEmpty([]),
       //chPreseq.collect().ifEmpty([]),
-      chRseqcGeneCov.collect().ifEmpty([]),
       //chRseqcBamStat.collect().ifEmpty([]),
       chRseqcInnerDistance.collect().ifEmpty([]),
       chRseqcJunctionAnnot.collect().ifEmpty([]),
