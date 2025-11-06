@@ -334,13 +334,14 @@ workflow {
   extractUmiReads(
     filterUnaligned.out.bam
   )
+  chExtractUmiReads=extractUmiReads.out.bam.filter { it[1].size() > 0 }
 
   samtoolsIndexUmiAligned(
-    extractUmiReads.out.bam
+    chExtractUmiReads
   )
 
   featureCountsUmis( 
-    extractUmiReads.out.bam.join(samtoolsIndexUmiAligned.out.bai).combine(chGtf)
+    chExtractUmiReads.join(samtoolsIndexUmiAligned.out.bai).combine(chGtf)
   )
   chVersions = chVersions.mix(featureCountsUmis.out.versions)
 
