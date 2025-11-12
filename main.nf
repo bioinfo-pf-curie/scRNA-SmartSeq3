@@ -334,7 +334,7 @@ workflow {
   extractUmiReads(
     filterUnaligned.out.bam
   )
-  chExtractUmiReads=extractUmiReads.out.bam.filter { it[1].size() > 0 }
+  chExtractUmiReads=extractUmiReads.out.bam
 
   samtoolsIndexUmiAligned(
     chExtractUmiReads
