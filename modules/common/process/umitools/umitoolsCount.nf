@@ -23,7 +23,7 @@ process umitoolsCount {
     -I ${bam} -S ${prefix}_matrix.tsv.gz > ${prefix}_umitoolsCount.log
 
   # as umitools still create the matrix even if it is empty, I removed it afterworads if empty
-  count=$(awk '/reads counted:/ {print \$NF}' "${prefix}_umitoolsCount.log")
+  count=\$(awk '/reads counted:/ {print \$NF}' "${prefix}_umitoolsCount.log")
   if [ "\$count" -e 0 ]; then
       rm ${prefix}_matrix.tsv.gz
   fi
