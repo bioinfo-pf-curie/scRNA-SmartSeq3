@@ -18,10 +18,8 @@ process extractUmiReads {
   """
   samtools view "${bam}" | awk '\$1 ~ /_/ {print}' > umiReads.sam
 
-  if [ "$(wc -l < umiReads.sam)" -gt 0 ]; then
-      samtools view -h "${bam}" | \
-      awk 'BEGIN{OFS="\t"} /^@/ {print; next} \$1 ~ /_/ {print}' | \
-      samtools view -b -o "${prefix}_umi.bam"
+  if [ "\$(wc -l < umiReads.sam)" -gt 0 ]; then
+      samtools view -h "${bam}" | awk 'BEGIN{OFS="\t"} /^@/ {print; next} \$1 ~ /_/ {print}' | samtools view -b -o "${prefix}_umi.bam"
   fi
   rm umiReads.sam
   """
