@@ -11,6 +11,8 @@ typeofcount<-as.character(commandArgs(TRUE)[1])
 ##### Merge individual matrices
 ####----------------------------------------
 listFile<-list.files(path = ".", pattern= "*.tsv.gz", full.names = T)
+
+
 if (typeofcount == "reads") { # si reads = format large
   i <- 1
   for (file in listFile) {
@@ -31,18 +33,18 @@ if (typeofcount == "reads") { # si reads = format large
   
   # Replace NA by 0 (row= genes/columns=sample)
   matrixFinal[is.na(matrixFinal)]<-0
-  matrixFinal %>% pivot_longer(!Geneid, names_to = "cells", values_to = "reads")-> longMatx
+  matrixFinal %>% pivot_longer(!Geneid, names_to = "cell", values_to = "count")-> longMatx
 
   longMatx$Geneid=as.factor(longMatx$Geneid)
-  longMatx$cells=as.factor(longMatx$cells)
-  longMatx$reads=as.factor(longMatx$reads)
+  longMatx$cell=as.factor(longMatx$cell)
+  longMatx$count=as.factor(longMatx$count)
   sparseMtx <- sparseMatrix(i=as.numeric(longMatx$Geneid),
-                            j=as.numeric(longMatx$cells),
-                            x=as.numeric(longMatx$reads),
-                            dimnames=list(levels(longMatx$Geneid), levels(longMatx$cells))) 
+                            j=as.numeric(longMatx$cell),
+                            x=as.numeric(longMatx$count),
+                            dimnames=list(levels(longMatx$Geneid), levels(longMatx$cell))) 
 
 }else{ # long format "gene	| cell	| count"
-  longMatx <- map_dfr(listFile, ~fread(cmd = paste("zcat", .x), header = TRUE))
+  longMatx <- map_dfr(listFile, ~fread(cmd = paste("zcat", .x), header = TRUE, colClasses = list(character = "cell")))
 
   longMatx$gene=as.factor(longMatx$gene)
   longMatx$cell=as.factor(longMatx$cell)
@@ -77,7 +79,7 @@ write.table(
   row.names = FALSE,
   col.names = FALSE
 )
-# cells
+# cell
 write.table(
   colnames(sparseMtx),
   file = paste0(dirName, "/barcodes.tsv"),
