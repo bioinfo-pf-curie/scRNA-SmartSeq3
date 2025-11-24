@@ -27,7 +27,7 @@ if (typeofcount == "reads") { # si reads = format large
       i <- 2
     }
   }
-}
+
   
   # Replace NA by 0 (row= genes/columns=sample)
   matrixFinal[is.na(matrixFinal)]<-0
