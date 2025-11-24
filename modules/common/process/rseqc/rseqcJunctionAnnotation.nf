@@ -13,7 +13,7 @@ process rseqcJunctionAnnotation {
   path bed12 
 
   output:
-  path "${meta.id}*.{txt,pdf,r,xls}", emit: results
+  path "${meta.id}*.{txt,pdf,r,xls}", optional: true, emit: results
   path("versions.txt"), emit: versions
 
   when:

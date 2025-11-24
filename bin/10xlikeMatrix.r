@@ -11,20 +11,23 @@ typeofcount<-as.character(commandArgs(TRUE)[1])
 ##### Merge individual matrices
 ####----------------------------------------
 listFile<-list.files(path = ".", pattern= "*.tsv.gz", full.names = T)
-
-if ( typeofcount == "reads"){ #if reads = wide format
-  i=1
-  for (file in listFile ){
-    matrix<-read.table(file, header=TRUE, check.names = F)
-    if( nrow(matrix)>1 ){
-      if(i==1){
-        matrixFinal<-matrix
-      }else{
-        matrixFinal<-merge(matrixFinal, matrix, by = "Geneid", all= TRUE)
+if (typeofcount == "reads") { # si reads = format large
+  i <- 1
+  for (file in listFile) {
+    matrix <- read.table(file, header = TRUE, check.names = FALSE, stringsAsFactors = FALSE)
+    matrix$Geneid <- as.character(matrix$Geneid)
+    
+    if (nrow(matrix) > 1) {
+      if (i == 1) {
+        matrixFinal <- matrix
+      } else {
+        matrixFinal$Geneid <- as.character(matrixFinal$Geneid)
+        matrixFinal <- merge(matrixFinal, matrix, by = "Geneid", all = TRUE)
       }
-      i=2
+      i <- 2
     }
   }
+}
   
   # Replace NA by 0 (row= genes/columns=sample)
   matrixFinal[is.na(matrixFinal)]<-0
