@@ -1,5 +1,5 @@
 process saturationCurve {
-  label 'seqkit'
+  label 'R'
   label 'lowCpu'
   label 'highMem'
 
@@ -12,11 +12,14 @@ process saturationCurve {
 
   script:
   """
+  # get reads count per cell
   for r1 in *_concat.R1.fastq.gz
   do
     seqkit seq -n --only-id \$r1 | cut -f2 -d_ | sort | uniq -c >> reads_cell
   done
+  awk '{print \$2, \$1}' reads_cell >  cell_reads
 
+  # get gene count per cell
   for matrix in *_matrix.tsv.gz; do 
     gzip -cd \$matrix > mat
     samples=\$(awk 'NR==1 {for (i=2; i<=NF; i++) print \$i}' mat)
@@ -24,12 +27,9 @@ process saturationCurve {
     paste <(echo "\$samples") <(echo "\$totGenes") >> cell_genes
   done
 
-  awk '{print \$2, \$1}' reads_cell >  cell_reads
+  # do saturatoin curve
+  saturationCurve.r
 
-  LC_ALL=C sort -t \$'\t' -k1,1 -T ./ cell_genes > cell_genes.sorted
-  LC_ALL=C sort -t \$'\t' -k1,1 -T ./ cell_reads > cell_reads.sorted
-
-  join -1 1 -2 1 cell_reads.sorted cell_genes.sorted | tr ' ' ',' > satCurve.txt
   """
 }
 

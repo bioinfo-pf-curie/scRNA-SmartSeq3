@@ -8,3 +8,5 @@ dependencies:
   - conda-forge::r-tidyverse=2.0.0=r44h785f33e_2
   - conda-forge::r-matrix=1.7_3=r44h2ae2be5_0
   - conda-forge::zip=3.0=hd590300_3
+  - bioconda::seqkit=2.10.0=h9ee0642_0
+
