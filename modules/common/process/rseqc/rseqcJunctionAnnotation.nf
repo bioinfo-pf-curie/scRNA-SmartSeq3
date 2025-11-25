@@ -28,6 +28,6 @@ process rseqcJunctionAnnotation {
   junction_annotation.py \\
       -i ${bam} \\
       -o ${prefix}_junctionAnnot_rseqc --min-intron=5 \\
-      -r $bed12 ${args} &> ${prefix}_junctionAnnot_rseqc_log.txt
+      -r $bed12 ${args} &> ${prefix}_junctionAnnot_rseqc_log.txt || true 
   """  
 }
