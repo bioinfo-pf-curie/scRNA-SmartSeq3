@@ -24,9 +24,10 @@ process saturationCurve {
     paste <(echo "\$samples") <(echo "\$totGenes") >> cell_genes
   done
 
-  LC_ALL=C sort -t \$'\t' -k1 -T ./ cell_genes > cell_genes.sorted
   awk '{print \$2, \$1}' reads_cell >  cell_reads
-  LC_ALL=C sort -t \$'\t' -k1 -T ./ cell_reads > cell_reads.sorted
+
+  LC_ALL=C sort -t \$'\t' -k1,1 -T ./ cell_genes > cell_genes.sorted
+  LC_ALL=C sort -t \$'\t' -k1,1 -T ./ cell_reads > cell_reads.sorted
 
   join -1 1 -2 1 cell_reads.sorted cell_genes.sorted | tr ' ' ',' > satCurve.txt
   """
