@@ -82,6 +82,9 @@ do
         frag_part=$(grep "Input Reads:" $chunk| awk '{print $NF}')
         frag=$(( $frag + $frag_part ))
         umi_part=$(grep "Reads output:" $chunk| awk '{print $NF}')
+        if [ -z "$umi_part" ]; then
+            umi_part=0
+        fi
         umi=$(( $umi + $umi_part ))
     done
     mean_frag=$( echo $cells $frag | awk ' { printf "%.0f",$2/$1 }' )
