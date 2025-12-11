@@ -14,7 +14,7 @@ disable_version_detection: true
 ## Custom content
 
 custom_data:
-    my_stats:
+    general_stats:
         file_format: 'csv'
         section_name: 'General Metrics'
         description: |
@@ -170,7 +170,7 @@ custom_data:
         xlab: 'Raw reads'
 
 sp:
-   my_stats:
+   general_stats:
       fn: 'general_stats.mqc'
    cell_reads:
       fn: 'cell_finalReads.txt'

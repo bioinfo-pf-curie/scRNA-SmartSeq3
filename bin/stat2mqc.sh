@@ -108,19 +108,23 @@ do
     header+=",Number_aligned,Percent_aligned"
     output+=",${mean_aligned},${mean_percent_aligned}"
 
-    cells=$(wc -l < bcAfterStar/${sample}_barcodes.txt)
+    for chunk in bcAfterStar/${sample}_*barcodes.txt
+    do
+    cells_align_part=$(wc -l < $chunk)
+    cells_align=$(( $cells_align + $cells_align_part ))
+    done
 
     # samtools markdup
     reads_dedup=$(grep "Total alignments :" featurecountsAll/${sample}_reads_featureCounts.log |  sed 's/.*Total alignments *: *\([0-9]\+\).*/\1/')
     percent_reads_dedup=$(echo "$reads" "$reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
     # featureCounts
-    reads_dedup_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | awk '{print $NF}')
+    reads_dedup_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | tr '\t' '\n' | awk '{sum += $1} END {print sum}') #all reads per cells inline
     percent_reads_dedup_assigned=$(echo "$reads" "$reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
 
     # means
-    mean_reads_dedup=$( echo $cells $reads_dedup | awk ' { printf "%.0f",$2/$1 }' )
+    mean_reads_dedup=$( echo $cells_align $reads_dedup | awk ' { printf "%.0f",$2/$1 }' )
     mean_percent_reads_dedup=$(echo "$mean_reads" "$mean_reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
-    mean_reads_dedup_assigned=$( echo $cells $reads_dedup_assigned | awk ' { printf "%.0f",$2/$1 }' )
+    mean_reads_dedup_assigned=$( echo $cells_align $reads_dedup_assigned | awk ' { printf "%.0f",$2/$1 }' )
     mean_percent_reads_dedup_assigned=$(echo "$mean_reads" "$mean_reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
     header+=",Number_dedup,Percent_dedup,Final_reads,Percent_assigned"
     output+=",${mean_reads_dedup},${mean_percent_reads_dedup},${mean_reads_dedup_assigned},${mean_percent_reads_dedup_assigned}"
