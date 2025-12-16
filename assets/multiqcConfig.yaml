@@ -84,7 +84,7 @@ custom_data:
               title: 'Cells'
               scale: 'Oranges'
               format: '{:,.0f}'
-              placement: 11000
+              placement: 8500
               hidden: false
             Percent_dedup:
               title: '%Deduplicated'
