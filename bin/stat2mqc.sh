@@ -121,28 +121,28 @@ do
         fi
     done
 
+    header+=",Cells"
+    output+=",${cells_align}"
+
     # samtools markdup
     reads_dedup=$(grep "Total alignments :" featurecountsAll/${sample}_reads_featureCounts.log |  sed 's/.*Total alignments *: *\([0-9]\+\).*/\1/')
     percent_reads_dedup=$(echo "$reads" "$reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
     # featureCounts
     reads_dedup_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | tr '\t' '\n' | awk '{sum += $1} END {print sum}') #all reads per cells inline
     percent_reads_dedup_assigned=$(echo "$reads" "$reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
-
+    #cells_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | tr '\t' '\n'  | tail -n +2 | wc -l)
+    header+=",Number_dedup,Percent_dedup,Final_reads,Percent_assigned"
     # means
     if (( $cells_align == 0 )); then
-        mean_reads_dedup=0
-        mean_reads_dedup_assigned=0
-        mean_percent_reads_dedup=0
-        mean_percent_reads_dedup_assigned=0
+        output+=",,,,"
     else
         mean_reads_dedup=$( echo $cells_align $reads_dedup | awk ' { printf "%.0f",$2/$1 }' )
         mean_reads_dedup_assigned=$( echo $cells_align $reads_dedup_assigned | awk ' { printf "%.0f",$2/$1 }' )
         mean_percent_reads_dedup=$(echo "$mean_reads" "$mean_reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
         mean_percent_reads_dedup_assigned=$(echo "$mean_reads" "$mean_reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
+        output+=",${mean_reads_dedup},${mean_percent_reads_dedup},${mean_reads_dedup_assigned},${mean_percent_reads_dedup_assigned}"
     fi
-    header+=",Number_dedup,Percent_dedup,Final_reads,Percent_assigned"
-    output+=",${mean_reads_dedup},${mean_percent_reads_dedup},${mean_reads_dedup_assigned},${mean_percent_reads_dedup_assigned}"
-
+    
     ##------------Reads
     # Genes (wide format)
     # genes | cell1 | cell2 | ....
@@ -187,8 +187,8 @@ do
     ncells=$(wc -l < genes_per_cell)
     totgenes=$(awk '{sum += $1} END {print sum}' genes_per_cell)
     mean_genes_umis=$( echo $ncells $totgenes | awk '{ printf "%.0f",$2/$1 }' )
-    header+=",Mean_genes_umis,Cells"
-    output+=",${mean_genes_umis},${ncells}"
+    header+=",Mean_genes_umis"
+    output+=",${mean_genes_umis}"
 
     if [ $n_header == 0 ]; then
         echo -e $header > general_stats.mqc
