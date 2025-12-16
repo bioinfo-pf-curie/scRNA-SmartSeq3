@@ -108,10 +108,17 @@ do
     header+=",Number_aligned,Percent_aligned"
     output+=",${mean_aligned},${mean_percent_aligned}"
 
-    for chunk in bcAfterStar/${sample}_*barcodes.txt
-    do
-    cells_align_part=$(wc -l < $chunk)
-    cells_align=$(( $cells_align + $cells_align_part ))
+    cells_align=0
+    for chunk in bcAfterStar/"${sample}"_*barcodes.txt; do
+        if [[ -e "$chunk" ]]; then
+            echo $chunk
+            cells_align_part=$(wc -l < "$chunk")
+            cells_align=$(( cells_align + cells_align_part ))
+        else
+            echo "No corresponding file = no cells : $chunk"
+            cells_align_part=0
+            cells_align=$(( cells_align + cells_align_part ))
+        fi
     done
 
     # samtools markdup
@@ -122,10 +129,17 @@ do
     percent_reads_dedup_assigned=$(echo "$reads" "$reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
 
     # means
-    mean_reads_dedup=$( echo $cells_align $reads_dedup | awk ' { printf "%.0f",$2/$1 }' )
-    mean_percent_reads_dedup=$(echo "$mean_reads" "$mean_reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
-    mean_reads_dedup_assigned=$( echo $cells_align $reads_dedup_assigned | awk ' { printf "%.0f",$2/$1 }' )
-    mean_percent_reads_dedup_assigned=$(echo "$mean_reads" "$mean_reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
+    if (( $cells_align == 0 )); then
+        mean_reads_dedup=0
+        mean_reads_dedup_assigned=0
+        mean_percent_reads_dedup=0
+        mean_percent_reads_dedup_assigned=0
+    else
+        mean_reads_dedup=$( echo $cells_align $reads_dedup | awk ' { printf "%.0f",$2/$1 }' )
+        mean_reads_dedup_assigned=$( echo $cells_align $reads_dedup_assigned | awk ' { printf "%.0f",$2/$1 }' )
+        mean_percent_reads_dedup=$(echo "$mean_reads" "$mean_reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
+        mean_percent_reads_dedup_assigned=$(echo "$mean_reads" "$mean_reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
+    fi
     header+=",Number_dedup,Percent_dedup,Final_reads,Percent_assigned"
     output+=",${mean_reads_dedup},${mean_percent_reads_dedup},${mean_reads_dedup_assigned},${mean_percent_reads_dedup_assigned}"
 
