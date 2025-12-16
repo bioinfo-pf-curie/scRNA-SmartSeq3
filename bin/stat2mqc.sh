@@ -146,29 +146,35 @@ do
     ##------------Reads
     # Genes (wide format)
     # genes | cell1 | cell2 | ....
-    nb_col=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | awk 'NR==1 {print NF}')
-    if [ $nb_col -gt 2 ]; then
-        mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | awk '
-                            {
-                                for (i=2; i<=NF; i++) {
-                                    if ($i > 0) {
-                                        count[i]++
+    if [[ -f "matrice_reads/${sample}_reads_matrix.tsv.gz" ]]
+    then
+        nb_col=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | awk 'NR==1 {print NF}')
+        if [ $nb_col -gt 2 ]; then
+            mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | awk '
+                                {
+                                    for (i=2; i<=NF; i++) {
+                                        if ($i > 0) {
+                                            count[i]++
+                                        }
                                     }
-                                }
-                            } END {
-                                total = 0
-                                n_col = 0
-                                for (i in count) {
-                                    total += count[i]
-                                    n_col++
-                                }
-                                print total / n_col
-                            }')
+                                } END {
+                                    total = 0
+                                    n_col = 0
+                                    for (i in count) {
+                                        total += count[i]
+                                        n_col++
+                                    }
+                                    print total / n_col
+                                }')
+        else
+            mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | wc -l)
+        fi
+        header+=",Mean_genes_reads"
+        output+=",${mean_genes_reads}"
     else
-        mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | wc -l)
+        header+=",Mean_genes_reads"
+        output+=","
     fi
-    header+=",Mean_genes_reads"
-    output+=",${mean_genes_reads}"
 
     ##------------UMIs
     #umi_aligned=$(grep "Total alignments :" featurecountsUmis/${sample}_umi_featureCounts.log | awk '{print $NF}')
