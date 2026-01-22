@@ -32,7 +32,6 @@ if ( typeofcount == "reads"){ #if reads = wide format
 
   longMatx$Geneid=as.factor(longMatx$Geneid)
   longMatx$cells=as.factor(longMatx$cells)
-  longMatx$reads=as.factor(longMatx$reads)
   sparseMtx <- sparseMatrix(i=as.numeric(longMatx$Geneid),
                             j=as.numeric(longMatx$cells),
                             x=as.numeric(longMatx$reads),
@@ -43,7 +42,6 @@ if ( typeofcount == "reads"){ #if reads = wide format
 
   longMatx$gene=as.factor(longMatx$gene)
   longMatx$cell=as.factor(longMatx$cell)
-  longMatx$count=as.factor(longMatx$count)
   sparseMtx <- sparseMatrix(i=as.numeric(longMatx$gene),
                             j=as.numeric(longMatx$cell),
                             x=as.numeric(longMatx$count),
