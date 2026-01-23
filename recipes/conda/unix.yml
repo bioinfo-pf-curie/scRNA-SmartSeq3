@@ -1,0 +1,9 @@
+name: unix
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - conda-forge::markdown=3.8=pyhd8ed1ab_0
+  - conda-forge::pigz=2.8=hadc24fc_1
+  - conda-forge::zipp=3.21.0=pyhd8ed1ab_1 

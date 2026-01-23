@@ -1,13 +1,21 @@
 ***************************************
-version-1.3.0
+version-3.0.0
 
-  - add deduplication on reads and umis separetly
-
++ nextflow dsl2
++ multiqc html graphes addition (fastqc, qualimap, rseqc, etc.)
++ add liveseq protocol
++ update tools versions and environment  
 
 ***************************************
-version-1.2.0
+version-2.1.0
 
-  - add errorStrategy 'ignore' for geneBodyCoverage process to skip the error when the estimation is not possible
++ add PCR deduplication for all reads
+
+***************************************
+version-2.0.0
+
++ add errorStrategy 'ignore' for geneBodyCoverage process to skip the error when the estimation is not possible
++ add flashseq protocol
 
 ***************************************
 version-1.1.0

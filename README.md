@@ -1,7 +1,7 @@
-# <img src="assets/logo-sseq3.png" alt="logo" width="50"/> SmartSeq3
+# <img src="assets/logo-sseq3.png" alt="logo" width="50"/> SmartSeq3/FlashSeq
 
 
-**Institut Curie - Nextflow SmartSeq3 analysis pipeline**
+**Institut Curie - Nextflow SmartSeq3/FlashSeq analysis pipeline**
 
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.32.0-brightgreen.svg)](https://www.nextflow.io/)
 [![MultiQC](https://img.shields.io/badge/MultiQC-1.10-blue.svg)](https://multiqc.info/)
@@ -21,17 +21,15 @@ The aim of the SmartSeq3 is to combine a full-length transcriptome coverage and 
 ![MultiQC](docs/images/samartseq3-sequence.png)
 
 
-1. Get R1 reads having a 5' tag to catch UMI reads ([`seqkit`](https://bioinf.shenwei.me/seqkit/))
-2. Extract UMIs from tagged reads ([`umi-tools`](https://umi-tools.readthedocs.io/en/latest/))
-3. Trim 3' linker and polyA tails on R2 reads ([`cutadapt`](https://cutadapt.readthedocs.io/en/latest/index.html))
-4. Read alignments on R1+R2 ([`STAR`](https://github.com/alexdobin/STAR))
-5. Read assignments on R1+R2 ([`FeatureCounts`](https://bioconductor.org/packages/release/bioc/vignettes/Rsubread/inst/doc/SubreadUsersGuide.pdf))
-6. Generation of UMI count matrices ([`umi-tools`](https://umi-tools.readthedocs.io/en/latest/))
-7. BigWig generations ([`bamCoverage`](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html))
-8. Estimate gene body coverage ([`genebody_coverage`](http://rseqc.sourceforge.net/))
-9. Generate cell QC plots (#UMIS per cell, %MT transcrits per cell, UMI & Gene per cell)
-10. Generate a 10X format matrix with all cells
-11. Results summary ([`MultiQC`](https://multiqc.info/))
+1. Extract UMIs from tagged reads ([`umi-tools`](https://umi-tools.readthedocs.io/en/latest/))
+3. Trim 3' linker and polyA tails ([`cutadapt`](https://cutadapt.readthedocs.io/en/latest/index.html))
+4. Alignments ([`STAR`](https://github.com/alexdobin/STAR))
+5. Remove PCR duplicates ([`samtools`](https://www.htslib.org/doc/samtools.html))
+6. Assignments ([`FeatureCounts`](https://bioconductor.org/packages/release/bioc/vignettes/Rsubread/inst/doc/SubreadUsersGuide.pdf))
+7. Generation of UMI count matrices ([`umi-tools`](https://umi-tools.readthedocs.io/en/latest/))
+8. Generate QC plots 
+9. Generate a 10X like matrix 
+10. Results summary ([`MultiQC`](https://multiqc.info/))
 
 
 ### Quick help
@@ -45,7 +43,6 @@ SmartSeq3 v.1.0
 
 Usage:
 
-nextflow run main.nf --reads '*_R{1,2}.fastq.gz' -profile conda --genomeAnnotationPath '/data/annotations/pipelines' --genome 'hg38'
 nextflow run main.nf --samplePlan 'sample_plan.csv' -profile conda --genomeAnnotationPath '/data/annotations/pipelines' --genome 'hg38'
 
 Mandatory arguments:
@@ -61,14 +58,23 @@ Mandatory arguments:
   Skip options: All are false by default
     --skipSoftVersion [bool]      Do not report software version
     --skipMultiQC [bool]          Skips MultiQC
-    --skipGeneCov [bool]          Skips calculating genebody coverage
-  
+
   Genomes: If not specified in the configuration file or if you wish to overwrite any of the references given by the --genome field
-  --genomeAnnotationPath [file]      Path  to genome annotation folder
+    --bed12                [path]    Path to gene file (BED12)
+    --fasta                [path]    Path to genome fasta file
+    --genomeAnnotationPath [path]    Path to genome annotations folder
+    --gtf                  [path]    Path to GTF annotation file
 
   Other options:
-    --outDir [file]               The output directory where the results will be saved
+    --outDir [path]               The output directory where the results will be saved
     -name [str]                   Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic
+    --protocol [str]              Name of the protocol either "smartseq3" or "flashseq" or "liveseq"
+    --sampleDescription [path]    Path to sampleDescription file. It has cell's bionames and allows to generate batches if generateBatch is true 
+    --generateBatch [bool]        If true, group cells per batch. --sampleDescription needs to be given to get batch names
+    --starOpts [bool]             Change star option; default is false
+    --starDefaultOpts [str]       If starOpts is true, precise options. Default is in nextflow.config file
+    --starTwoPass [bool]          Run two pass mode of star; default is false
+    --featurecountsOpts [str]     Options for featureCounts quantification
  
   =======================================================
   Available Profiles
@@ -127,7 +133,42 @@ Here are a few examples of how to set the profile option.
 A sample plan is a csv file (comma separated) that list all samples with their biological IDs.
 The sample plan is expected to be created as below :
 
-SAMPLE_ID | SAMPLE_NAME | FASTQ_R1 [Path to R1.fastq file] | FASTQ_R2 [For paired end, path to Read 2 fastq]
+SAMPLE_ID,SAMPLE_NAME,FASTQ_DIR
+
+You can give one cell per line with its corresponding directory, or one batch per line if your cells are grouped per batch in directories. 
+If it is not the case but want to generate results per batches, use the option --generateBatch and give all your fastqs in one repository (one line in the sample plan).
+
+### Sample Description
+
+A sample description is a txt file (pipe separated) that list all cell IDs and biological names.
+The sample plan is expected to be as below :
+
+cell1_batch1|bio-name-cell-1
+cell2_batch1|bio-name-cell-2
+cell3_batch2|bio-name-cell-3
+cell4_batch3|bio-name-cell-3
+...
+
+Batch information (e.g batch1) needs to be in the first column and separated by a "_" from the cellID (e.g cell1).
+
+There is one fastq pair per cell so each fastq have to be named with the cellID_batch (e.g cell1_batch1) or with the biological name. 
+
+### Run STAR with your own genome
+
+1) Create star index with your fasta and gtf
+
+STAR 2.7.8a is needed.
+
+```
+STAR  --runThreadN 4  \
+    --genomeFastaFiles your_fasta.fa  \
+    --sjdbGTFfile your_gtf.gtf \
+    --runMode genomeGenerate --genomeDir new_STAR_2.7.8a/
+```
+
+2) Include star index and gtf paths to your nextflow command (parametres --gtf your_gtf.gtf --starIndex new_STAR_2.7.8a)
+
+NB: If you have a bed12 file of your genome, add it to the nextflow command (--bed12 your_bed.bed12). It is used by RseqC which is a QC tool generating graphes for the multiqc html report. 
 
 ### Full Documentation
 

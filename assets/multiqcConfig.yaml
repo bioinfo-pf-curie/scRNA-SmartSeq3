@@ -1,145 +1,156 @@
 #
-# SmartSeq3 config for MultiQC
+# RNA-seq config for MultiQC
 #
 #################################################################
 
 skip_generalstats: true
-read_count_multiplier: 0.000001
-read_count_prefix: 'M'
-read_count_desc: 'millions'
+skip_versions_section: true
+disable_version_detection: true
+#read_count_multiplier: 0.001
+#read_count_prefix: 'K'
+#read_count_desc: 'thousands'
 
 ###################################
 ## Custom content
 
 custom_data:
-    stats:
-      file_format: 'csv'
-      section_name: 'General Metrics'
-      description: 'Result summaries of each cell. The number of fragments is the number of cDNA sequenced. It is the sequencing depth. The percentage of UMIs is the proportion of fragments having tag-UMI-GGG pattern within their sequences. Alignment is made on non UMI and UMI reads. The assignment is made on correctly aligned reads. Gene counts is calculating using all the reads or only UMI reads to have a cleaner count.'
-      plot_type: 'table'
-      pconfig:
-          namespace: 'stats'
-          id: 'stats'
-          title: 'General Statistics'
-          save_file: true
-          col1_header: 'Sample ID'
-      headers:
-          Sample_name:
-            title: 'Sample Name'
-            scale: false
-            placement: 2000
-          Number_of_fragments:
-            title: 'Total Fragments'
-            scale: 'YlGnBu'
-            format: '{:,.0f}'
-            placement: 3000
-          Percent_UMIs:
-            title: 'UMI reads (%)'
-            min: 0
-            max: 100
-            scale: 'Purples'
-            suffix: '%'
-            format: '{:,.1f}'
-            placement: 4000
-          Percent_Aligned:
-            title: 'Aligned (%)'
-            min: 0
-            max: 100
-            scale: 'Greens'
-            suffix: '%'
-            format: '{:,.1f}'
-            placement: 5000
-          Percent_Assigned:
-            title: 'Assigned (%)'
-            min: 0
-            max: 100
-            scale: 'YlGn'
-            suffix: '%'
-            format: '{:,.1f}'
-            placement: 6000
-          Number_of_UMIs:
-            title: 'UMIs'
-            scale: 'Oranges'
-            format: '{:,.0f}'
-            placement: 7000
-          Number_of_genes_umi:
-            title: 'Genes (umis)'
-            scale: 'RdPu'
-            format: '{:,.0f}'
-            placement: 8000
-          Number_of_reads:
-            title: 'Reads'
-            scale: 'Oranges'
-            format: '{:,.0f}'
-            placement: 9000
-          Number_of_genes_read:
-            title: 'Genes (reads)'
-            scale: 'RdPu'
-            format: '{:,.0f}'
-            placement: 10000
+    general_stats:
+        file_format: 'csv'
+        section_name: 'General Metrics'
+        description: |
+            Summary of single cell transcriptomics data.
+            If a sample contains more than one cell, means across cells are reported.
+            Reads are uniquely aligned, deduplicated (PCR duplicates are removed) and assigned to genes.
+            Genes are detected using all reads or using only UMI reads.
+        plot_type: 'table'
+        pconfig:
+            id: 'stats'
+            save_file: true
+            col1_header: 'Sample Name'
+        headers:
+            Sample_id:
+              title: 'Sample ID'
+              scale: false
+              placement: 900
+            Total_cells:
+              title: 'Total Cells'
+              scale: 'Oranges'
+              format: '{:,.0f}'
+              placement: 2000
+              hidden: false
+            Number_of_frag:
+              title: 'Total Fragments'
+              scale: 'YlGn'
+              format: '{:,.0f}'
+              placement: 3000
+              hidden: false
+            Number_of_reads:
+              title: 'Total Reads'
+              scale: 'YlGn'
+              format: '{:,.0f}'
+              placement: 4000
+              hidden: false
+            Number_umis:
+              title: 'Total UMIs'
+              scale: 'PuBu'
+              format: '{:,.0f}'
+              placement: 5000
+              hidden: false
+            Percent_umis:
+              title: '%UMIs'
+              scale: 'PuBu'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 6000
+              hidden: false
+            Percent_aligned:
+              title: '%Aligned'
+              scale: 'YlOrBr'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 7000
+              hidden: false
+            Number_aligned:
+              title: 'Aligned'
+              scale: 'YlOrBr'
+              format: '{:,.0f}'
+              placement: 8000
+              hidden: true
+            Cells:
+              title: 'Cells'
+              scale: 'Oranges'
+              format: '{:,.0f}'
+              placement: 8500
+              hidden: false
+            Percent_dedup:
+              title: '%Deduplicated'
+              scale: 'BuPu'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 9000
+              hidden: false
+            Number_dedup:
+              title: 'Deduplicated'
+              scale: 'BuPu'
+              format: '{:,.0f}'
+              placement: 9500
+              hidden: true
+            Percent_assigned:
+              title: '%Assigned'
+              scale: 'OrRd'
+              min: 0
+              max: 100
+              suffix: '%'
+              format: '{:,.0f}'
+              placement: 10000
+              hidden: false
+            Final_reads:
+              title: 'Reads'
+              scale: 'PuRd'
+              format: '{:,.0f}'
+              placement: 11500
+              hidden: false
+            Mean_genes_reads:
+              title: 'Genes (reads)'
+              scale: 'Greys'
+              format: '{:,.0f}'
+              placement: 12000
+              hidden: false
+            Final_umis:
+              title: 'UMIs'
+              scale: 'Greens'
+              format: '{:,.0f}'
+              placement: 13000
+              hidden: false
+            Mean_genes_umis:
+              title: 'Genes (UMIs)'
+              scale: 'YlGnBu'
+              format: '{:,.0f}'
+              placement: 14000
+              hidden: false
 
-    final:
+    cell_reads: 
       file_format: 'csv'
-      section_name: 'Mapping summary'
-      description: '{desc} Overview of mapping steps corresponding to alignment & assignment. The alignment is done on all reads (UMI and non UMI reads). Correct reads are aligned on the genome and assigned to a gene.'
+      section_name: 'Final reads per cell'
+      description: 'Number of final reads (after alignment, deduplication and assignment) per cell.'
       plot_type: 'bargraph'
       pconfig:
-        id: 'final'
-        title: 'Mapping summary'
-
-    umiPerGene: 
-      file_format: 'csv'
-      section_name: 'Expression level'
-      title: 'Number of UMIs per gene'
-      description: 'Distribution of the number of UMIs per gene in each sample. Genes having more than 70 UMIs (x axis) are not shown. Most genes have between one and 10 UMIs and a bend can be observed around 5.'
-      plot_type: 'linegraph'
-      pconfig:
-        id: 'umiPerGene'
-        title: ''
-        xlab: 'Number of UMIs per gene'
-        xmax: 70
-        ylab: 'Number of genes'
-        #xLog: True
-        #logswitch: True
-        #logswitch_active: True
-        #logswitch_label: 'Log10'
-        #reversedStacks: True
-
-    nbGene_perCell: 
-      file_format: 'csv'
-      section_name: 'Library complexity'
-      title: 'Number of genes per cell'
-      description: 'Genes are those found in the UMI matrices (non UMI reads are not take into account).'
-      plot_type: 'bargraph'
-      pconfig:
-        id: 'nbGene_perCell'
-        title: 'Number of genes per cell'
-
-    nbUmi_perCell: 
-      file_format: 'csv'
-      section_name: 'Number of UMIs per cell'
-      plot_type: 'bargraph'
-      pconfig:
-        id: 'nbUmi_perCell'
-        title: 'Number of UMIs per cell'
-        
-    ratio: 
-      file_format: 'csv'
-      section_name: 'Library complexity'
-      section_name: 'Number of genes & UMIs per cell'
-      description: 'A scatter plot of the ratio of the number of genes and UMIs per cell allow an easy representation of a cell composition.'
-      plot_type: 'scatter'
-      pconfig:
-        id: 'ratio'
-        title: 'Number of genes and UMIs per cell'
-        xlab: 'Number of UMIs'
-        ylab: 'Number of genes'
-
-    mt: 
+        id: 'totreads'
+        title: 'Reads per cell'
+        xlab: 'Cells'
+        ylab: 'Unique reads'
+              
+    mt_percent: 
       file_format: 'csv'
       section_name: 'Cell viability'
       title: '% Mitochondrial RNAs per cell'
-      description: 'Percentage of mitochondrial RNAs is a cell viability marker. It varies according to your cell type (e.g cell line, primary cells, etc.). Here, only UMI reads are take into account.'
+      description: 'Percentage of mitochondrial RNAs is a cell viability marker. It varies according to your cell type (e.g cell line, primary cells, etc.).'
       plot_type: 'scatter'
       pconfig:
         id: 'mt'
@@ -147,84 +158,70 @@ custom_data:
         xlab: 'Number of genes'
         ylab: '% mitochondrial RNAs'
 
-    gene_saturation:
-       file_format: 'tsv'
-       section_name: 'Gene-based saturation'
-       description: 'Plot showing the number of detected genes for a given set of subsampled values.'
-       plot_type: 'linegraph'
-       pconfig:
-            namespace: 'gene saturation'
-            id: 'genesaturation'
-            title: 'Gene-based Saturation'
-            ylab: 'Number of detected genes'
-            xlab: 'Number of UMIs (per thousand)'
-
+    sat_curve: 
+      file_format: 'csv'
+      section_name: 'Saturation Plot'
+      description: 'Scatter plot helping to assess whether the sequencing depth is sufficient to capture the transcriptome complexity. A curve approaching a plateau suggests saturation.'
+      plot_type: 'scatter'
+      pconfig:
+        title: 'Total reads vs Genes per cell'
+        id: 'sat'
+        ylab: 'Genes'
+        xlab: 'Raw reads'
 
 sp:
-  stats:
-      fn: 'table_mqc.stats'
-  final:
-      fn: 'final_mqc.stats'
-  umiPerGene:
-      fn: '*_HistUMIperGene_mqc.csv'
-  nbGene_perCell:
-      fn: 'nbGenePerCell.csv'
-  nbUmi_perCell:
-      fn: 'nbUMIPerCell.csv'
-  ratio:
-      fn: 'RatioPerCell.csv'
-  mt:
-      fn: 'MtGenePerCell.csv'
-  gene_saturation:
-      fn: '*gcurve.txt'
-
-
+   general_stats:
+      fn: 'general_stats.mqc'
+   cell_reads:
+      fn: 'cell_finalReads.txt'
+   mt_percent:
+      fn: 'percent_mt.txt'
+   sat_curve:
+      fn: 'satCurve.txt'
+   
 
 ###############################
 ## Modules 
 
 module_order:
+  - fastqc
   - cutadapt
   - star
   - featurecounts
-  - preseq:
-     name: 'Sequencing Complexity'
-     info: 'Estimates the complexity of a library, showing how many additional unique reads are sequenced for increasing total read count. A shallow curve indicates complexity saturation. The dashed line shows a perfectly complex library where total reads = unique reads.'
-  - deeptools
+  - umitools
   - rseqc
+  - qualimap
+
+#############################
+## Removed plots
+remove_sections :
+  - star_summary
+  - umitools-umi-stats
+  - umitools-dedup-plot
+  - fastqc_overrepresented_sequences
+  - fastqc_per_base_n_content
+  - fastqc_adapter_content
+  - fastqc_per_sequence_quality_scores
+  - fastqc_per_sequence_gc_content
+  - fastqc_sequence_length_distribution
+  - fastqc_sequence_counts
+  - fastqc_status_checks
 
 #############################
 ## Display
 
 report_section_order:
-  # summary table
   stats:
-    order: 850
-  # mapping:
-  final:
-    order: 800
-  star:
-    order: 750
-  featurecounts:
-    order: 700
-  cutadapt:
-    order: 650
-  rseqc:
-    order: 550
-  # cell analysis
-  umiPerGene:
-    order: 500
-  nbGene_perCell:
-    order: 450
-  nbUmi_perCell:
-    order: 400
-  ratio:
-    order: 350
-  mt:
-    order: 300
+    order: 1
+  cell_reads:
+    order: -700
+  mt_percent:
+    order: -800
+  sat_curve:
+    order: -900
   software_versions:
-    order: -1500
+    order: -1000
   summary:
-    order: -2000
+    order: -1100
 
 plots_force_interactive: True

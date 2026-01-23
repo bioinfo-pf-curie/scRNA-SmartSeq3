@@ -1,17 +1,12 @@
-name: R-4.0.3
+name: R
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
-  - conda-forge::zip=3.0=h7f98852_1
-  - conda-forge::r-base=4.0.3=hd23ff56_6
-  - conda-forge::r-stringi=1.5.3=r40hcabe038_1
-  - conda-forge::r-reshape2=1.4.4=r40h0357c0b_1
-  - bioconda::bioconductor-dropletutils=1.10.0=r40h5f743cb_0
-  - conda-forge::r-plotrix=3.8_1=r40hc72bb7e_0
-  - conda-forge::r-dplyr=1.0.5=r40h03ef668_0
-  - conda-forge::r-matrix=1.3_2=r40he454529_0
-  - conda-forge::r-seurat=4.0.0=r40h03ef668_0
-  - conda-forge::r-spatstat=1.64_1=r40h0357c0b_0
+  - conda-forge::r-base=4.4.1=h1dca405_0
+  - conda-forge::r-tidyverse=2.0.0=r44h785f33e_2
+  - conda-forge::r-matrix=1.7_3=r44h2ae2be5_0
+  - conda-forge::zip=3.0=hd590300_3
+  - bioconda::seqkit=2.10.0=h9ee0642_0
 
