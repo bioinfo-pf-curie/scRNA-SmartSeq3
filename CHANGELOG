@@ -7,15 +7,24 @@ version-3.0.0
 + update tools versions and environment  
 
 ***************************************
-version-2.1.0
+version-2.1.0 (previous v1.3.0)
 
 + add PCR deduplication for all reads
 
 ***************************************
-version-2.0.0
+version-2.0.0 (previous v1.2.1)
+
++ add flashseq protocol
++ add Plasmodium falciparum genome
++ Update environment.yml
++ update stat2mqc genes and umis
++ delete skipBigWig
+
+***************************************
+version-1.2.0
 
 + add errorStrategy 'ignore' for geneBodyCoverage process to skip the error when the estimation is not possible
-+ add flashseq protocol
+
 
 ***************************************
 version-1.1.0
