@@ -46,7 +46,7 @@ process multiqc {
   output:
   path splan, emit: splan
   path "*report.html", emit: report
-  path "*_data", emit: data
+  path "general_stats.mqc", emit: stats
 
   script:
   rtitle = customRunName ? "--title \"$customRunName\"" : ''

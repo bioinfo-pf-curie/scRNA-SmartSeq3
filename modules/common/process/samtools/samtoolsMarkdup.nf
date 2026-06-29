@@ -6,7 +6,7 @@ process samtoolsMarkdup {
   tag "${meta.id}"
   label 'samtools'
   label 'medCpu'
-  label 'medMem'
+  label 'highMem'
 
   input:
   tuple val(meta), path(bam)

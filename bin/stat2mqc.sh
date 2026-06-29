@@ -82,6 +82,9 @@ do
         frag_part=$(grep "Input Reads:" $chunk| awk '{print $NF}')
         frag=$(( $frag + $frag_part ))
         umi_part=$(grep "Reads output:" $chunk| awk '{print $NF}')
+        if [ -z "$umi_part" ]; then
+            umi_part=0
+        fi
         umi=$(( $umi + $umi_part ))
     done
     mean_frag=$( echo $cells $frag | awk ' { printf "%.0f",$2/$1 }' )
@@ -105,49 +108,73 @@ do
     header+=",Number_aligned,Percent_aligned"
     output+=",${mean_aligned},${mean_percent_aligned}"
 
-    cells=$(wc -l < bcAfterStar/${sample}_barcodes.txt)
+    cells_align=0
+    for chunk in bcAfterStar/"${sample}"_*barcodes.txt; do
+        if [[ -e "$chunk" ]]; then
+            echo $chunk
+            cells_align_part=$(wc -l < "$chunk")
+            cells_align=$(( cells_align + cells_align_part ))
+        else
+            echo "No corresponding file = no cells : $chunk"
+            cells_align_part=0
+            cells_align=$(( cells_align + cells_align_part ))
+        fi
+    done
+
+    header+=",Cells"
+    output+=",${cells_align}"
 
     # samtools markdup
     reads_dedup=$(grep "Total alignments :" featurecountsAll/${sample}_reads_featureCounts.log |  sed 's/.*Total alignments *: *\([0-9]\+\).*/\1/')
     percent_reads_dedup=$(echo "$reads" "$reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
     # featureCounts
-    reads_dedup_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | awk '{print $NF}')
+    reads_dedup_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | tr '\t' '\n' | awk '{sum += $1} END {print sum}') #all reads per cells inline
     percent_reads_dedup_assigned=$(echo "$reads" "$reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
-
-    # means
-    mean_reads_dedup=$( echo $cells $reads_dedup | awk ' { printf "%.0f",$2/$1 }' )
-    mean_percent_reads_dedup=$(echo "$mean_reads" "$mean_reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
-    mean_reads_dedup_assigned=$( echo $cells $reads_dedup_assigned | awk ' { printf "%.0f",$2/$1 }' )
-    mean_percent_reads_dedup_assigned=$(echo "$mean_reads" "$mean_reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
+    #cells_assigned=$(grep "Assigned" featurecountsAll/${sample}_reads.csv.summary | tr '\t' '\n'  | tail -n +2 | wc -l)
     header+=",Number_dedup,Percent_dedup,Final_reads,Percent_assigned"
-    output+=",${mean_reads_dedup},${mean_percent_reads_dedup},${mean_reads_dedup_assigned},${mean_percent_reads_dedup_assigned}"
-
+    # means
+    if (( $cells_align == 0 )); then
+        output+=",,,,"
+    else
+        mean_reads_dedup=$( echo $cells_align $reads_dedup | awk ' { printf "%.0f",$2/$1 }' )
+        mean_reads_dedup_assigned=$( echo $cells_align $reads_dedup_assigned | awk ' { printf "%.0f",$2/$1 }' )
+        mean_percent_reads_dedup=$(echo "$mean_reads" "$mean_reads_dedup" | awk ' { printf "%.0f",$2/$1*100 } ')
+        mean_percent_reads_dedup_assigned=$(echo "$mean_reads" "$mean_reads_dedup_assigned" | awk ' { printf "%.0f",$2/$1*100 } ')
+        output+=",${mean_reads_dedup},${mean_percent_reads_dedup},${mean_reads_dedup_assigned},${mean_percent_reads_dedup_assigned}"
+    fi
+    
     ##------------Reads
     # Genes (wide format)
     # genes | cell1 | cell2 | ....
-    nb_col=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | awk 'NR==1 {print NF}')
-    if [ $nb_col -gt 2 ]; then
-        mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | awk '
-                            {
-                                for (i=2; i<=NF; i++) {
-                                    if ($i > 0) {
-                                        count[i]++
+    if [[ -f "matrice_reads/${sample}_reads_matrix.tsv.gz" ]]
+    then
+        nb_col=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | awk 'NR==1 {print NF}')
+        if [ $nb_col -gt 2 ]; then
+            mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | awk '
+                                {
+                                    for (i=2; i<=NF; i++) {
+                                        if ($i > 0) {
+                                            count[i]++
+                                        }
                                     }
-                                }
-                            } END {
-                                total = 0
-                                n_col = 0
-                                for (i in count) {
-                                    total += count[i]
-                                    n_col++
-                                }
-                                print total / n_col
-                            }')
+                                } END {
+                                    total = 0
+                                    n_col = 0
+                                    for (i in count) {
+                                        total += count[i]
+                                        n_col++
+                                    }
+                                    print total / n_col
+                                }')
+        else
+            mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | wc -l)
+        fi
+        header+=",Mean_genes_reads"
+        output+=",${mean_genes_reads}"
     else
-        mean_genes_reads=$(zcat matrice_reads/${sample}_reads_matrix.tsv.gz | tail -n +2 | wc -l)
+        header+=",Mean_genes_reads"
+        output+=","
     fi
-    header+=",Mean_genes_reads"
-    output+=",${mean_genes_reads}"
 
     ##------------UMIs
     #umi_aligned=$(grep "Total alignments :" featurecountsUmis/${sample}_umi_featureCounts.log | awk '{print $NF}')
@@ -166,8 +193,8 @@ do
     ncells=$(wc -l < genes_per_cell)
     totgenes=$(awk '{sum += $1} END {print sum}' genes_per_cell)
     mean_genes_umis=$( echo $ncells $totgenes | awk '{ printf "%.0f",$2/$1 }' )
-    header+=",Mean_genes_umis,Cells"
-    output+=",${mean_genes_umis},${ncells}"
+    header+=",Mean_genes_umis"
+    output+=",${mean_genes_umis}"
 
     if [ $n_header == 0 ]; then
         echo -e $header > general_stats.mqc

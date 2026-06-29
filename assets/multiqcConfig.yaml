@@ -14,7 +14,7 @@ disable_version_detection: true
 ## Custom content
 
 custom_data:
-    my_stats:
+    general_stats:
         file_format: 'csv'
         section_name: 'General Metrics'
         description: |
@@ -80,6 +80,12 @@ custom_data:
               format: '{:,.0f}'
               placement: 8000
               hidden: true
+            Cells:
+              title: 'Cells'
+              scale: 'Oranges'
+              format: '{:,.0f}'
+              placement: 8500
+              hidden: false
             Percent_dedup:
               title: '%Deduplicated'
               scale: 'BuPu'
@@ -103,12 +109,6 @@ custom_data:
               suffix: '%'
               format: '{:,.0f}'
               placement: 10000
-              hidden: false
-            Cells:
-              title: 'Cells'
-              scale: 'Oranges'
-              format: '{:,.0f}'
-              placement: 11000
               hidden: false
             Final_reads:
               title: 'Reads'
@@ -170,7 +170,7 @@ custom_data:
         xlab: 'Raw reads'
 
 sp:
-   my_stats:
+   general_stats:
       fn: 'general_stats.mqc'
    cell_reads:
       fn: 'cell_finalReads.txt'

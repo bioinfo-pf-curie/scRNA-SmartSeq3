@@ -10,10 +10,10 @@ process rseqcJunctionAnnotation {
 
   input:
   tuple val(meta), path(bam)
-  path bed12 
+  path bed12
 
   output:
-  path "${meta.id}*.{txt,pdf,r,xls}", emit: results
+  path "${meta.id}*.{txt,pdf,r,xls}", optional: true, emit: results
   path("versions.txt"), emit: versions
 
   when:
@@ -27,7 +27,7 @@ process rseqcJunctionAnnotation {
 
   junction_annotation.py \\
       -i ${bam} \\
-      -o ${prefix}_junctionAnnot_rseqc \\
-      -r $bed12 ${args} &> ${prefix}_junctionAnnot_rseqc_log.txt
+      -o ${prefix}_junctionAnnot_rseqc --min-intron=5 \\
+      -r $bed12 ${args} &> ${prefix}_junctionAnnot_rseqc_log.txt || true 
   """  
 }

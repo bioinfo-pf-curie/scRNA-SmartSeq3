@@ -11,7 +11,7 @@ process umitoolsCount {
   tuple val(meta), path(bam), path(bai)
 
   output:
-  tuple val(meta), path("*_matrix.tsv.gz"), emit: matrix
+  tuple val(meta), path("*_matrix.tsv.gz"), optional: true, emit: matrix
   tuple val(meta), path("*.log"), emit: log
   path("versions.txt"), emit: versions
 
@@ -21,6 +21,13 @@ process umitoolsCount {
   """
   umi_tools count ${args} \\
     -I ${bam} -S ${prefix}_matrix.tsv.gz > ${prefix}_umitoolsCount.log
+
+  # as umitools still create the matrix even if it is empty, I removed it afterworads if empty
+  count=\$(awk '/reads counted:/ {print \$NF}' "${prefix}_umitoolsCount.log")
+  if [ "\$count" -lt 1 ]; then
+      rm ${prefix}_matrix.tsv.gz
+  fi
+
   umi_tools --version | cut -f1,3 -d" " &> versions.txt
   """
 }

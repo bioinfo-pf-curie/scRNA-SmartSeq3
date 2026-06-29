@@ -6,3 +6,4 @@ channels:
 dependencies:
   # Add required software dependencies here
   - bioconda::rseqc=5.0.4=pyhdfd78af_0
+  - bioconda::samtools=1.21=h96c455f_1
