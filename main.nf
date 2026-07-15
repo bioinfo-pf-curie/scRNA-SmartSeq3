@@ -453,7 +453,7 @@ workflow {
     )
     chMt=calculMT.out.results
   } else {
-    chMt=Channel.empty()
+    chMt=Channel.value([])
   }
 
   saturationCurve(
@@ -558,7 +558,7 @@ workflow {
       chFastqNbCells.map{it->[it[1]]}.collect().ifEmpty([]), // Nb cells 
       starAlign.out.logs.collect().ifEmpty([]),
       chFastqc.collect().ifEmpty([]),
-      chMt,
+      chMt.collect().ifEmpty([]),
       chSaturationCurve,
       featureCountsAll.out.summary.collect(),
       featureCountsAll.out.log.collect(),
