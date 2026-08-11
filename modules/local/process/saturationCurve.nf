@@ -1,5 +1,5 @@
 process saturationCurve {
-  label 'R'
+  label 'r'
   label 'lowCpu'
   label 'highMem'
 
