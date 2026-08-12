@@ -143,6 +143,7 @@ If it is not the case but want to generate results per batches, use the option -
 A sample description is a txt file (pipe separated) that list all cell IDs and biological names.
 The sample plan is expected to be as below :
 
+...
 cell1_batch1|bio-name-cell-1
 cell2_batch1|bio-name-cell-2
 cell3_batch2|bio-name-cell-3

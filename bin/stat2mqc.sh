@@ -204,4 +204,6 @@ do
     echo -e $output >> general_stats.mqc
 done
 
-awk -F',' 'BEGIN {OFS=","; print "Sample,Cell,ReadCount"} {print $1","$1","$2}' percent_mt.txt > cell_finalReads.txt
+if [ -f "percent_mt.txt" ]; then
+    awk -F',' 'BEGIN {OFS=","; print "Sample,Cell,ReadCount"} {print $1","$1","$2}' percent_mt.txt > cell_finalReads.txt
+fi
