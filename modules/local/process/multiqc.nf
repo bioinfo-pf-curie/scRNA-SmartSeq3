@@ -24,7 +24,6 @@ process multiqc {
   //path rseqc_bamstat
   path ('rseqc/*')
   path ('rseqc/*')
-  path ('rseqc/*')
   path ('qualimap/*')
   //path rseqc_readquality not a module
   //path rseqc_readdistrib //not working
