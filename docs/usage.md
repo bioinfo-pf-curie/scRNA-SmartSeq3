@@ -1,18 +1,14 @@
 # Usage
 
-<!-- TODO - Update with the usage of your pipeline -->
-
 ## Table of contents
 
 * [Introduction](#general-nextflow-info)
 * [Running the pipeline](#running-the-pipeline)
 * [Main arguments](#main-arguments)
     * [`-profile`](#-profile)
-    * [`--reads`](#-reads)
     * [`--samplePlan`](#-sampleplan)
     * [`--sampleDescription`](#-sampledescription)
 * [Inputs](#inputs)
-    * [`--singleEnd`](#--singleend)
     * [`--protocol`] (#--protocol)
 * [Reference genomes](#reference-genomes)
     * [`--genome`](#--genome)
@@ -118,6 +114,8 @@ You can find the keys to specify the genomes in the [genomes config file](../con
   * `--genome dmelr6.28`
 * Plasmodium falciparum
   * `--genome Pfalciparum3D7_PlasmoDB-68`
+* C. elegans
+  * `--genome WS298`
 	
 ## Annotations
 
